@@ -53,11 +53,11 @@ All of this can be done by convention writing the following command line:
 Parse and map command line args to built-in and complex (custom user defined) types. then invoke methods automatically.
 UltraMapper.CommandLine uses Expressions to generate all the code needed to deal with your commands, instead of Reflection to guarantee good performances.     
 
-Default syntax:
+Default parser syntax:
 
   example 1: --move C:\ThisFile.exe "C:\New Directory\ThisFile.exe" 
   
-  - --<commmandName> a double dash indentifies a command      
+  - --<commmandName> a <b>double dash</b> indentifies a command      
   - Whitespaces characters delimit commmands and values
   - Double quotes escape special characters and whitespace.
   
