@@ -133,16 +133,16 @@ UltraMapper.CommandLine uses Expressions to generate all the code needed to deal
 
 
 ## Provide your very own syntax!
-    You can provide and use a new syntax along with UltraMapper.CommandLine by implementing ICommandParser.
-    A few rules apply to it. Read more here.
+You can provide and use a new syntax along with UltraMapper.CommandLine by implementing ICommandParser.
+A few rules apply to it. Read more here.
     
 ## --help command and IHelpProvider:
-    If you manually define a help command in your commands class, it will be invoked when invoking --help
-    
-    If you do not define a help command, a help command is automatically generated for you.   
-    The default help provider used in this latter case will analyze your commands class and generate adequate usage documentation keeping into account both operations and parameters.
-    
-    You can also provide a new helper by implementing an IHelpProvider. A few rules apply to it. Read more here.
+If you manually define a help command in your commands class, it will be invoked when invoking --help
+
+If you do not define a help command, a help command is automatically generated for you.   
+The default help provider used in this latter case will analyze your commands class and generate adequate usage documentation keeping into account both operations and parameters.
+
+You can also provide a new helper by implementing an IHelpProvider. A few rules apply to it. Read more here.
     
 ## Remarks:
 
