@@ -12,21 +12,20 @@ namespace UltraMapper.CommandLine
         public IHelpProvider HelpProvider { get; private set; }
         public ParsedParametersAdapter ParamsAdapter { get; private set; }
 
-        public static CommandLine Instance = new CommandLine(
-            new CommandParser(), new UltraMapperBinding() );
+        public static CommandLine Instance = new CommandLine( new CommandParser() );
 
-        public CommandLine( ICommandParser parser, IMapper mapper )
-            : this( parser, mapper, new DefaultHelpProvider() ) { }
+        public CommandLine( ICommandParser parser )
+            : this( parser, new DefaultHelpProvider() ) { }
 
-        public CommandLine( ICommandParser parser, IMapper mapper,
+        public CommandLine( ICommandParser parser,
             IHelpProvider helpProvider )
         {
             this.ParamsAdapter = new ParsedParametersAdapter();
 
             this.Parser = parser;
-            this.Mapper = mapper;
             this.HelpProvider = helpProvider;
 
+            this.Mapper = new UltraMapperBinding();
             this.Mapper.Initialize( helpProvider );
         }
 
