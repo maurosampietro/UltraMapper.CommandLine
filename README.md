@@ -56,22 +56,22 @@ UltraMapper.CommandLine uses Expressions to generate all the code needed to deal
 ## Default parser syntax:
  
   - --<commmandName> a <b>double dash</b> indentifies a command
-    example: --close
+example: --close
     
   - <b>Whitespaces</b> characters delimit commmands and values
-    example: --move C:\Temp\file.txt C:\Archive\file.txt 
+example: --move C:\Temp\file.txt C:\Archive\file.txt 
     
   - Double quotes escape special characters including whitespaces.
-    example: --move "C:\folder with spaces in the name\file.txt" C:\Archive\file.txt 
+example: --move "C:\folder with spaces in the name\file.txt" C:\Archive\file.txt 
     
   - if your param is a complex type, <b>round brackets</b> identies the object
-    example: --sum ()
+example: --sum ()
     
   - If your param is a collection <b>square brackets</b> identifies the collection
-    example: --sum [[1 2 3 4 5]]  
+example: --sum [[1 2 3 4 5]]  
     
   - <b>Collections of complex types</b> are supported, recursively, without limits
-    example: --sum [( a b) ( c d ) (e f) ]    
+example: --sum [( a b) ( c d ) (e f) ]    
   
 ## Multiple advancements compared to other similar projects include:
 
