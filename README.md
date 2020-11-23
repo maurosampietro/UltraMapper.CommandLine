@@ -68,7 +68,7 @@ UltraMapper.CommandLine uses Expressions to generate all the code needed to deal
   example: --sum ()
     
   - If your param is a collection <b>square brackets</b> identifies the collection       
-  example: --sum [[1 2 3 4 5]]  
+  example: --sum [1 2 3 4 5]    
     
   - <b>Collections of complex types</b> are supported, recursively, without limits     
   example: --sum [ (a b) (c d) (e f) ]    
