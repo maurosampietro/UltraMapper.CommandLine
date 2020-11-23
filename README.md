@@ -1,21 +1,32 @@
 # UltraMapper.CommandLine
 
+THIS DOCUMENTATION IS A WORK IN PROGRESS. BE PATIENT [2020-NOV-23].
+
+
 Suppose you have a console program capable of executing multiple complex tasks.
 You tipically will control the program by passing arguments to it.
 
 You will face the need to give that text a sense by defining rules that will allow you to split it into meaningful chuncks;
 usually those rules will allow you to split the text in such a way that it easy to identity the parameter you want to assign the value to, and the value itself.
 
-This process is called parsing.
+This process is called parsing. Read more about the default syntax.
 
 Once you identified all of the parameters and the related values you will need to cast the values from plain text into a more specific strong-type (int, double, etc..)
 Once that is done, you can read those strongly-typed values to call appropriate methods.
 
-With UltraMapper.CommandLine all of this is automatic, you just need to define your operations to be executed.
-You can directly call methods taking as arguments, built-in types (eg: bool, int, double, string, etc..) and complex user defined types (eg: your classes)
+With UltraMapper.CommandLine will drastically simplify your code as all of this is completly automatic: you just need to define the operations to be executed in a class.
+You can directly set properties and call methods taking as arguments built-in types (eg: bool, int, double, string, etc..), complex user defined types (eg: your classes)
 and collections of built-in and user-defined types.
 
 An example:
+
+The following program supports 5 commands or operations: it can sum a given amount of numbers, open any directory in explorer, clear the conosle screen, exit the program and set how much time to wait before exiting the program. 
+Parsing the arguments onto the class Commands will start the process of analyzing the Commands class and generating the necessary code capable of calling its properties and methods.
+
+Let's say i want to open C:\Temp, sum the numbers '1,2,3', set the sleeping time to 10000ms, clear screen and exit.
+All of this can be done by convention writing the following command line:
+
+    --opendir C:\temp --sum [1 2 3] --sleepingtime 10000 --clearscreen --exit
 
     static void Main( string[] args )
     {
@@ -37,6 +48,7 @@ An example:
             Environment.Exit( 0 );
         }
     }
+    
 
 Parse and map command line args to built-in and complex (custom user defined) types. then invoke methods automatically.
 UltraMapper.CommandLine uses Expressions to generate all the code needed to deal with your commands, instead of Reflection to guarantee good performances.     
@@ -131,4 +143,26 @@ Remarks:
 
 - AutoParser works with with properties and methods but not with fields.
 - Methods are only supported at first level (makes no sense otherwise)
--  Methods can be called directly only if void, non abstract, non generic.    
+- Methods can be called directly only if void, non abstract, non generic.    
+
+
+ICommandParser:
+    You can provide and use a new syntax along with UltraMapper.CommandLine by implementing ICommandParser.
+    A few rules apply to it. Read more here.
+    
+Help command:
+    If you manually define a help command in your commands class, it will be invoked when invoking --help
+    
+    If you do not define a help command, a help command is automatically generated for you.   
+    The default help provider used in this latter case will analyze your commands class and generate adequate usage documentation keeping into account both operations and parameters.
+    
+    You can also provide a new helper by implementing an IHelpProvider. A few rules apply to it. Read more here.
+
+How can you contribute?
+
+- Support standard command line dialects:
+    
+    I had to come up with a new syntax in order to support the identification of complex types and collections, however it would also be nice to support other commandline dialects and JSON (even if some UltraMapper.CommandLine features would not be available to them).
+    You can try and write a JSON parser by implementing the IParser interface. (Feel free to write me to ask details)
+
+
