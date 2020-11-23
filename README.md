@@ -1,8 +1,26 @@
-# CommandLine.AutoParser
+# UltraMapper.CommandLine
 
-Parse, map and invoke command line args automatically.
-CommandLine.AutoParser uses Expressions to generate all the code needed to deal with your commands, instead of Reflection to guarantee good performances.     
+Parse and map command line args, then invoke methods automatically.
+UltraMapper.CommandLine uses Expressions to generate all the code needed to deal with your commands, instead of Reflection to guarantee good performances.     
 
+Default syntax:
+
+  example 1: --move C:\ThisFile.exe "C:\New Directory\ThisFile.exe" 
+  
+  - --<commmandName> a double dash indentifies a command      
+  - Whitespaces characters delimit commmands and values
+  - Double quotes escape special characters and whitespace.
+  
+  - if your param is a complex type, round brackets identies the object
+    example: --sum ()
+    
+  - If your param is a collection square brackets identifies the collection
+    example: --sum [[1 2 3 4 5]]  
+    
+  - Collections of complex type are supported, recursively, without limits
+    example: --sum [( a b) ( c d ) (e f) ]  
+  
+  
 Multiple advancements compared to other similar projects include:
 
   - The ability to invoke a method directly:
