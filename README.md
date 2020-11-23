@@ -1,7 +1,7 @@
-# CommandLine.AutoParser
+# UltraMapper.CommandLine
 
-Parse, map and invoke command line args automatically.
-CommandLine.AutoParser uses Expressions to generate all the code needed to deal with your commands, instead of Reflection to guarantee good performances.     
+Parse and map command line args, then invoke methods automatically.
+UltraMapper.CommandLine uses Expressions to generate all the code needed to deal with your commands, instead of Reflection to guarantee good performances.     
 
 Multiple advancements compared to other similar projects include:
 
