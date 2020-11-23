@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace CommandLine.AutoParser.UnitTest
+namespace UltraMapper.CommandLine.UnitTest
 {
     [TestClass]
     public class IntegerTests
@@ -15,7 +15,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void SetToInteger()
         {
             string args = $"--{nameof( Commands.Option )} 1";
-            var parsed = AutoParser.Instance.Parse<Commands>( args );
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
             Assert.IsTrue( parsed.Option == 1 );
         }
 
@@ -23,7 +23,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void SetToNegativeInteger()
         {
             string args = $"--{nameof( Commands.Option )} -1";
-            var parsed = AutoParser.Instance.Parse<Commands>( args );
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
             Assert.IsTrue( parsed.Option == -1 );
         }
 
@@ -31,7 +31,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void SetToNegativeIntegerFromQuotedString()
         {
             string args = $@"--{nameof( Commands.Option )} ""-1""";
-            var parsed = AutoParser.Instance.Parse<Commands>( args );
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
             Assert.IsTrue( parsed.Option == -1 );
         }
 
@@ -41,7 +41,7 @@ namespace CommandLine.AutoParser.UnitTest
             string args = $"--{nameof( Commands.Option )} 1.0";
             Assert.ThrowsException<ArgumentException>( () =>
             {
-                var parsed = AutoParser.Instance.Parse<Commands>( args );
+                var parsed = CommandLine.Instance.Parse<Commands>( args );
                 Assert.IsTrue( parsed.Option == 0 );
             } );
         }
@@ -52,7 +52,7 @@ namespace CommandLine.AutoParser.UnitTest
             string args = $"--{nameof( Commands.Option )} -1.0";
             Assert.ThrowsException<ArgumentException>( () =>
             {
-                var parsed = AutoParser.Instance.Parse<Commands>( args );
+                var parsed = CommandLine.Instance.Parse<Commands>( args );
                 Assert.IsTrue( parsed.Option == 0 );
             } );
         }
@@ -63,7 +63,7 @@ namespace CommandLine.AutoParser.UnitTest
             string args = $"--{nameof( Commands.Option )} suka";
             Assert.ThrowsException<ArgumentException>( () =>
             {
-                var parsed = AutoParser.Instance.Parse<Commands>( args );
+                var parsed = CommandLine.Instance.Parse<Commands>( args );
                 Assert.IsTrue( parsed.Option == 0 );
             } );
         }

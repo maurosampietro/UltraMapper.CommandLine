@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace CommandLine.AutoParser.UnitTest
+namespace UltraMapper.CommandLine.UnitTest
 {
     [TestClass]
     public class BooleanTests
@@ -15,7 +15,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ExplicitSetToTrue()
         {
             string args = "--open true";
-            var parsed = AutoParser.Instance.Parse<Commands>( args );
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
             Assert.IsTrue( parsed.Open );
         }
 
@@ -23,7 +23,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ExplicitSetToFalse()
         {
             string args = "--open false";
-            var parsed = AutoParser.Instance.Parse<Commands>( args );
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
             Assert.IsTrue( !parsed.Open );
         }
 
@@ -31,7 +31,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ImplicitSetToTrue()
         {
             string args = "--open";
-            var parsed = AutoParser.Instance.Parse<Commands>( args );
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
             Assert.IsTrue( parsed.Open );
         }
 
@@ -40,7 +40,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             string args = "--open wrongarg";
             Assert.ThrowsException<ArgumentException>( () =>
-                AutoParser.Instance.Parse<Commands>( args ) );
+                CommandLine.Instance.Parse<Commands>( args ) );
         }
     }
 }

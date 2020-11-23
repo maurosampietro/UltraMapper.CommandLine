@@ -1,4 +1,4 @@
-﻿using CommandLine.AutoParser.Parsers;
+﻿using UltraMapper.CommandLine.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using UltraMapper.Internals;
 using UltraMapper.MappingExpressionBuilders;
 using UltraMapper.MappingExpressionBuilders.MapperContexts;
 
-namespace CommandLine.AutoParser.UltraMapper.Extensions
+namespace UltraMapper.CommandLine.Extensions
 {
     public class ComplexParamExpressionBuilder : ReferenceMapper
     {

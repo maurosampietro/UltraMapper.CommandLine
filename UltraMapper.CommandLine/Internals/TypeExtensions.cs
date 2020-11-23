@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace CommandLine.AutoParser
+namespace UltraMapper.CommandLine
 {
     public static class TypeExtensions
     {

@@ -1,11 +1,11 @@
-﻿using CommandLine.AutoParser.Mappers;
-using CommandLine.AutoParser.Parsers;
+﻿using UltraMapper.CommandLine.Mappers;
+using UltraMapper.CommandLine.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UltraMapper.Internals;
 
-namespace CommandLine.AutoParser
+namespace UltraMapper.CommandLine
 {
     /// <summary>
     /// The parser does not know about the structure of the target type T. 

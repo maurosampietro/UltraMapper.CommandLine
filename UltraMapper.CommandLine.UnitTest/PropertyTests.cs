@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace CommandLine.AutoParser.UnitTest
+namespace UltraMapper.CommandLine.UnitTest
 {
     [TestClass]
     public class PropertyTests
@@ -45,7 +45,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--move a b";
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<DuplicateCommandNames>( args ) );
+                () => CommandLine.Instance.Parse<DuplicateCommandNames>( args ) );
         }
 
         [TestMethod]
@@ -53,7 +53,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--open thisisnotcovertibletoboolean";
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands>( args ) );
+                () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
         [TestMethod]
@@ -61,14 +61,14 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--open false true false";
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands>( args ) );
+                () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
         [TestMethod]
         public void NamedParamsExactOrder()
         {
             var args = "--move from=fromhere to=tohere";
-            var parsed = AutoParser.Instance.Parse<Commands>( args );
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
             Assert.IsTrue( parsed.Move.From == "fromhere" );
             Assert.IsTrue( parsed.Move.To == "tohere" );
         }
@@ -78,7 +78,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--move from=fromhere to=tohere from=fromhere2 to=tohere2";
             Assert.ThrowsException<DuplicateArgumentException>(
-                () => AutoParser.Instance.Parse<Commands>( args ) );
+                () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
         [TestMethod]
@@ -86,7 +86,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--move from=fromhere TO=tohere FROM=fromhere2 to=tohere2";
             Assert.ThrowsException<DuplicateArgumentException>(
-                () => AutoParser.Instance.Parse<Commands>( args ) );
+                () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
         [TestMethod]
@@ -94,14 +94,14 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--move from=fromhere to=tohere (from=something (a=a a=b))";
             Assert.ThrowsException<DuplicateArgumentException>(
-                () => AutoParser.Instance.Parse<Commands>( args ) );
+                () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
         [TestMethod]
         public void NamedParamsSparseOrder()
         {
             var args = "--move to=tohere from=fromhere";
-            var parsed = AutoParser.Instance.Parse<Commands>( args );
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
             Assert.IsTrue( parsed.Move.From == "fromhere" );
             Assert.IsTrue( parsed.Move.To == "tohere" );
         }
@@ -110,7 +110,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void MixedNamedNonNamedParams()
         {
             var args = "--move fromhere to=tohere";
-            var parsed = AutoParser.Instance.Parse<Commands>( args );
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
             Assert.IsTrue( parsed.Move.From == "fromhere" );
             Assert.IsTrue( parsed.Move.To == "tohere" );
         }
@@ -121,7 +121,7 @@ namespace CommandLine.AutoParser.UnitTest
             var args = "--move to=tohere fromhere";
 
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands>( args ) );
+                () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
         [TestMethod]
@@ -130,24 +130,24 @@ namespace CommandLine.AutoParser.UnitTest
             var args = "--move fromhere";
 
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands>( args ) );
+                () => CommandLine.Instance.Parse<Commands>( args ) );
 
             args = "--move to=toherehere";
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands>( args ) );
+                () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
         [TestMethod]
         public void Optional()
         {
             var args = "--exchange a=this";
-            var parsed = AutoParser.Instance.Parse<Commands>( args );
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
 
             Assert.IsTrue( parsed.Exchange.A == "this" );
             Assert.IsTrue( String.IsNullOrEmpty( parsed.Exchange.B ) );
 
             args = "--exchange b=that";
-            parsed = AutoParser.Instance.Parse<Commands>( args );
+            parsed = CommandLine.Instance.Parse<Commands>( args );
             Assert.IsTrue( String.IsNullOrEmpty( parsed.Exchange.A ) );
             Assert.IsTrue( parsed.Exchange.B == "that" );
         }
@@ -156,7 +156,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void Optional2()
         {
             var args = "--exchange b=that a=this";
-            var parsed = AutoParser.Instance.Parse<Commands>( args );
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
             Assert.IsTrue( parsed.Exchange.A == "this" );
             Assert.IsTrue( parsed.Exchange.B == "that" );
         }
@@ -166,7 +166,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--move SomeWrongParam=this SomeOtherWrongParam=that";
             Assert.ThrowsException<UndefinedParameterException>(
-                () => AutoParser.Instance.Parse<Commands>( args ) );
+                () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
         [TestMethod]
@@ -174,7 +174,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--someNonExistingCommand SomeWrongParam=this SomeOtherWrongParam=that";
             Assert.ThrowsException<UndefinedParameterException>(
-                 () => AutoParser.Instance.Parse<Commands>( args ) );
+                 () => CommandLine.Instance.Parse<Commands>( args ) );
         }
     }
 }

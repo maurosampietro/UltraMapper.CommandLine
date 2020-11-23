@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CommandLine.AutoParser.UnitTest
+namespace UltraMapper.CommandLine.UnitTest
 {
     [TestClass]
     [TestCategory( "Methods" )]
@@ -24,7 +24,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ParameterlessMethod()
         {
             var args = $"--{nameof( Commands.ParameterlessMethod )}";
-            var parsed = AutoParser.Instance.Parse<Commands>( args );
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
             Assert.IsTrue( parsed.IsExecuted );
         }
 
@@ -33,7 +33,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = $"--{nameof( Commands.ParameterlessMethod )} thisparamnotneeded";
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands>( args ) );
+                () => CommandLine.Instance.Parse<Commands>( args ) );
         }
     }
 
@@ -69,7 +69,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void StandardCall()
         {
             var args = $"--{nameof( Commands1.Open )} thispath";
-            var parsed = AutoParser.Instance.Parse<Commands1>( args );
+            var parsed = CommandLine.Instance.Parse<Commands1>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.IsOpenPathParam == "thispath" );
@@ -79,7 +79,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void StandardCallNamedParam()
         {
             var args = $"--{nameof( Commands1.Open )} path=thispath";
-            var parsed = AutoParser.Instance.Parse<Commands1>( args );
+            var parsed = CommandLine.Instance.Parse<Commands1>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.IsOpenPathParam == "thispath" );
@@ -90,7 +90,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = $"--{nameof( Commands1.Open )}";
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands1>( args ) );
+                () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
         [TestMethod]
@@ -98,14 +98,14 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = $"--{nameof( Commands1.Open )} thispath notneededparam";
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands1>( args ) );
+                () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
         [TestMethod]
         public void BoolParamExplicitSetFalse()
         {
             var args = $"--{nameof( Commands2.CallBool )} false";
-            var parsed = AutoParser.Instance.Parse<Commands2>( args );
+            var parsed = CommandLine.Instance.Parse<Commands2>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.IsCallBoolParam == false );
@@ -115,7 +115,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void BoolParamExplicitSetTrue()
         {
             var args = $"--{nameof( Commands2.CallBool )} true";
-            var parsed = AutoParser.Instance.Parse<Commands2>( args );
+            var parsed = CommandLine.Instance.Parse<Commands2>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.IsCallBoolParam == true );
@@ -125,7 +125,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void BoolParamImplicitSetTrue()
         {
             var args = $"--{nameof( Commands2.CallBool )}";
-            var parsed = AutoParser.Instance.Parse<Commands2>( args );
+            var parsed = CommandLine.Instance.Parse<Commands2>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.IsCallBoolParam == true );
@@ -186,7 +186,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void StandardCall()
         {
             var args = "--move fromhere tohere";
-            var parsed = AutoParser.Instance.Parse<Commands1>( args );
+            var parsed = CommandLine.Instance.Parse<Commands1>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.FromParam == "fromhere" );
@@ -197,7 +197,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void StandardCallNamedParam()
         {
             var args = "--move from=fromhere to=tohere";
-            var parsed = AutoParser.Instance.Parse<Commands1>( args );
+            var parsed = CommandLine.Instance.Parse<Commands1>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.FromParam == "fromhere" );
@@ -208,7 +208,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void StandardCallNamedParamRandomParamsOrder()
         {
             var args = "--move to=tohere from=fromhere";
-            var parsed = AutoParser.Instance.Parse<Commands1>( args );
+            var parsed = CommandLine.Instance.Parse<Commands1>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.FromParam == "fromhere" );
@@ -220,7 +220,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--move to=tohere fromhere";
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands1>( args ) );
+                () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
         [TestMethod]
@@ -228,15 +228,15 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--move";
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands1>( args ) );
+                () => CommandLine.Instance.Parse<Commands1>( args ) );
 
             args = "--move to=tohere";
             Assert.ThrowsException<ArgumentException>(
-                   () => AutoParser.Instance.Parse<Commands1>( args ) );
+                   () => CommandLine.Instance.Parse<Commands1>( args ) );
 
             args = "--move from=fromhere";
             Assert.ThrowsException<ArgumentException>(
-                   () => AutoParser.Instance.Parse<Commands1>( args ) );
+                   () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
         [TestMethod]
@@ -244,7 +244,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--move fromhere tohere notneeded";
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands1>( args ) );
+                () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
         [TestMethod]
@@ -252,7 +252,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--move to=tohere from=fromhere p3=notneeded";
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands1>( args ) );
+                () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
         [TestMethod]
@@ -260,7 +260,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--move fromhere tohere p3=notneeded";
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands1>( args ) );
+                () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
         [TestMethod]
@@ -268,14 +268,14 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--move fromhere to=tohere p3=notneeded";
             Assert.ThrowsException<ArgumentException>(
-                () => AutoParser.Instance.Parse<Commands1>( args ) );
+                () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
         [TestMethod]
         public void MethodParamNameOverride()
         {
             var args = $"--{nameof( Commands2.MoveParamNameOverride )} t=tohere f=fromhere";
-            var parsed = AutoParser.Instance.Parse<Commands2>( args );
+            var parsed = CommandLine.Instance.Parse<Commands2>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.FromParam == "fromhere" );
@@ -286,7 +286,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void MethodParamNameOverride2()
         {
             var args = $"--{nameof( Commands2.MoveParamNameOverride )} f=fromhere t=tohere";
-            var parsed = AutoParser.Instance.Parse<Commands2>( args );
+            var parsed = CommandLine.Instance.Parse<Commands2>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.FromParam == "fromhere" );
@@ -297,7 +297,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void MethodParamOrderOverride()
         {
             var args = $"--{nameof( Commands3.MoveParamOrderOverride )} tohere fromhere";
-            var parsed = AutoParser.Instance.Parse<Commands3>( args );
+            var parsed = CommandLine.Instance.Parse<Commands3>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.FromParam == "fromhere" );
@@ -388,7 +388,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void Method2SimpleParams()
         {
             var args = $"--{nameof( Commands5.PrintSimpleParams )} a 1";
-            var parsed = AutoParser.Instance.Parse<Commands5>( args );
+            var parsed = CommandLine.Instance.Parse<Commands5>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.PrintLines.SequenceEqual( new[] { "a" } ) );
@@ -399,7 +399,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void Method2ParamsComplexLineAndNumber()
         {
             var args = $"--{nameof( Commands5.PrintComplexLineAndNumber )} (b c) 1";
-            var parsed = AutoParser.Instance.Parse<Commands5>( args );
+            var parsed = CommandLine.Instance.Parse<Commands5>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.PrintLines.SequenceEqual( new[] { "b", "c" } ) );
@@ -410,7 +410,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void Method2ParamsLineAndComplexNumber()
         {
             var args = $"--{nameof( Commands5.PrintLineAndComplexNumber )} b (0 1)";
-            var parsed = AutoParser.Instance.Parse<Commands5>( args );
+            var parsed = CommandLine.Instance.Parse<Commands5>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.PrintLines.SequenceEqual( new[] { "b" } ) );
@@ -421,7 +421,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void Method2ParamsCollectionAndNumber()
         {
             var args = $"--{nameof( Commands5.PrintCollectionAndNumber )} [b c] 1";
-            var parsed = AutoParser.Instance.Parse<Commands5>( args );
+            var parsed = CommandLine.Instance.Parse<Commands5>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.PrintLines.SequenceEqual( new[] { "b", "c" } ) );
@@ -432,7 +432,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void Method2ParamsNumberAndCollection()
         {
             var args = $"--{nameof( Commands5.PrintNumberAndCollection )} 1 [b c]";
-            var parsed = AutoParser.Instance.Parse<Commands5>( args );
+            var parsed = CommandLine.Instance.Parse<Commands5>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.PrintLines.SequenceEqual( new[] { "b", "c" } ) );
@@ -443,7 +443,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void PrintComplexLineAndArrayOfNumbers()
         {
             var args = $"--{nameof( Commands5.PrintComplexLineAndArrayOfNumbers )} (b c) [0 1]";
-            var parsed = AutoParser.Instance.Parse<Commands5>( args );
+            var parsed = CommandLine.Instance.Parse<Commands5>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.PrintLines.SequenceEqual( new[] { "b", "c" } ) );
@@ -454,7 +454,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void PrintComplexNumberAndArrayOfLines()
         {
             var args = $"--{nameof( Commands5.PrintComplexNumberAndArrayOfLines )} (0 1) [b c]";
-            var parsed = AutoParser.Instance.Parse<Commands5>( args );
+            var parsed = CommandLine.Instance.Parse<Commands5>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.PrintLines.SequenceEqual( new[] { "b", "c" } ) );
@@ -465,7 +465,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void Method2ParamsCollections()
         {
             var args = $"--{nameof( Commands5.PrintCollections )} [b c] [0 1]";
-            var parsed = AutoParser.Instance.Parse<Commands5>( args );
+            var parsed = CommandLine.Instance.Parse<Commands5>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.PrintLines.SequenceEqual( new[] { "b", "c" } ) );

@@ -1,7 +1,7 @@
-﻿//using CommandLine.AutoParser.Attributes;
+﻿//using UltraMapper.CommandLine.Attributes;
 //using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-//namespace CommandLine.AutoParser.UnitTest
+//namespace UltraMapper.CommandLine.UnitTest
 //{
 //    [TestClass]
 //    //cannot test independently!!!!!!!!

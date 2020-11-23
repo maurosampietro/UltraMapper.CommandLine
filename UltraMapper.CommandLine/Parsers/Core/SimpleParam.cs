@@ -1,4 +1,4 @@
-﻿namespace CommandLine.AutoParser.Parsers
+﻿namespace UltraMapper.CommandLine.Parsers
 {
     public class SimpleParam : IParsedParam
     {

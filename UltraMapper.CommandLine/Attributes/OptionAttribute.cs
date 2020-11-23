@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CommandLine.AutoParser
+namespace UltraMapper.CommandLine
 {
     public sealed class OptionAttribute : Attribute
     {

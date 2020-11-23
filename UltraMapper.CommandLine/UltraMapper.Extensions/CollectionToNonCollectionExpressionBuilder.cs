@@ -4,7 +4,7 @@ using UltraMapper;
 using UltraMapper.Internals;
 using UltraMapper.MappingExpressionBuilders;
 
-namespace CommandLine.AutoParser.UltraMapper.Extensions
+namespace UltraMapper.CommandLine.Extensions
 {
     public abstract class CollectionToNonCollectionExpressionBuilder : ReferenceMapper
     {

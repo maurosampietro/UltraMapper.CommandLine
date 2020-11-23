@@ -1,10 +1,10 @@
-﻿using CommandLine.AutoParser.Mappers;
-using CommandLine.AutoParser.Parsers;
+﻿using UltraMapper.CommandLine.Mappers;
+using UltraMapper.CommandLine.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CommandLine.AutoParser
+namespace UltraMapper.CommandLine
 {
     public class DefaultHelpProvider : IHelpProvider
     {

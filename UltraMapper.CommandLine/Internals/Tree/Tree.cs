@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace CommandLine.AutoParser.Tree
+namespace UltraMapper.CommandLine.Tree
 {
     internal class Tree<T>
     {

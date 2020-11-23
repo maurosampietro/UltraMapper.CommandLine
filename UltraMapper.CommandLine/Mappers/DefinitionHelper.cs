@@ -1,4 +1,4 @@
-﻿using CommandLine.AutoParser.Tree;
+﻿using UltraMapper.CommandLine.Tree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using UltraMapper.Internals;
 
-namespace CommandLine.AutoParser.Mappers
+namespace UltraMapper.CommandLine.Mappers
 {
     public class DefinitionHelper
     {

@@ -1,10 +1,10 @@
-﻿using CommandLine.AutoParser.Mappers;
-using CommandLine.AutoParser.Parsers;
+﻿using UltraMapper.CommandLine.Mappers;
+using UltraMapper.CommandLine.Parsers;
 using System.Collections.Generic;
 using UltraMapper;
 using UltraMapper.MappingExpressionBuilders;
 
-namespace CommandLine.AutoParser.UltraMapper.Extensions
+namespace UltraMapper.CommandLine.Extensions
 {
     public class UltraMapperBinding : IMapper
     {

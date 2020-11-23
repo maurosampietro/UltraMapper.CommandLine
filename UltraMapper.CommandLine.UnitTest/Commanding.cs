@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace CommandLine.AutoParser.UnitTest
+namespace UltraMapper.CommandLine.UnitTest
 {
     //[TestClass]
     //public class Commanding

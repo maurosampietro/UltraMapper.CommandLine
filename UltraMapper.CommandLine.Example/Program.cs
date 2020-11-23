@@ -4,14 +4,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-namespace CommandLine.AutoParser.Example
+namespace UltraMapper.CommandLine.Example
 {
     class Program
     {
         static void Main( string[] args )
         {
-            //throw new Exception( "se scrivo --help sleeping time si rompe! sourceinstnace vs param access null" );
-            ConsoleLoop.Start<Commands>( args );
+            CommandLine.Instance.Parse<Commands>( args );
+            //ConsoleLoop.Start<Commands>( args );
         }
 
         public class Commands

@@ -1,10 +1,10 @@
-﻿using CommandLine.AutoParser.Mappers.Internals;
+﻿using UltraMapper.CommandLine.Mappers.Internals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace CommandLine.AutoParser.Parsers
+namespace UltraMapper.CommandLine.Parsers
 {
     /// <summary>
     /// Analyzes a string and identifies commands and parameters

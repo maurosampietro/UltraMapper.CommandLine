@@ -1,11 +1,11 @@
-﻿using CommandLine.AutoParser.Parsers;
+﻿using UltraMapper.CommandLine.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommandLine.AutoParser
+namespace UltraMapper.CommandLine
 {
     public interface IHelpProvider
     {

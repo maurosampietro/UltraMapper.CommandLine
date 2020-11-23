@@ -1,10 +1,10 @@
-﻿using CommandLine.AutoParser.Parsers;
-using CommandLine.AutoParser.UltraMapper.Extensions;
+﻿using UltraMapper.CommandLine.Parsers;
+using UltraMapper.CommandLine.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UltraMapper;
 using UltraMapper.MappingExpressionBuilders;
 
-namespace CommandLine.AutoParser.UnitTest.UltraMapper.Extensions
+namespace UltraMapper.CommandLine.UnitTest.UltraMapper.Extensions
 {
     [TestClass]
     public class UltraMapperExt
@@ -50,7 +50,7 @@ namespace CommandLine.AutoParser.UnitTest.UltraMapper.Extensions
                 $"--{nameof( Commands.SomeCommand )} (a=a b=11 sublevel2=(d=d e=e sublevel3=(g=g h=h)))"
             };
 
-            var target = AutoParser.Instance.Parse<Commands>( args );
+            var target = CommandLine.Instance.Parse<Commands>( args );
 
             Assert.IsTrue( target.PropertyA == nameof( Commands.PropertyA ) );
             Assert.IsTrue( target.PropertyB == nameof( Commands.PropertyB ).GetHashCode() );
@@ -72,7 +72,7 @@ namespace CommandLine.AutoParser.UnitTest.UltraMapper.Extensions
                 $"--{nameof( Commands.SomeCommand )} (a1 b1 (d e (g h)))"
             };
 
-            var target = AutoParser.Instance.Parse<Commands>( args );
+            var target = CommandLine.Instance.Parse<Commands>( args );
 
             Assert.IsTrue( target.PropertyA == "a" );
             Assert.IsTrue( target.PropertyB == 11 );
@@ -177,7 +177,7 @@ namespace CommandLine.AutoParser.UnitTest.UltraMapper.Extensions
         public void DirectNestedPropertyAssignment() //Is it actually useful?
         {
             var args = $"--{nameof( Commands.SomeCommand )} SomeCommand.SubLevel2.SubLevel3.G:g";
-            var parsed = AutoParser.Instance.Parse<Commands>( args );
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
 
             Assert.IsTrue( parsed.SomeCommand.SubLevel2.SubLevel3.G == "g" );
         }

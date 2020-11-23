@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CommandLine.AutoParser.Tree
+namespace UltraMapper.CommandLine.Tree
 {
     public sealed class TreeNode<T>
     {

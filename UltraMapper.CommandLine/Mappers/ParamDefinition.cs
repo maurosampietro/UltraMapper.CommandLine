@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CommandLine.AutoParser
+namespace UltraMapper.CommandLine
 {
     public class ParameterDefinition 
     {

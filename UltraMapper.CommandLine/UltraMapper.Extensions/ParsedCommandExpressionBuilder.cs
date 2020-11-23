@@ -1,4 +1,4 @@
-﻿using CommandLine.AutoParser.Parsers;
+﻿using UltraMapper.CommandLine.Parsers;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -6,7 +6,7 @@ using System.Reflection;
 using UltraMapper;
 using UltraMapper.MappingExpressionBuilders;
 
-namespace CommandLine.AutoParser.UltraMapper.Extensions
+namespace UltraMapper.CommandLine.Extensions
 {
     public class ParsedCommandExpressionBuilder : ReferenceMapper
     {

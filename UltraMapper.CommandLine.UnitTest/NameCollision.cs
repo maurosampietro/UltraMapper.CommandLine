@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace CommandLine.AutoParser.UnitTest
+namespace UltraMapper.CommandLine.UnitTest
 {
     /// <summary>
     /// Methods and property are already checked by the C# language
@@ -32,7 +32,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--operation true";
             Assert.ThrowsException<UndefinedParameterException>(
-                 () => AutoParser.Instance.Parse<Commands>( args ) );
+                 () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
         [TestMethod]
@@ -40,7 +40,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--open true";
             Assert.ThrowsException<ArgumentException>(
-                 () => AutoParser.Instance.Parse<Commands>( args ) );
+                 () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
         [TestMethod]
@@ -48,7 +48,7 @@ namespace CommandLine.AutoParser.UnitTest
         {
             var args = "--thiscommanddoesnotexist true";
             Assert.ThrowsException<UndefinedParameterException>(
-                 () => AutoParser.Instance.Parse<Commands2>( args ) );
+                 () => CommandLine.Instance.Parse<Commands2>( args ) );
         }
     }
 }

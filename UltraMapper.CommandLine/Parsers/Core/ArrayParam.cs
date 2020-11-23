@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CommandLine.AutoParser.Parsers
+namespace UltraMapper.CommandLine.Parsers
 {
     public class ArrayParam : IParsedParam
     {

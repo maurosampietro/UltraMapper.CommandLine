@@ -1,11 +1,11 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle( "CommandLine.AutoParser.UnitTest" )]
+[assembly: AssemblyTitle( "UltraMapper.CommandLine.UnitTest" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "" )]
-[assembly: AssemblyProduct( "CommandLine.AutoParser.UnitTest" )]
+[assembly: AssemblyProduct( "UltraMapper.CommandLine.UnitTest" )]
 [assembly: AssemblyCopyright( "Copyright ©  2019" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]

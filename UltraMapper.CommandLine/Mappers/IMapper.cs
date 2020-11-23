@@ -1,7 +1,7 @@
-﻿using CommandLine.AutoParser.Parsers;
+﻿using UltraMapper.CommandLine.Parsers;
 using System.Collections.Generic;
 
-namespace CommandLine.AutoParser.Mappers
+namespace UltraMapper.CommandLine.Mappers
 {
     public interface IMapper
     {

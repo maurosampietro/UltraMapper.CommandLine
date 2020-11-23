@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CommandLine.AutoParser.UnitTest
+namespace UltraMapper.CommandLine.UnitTest
 {
     [TestClass]
     [TestCategory( "Collections" )]
@@ -60,7 +60,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ArrayNoConversionProperty()
         {
             var args = $"--{nameof( CommandsArray.ArrayNoConversionProperty )} [1 2 3 4 5]";
-            var parsed = AutoParser.Instance.Parse<CommandsArray>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsArray>( args );
 
             Assert.IsTrue( parsed.ArrayNoConversionProperty
                 .SequenceEqual( new[] { "1", "2", "3", "4", "5" } ) );
@@ -70,7 +70,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ArrayConversionProperty()
         {
             var args = $"--{nameof( CommandsArray.ArrayConversionProperty )} [1 2 3 4 5]";
-            var parsed = AutoParser.Instance.Parse<CommandsArray>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsArray>( args );
 
             Assert.IsTrue( parsed.ArrayConversionProperty
                 .SequenceEqual( new[] { 1, 2, 3, 4, 5 } ) );
@@ -80,7 +80,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ListComplexProperty()
         {
             var args = $"--{nameof( CommandsList.ListComplexProperty )} [(1 2) (3 4) (5 6)]";
-            var parsed = AutoParser.Instance.Parse<CommandsList>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsList>( args );
 
             Assert.IsTrue( parsed.ListComplexProperty
                 .SequenceEqual( new[] { new Complex( 1, 2 ), new Complex( 3, 4 ), new Complex( 5, 6 ) } ) );
@@ -90,7 +90,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ListNoConversionProperty()
         {
             var args = $"--{nameof( CommandsList.ListNoConversionProperty )} [1 2 3 4 5]";
-            var parsed = AutoParser.Instance.Parse<CommandsList>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsList>( args );
 
             Assert.IsTrue( parsed.ListNoConversionProperty
                 .SequenceEqual( new[] { "1", "2", "3", "4", "5" } ) );
@@ -100,7 +100,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ListConversionProperty()
         {
             var args = $"--{nameof( CommandsList.ListConversionProperty )} [1 2 3 4 5]";
-            var parsed = AutoParser.Instance.Parse<CommandsList>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsList>( args );
 
             Assert.IsTrue( parsed.ListConversionProperty
                 .SequenceEqual( new[] { 1, 2, 3, 4, 5 } ) );
@@ -110,7 +110,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void EnumerableNoConversionProperty()
         {
             var args = $"--{nameof( CommandsEnumerable.EnumerableNoConversionProperty )} [1 2 3 4 5]";
-            var parsed = AutoParser.Instance.Parse<CommandsEnumerable>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsEnumerable>( args );
 
             Assert.IsTrue( parsed.EnumerableNoConversionProperty
                 .SequenceEqual( new[] { "1", "2", "3", "4", "5" } ) );
@@ -120,7 +120,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void EnumerableConversionProperty()
         {
             var args = $"--{nameof( CommandsEnumerable.EnumerableConversionProperty )} [1 2 3 4 5]";
-            var parsed = AutoParser.Instance.Parse<CommandsEnumerable>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsEnumerable>( args );
 
             Assert.IsTrue( parsed.EnumerableConversionProperty
                 .SequenceEqual( new[] { 1, 2, 3, 4, 5 } ) );
@@ -130,7 +130,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ArrayComplex()
         {
             var args = $"--{nameof( CommandsArray.ArrayComplexTypeProperty )} [(1 2) (3 4) (5 6)]";
-            var parsed = AutoParser.Instance.Parse<CommandsArray>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsArray>( args );
 
             Assert.IsTrue( parsed.ArrayComplexTypeProperty
                 .SequenceEqual( new[] { new Complex( 1, 2 ), new Complex( 3, 4 ), new Complex( 5, 6 ) } ) );
@@ -140,7 +140,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void EnumerableComplexProperty()
         {
             var args = $"--{nameof( CommandsEnumerable.EnumerableComplexTypeProperty )} [(1 2) (3 4) (5 6)]";
-            var parsed = AutoParser.Instance.Parse<CommandsEnumerable>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsEnumerable>( args );
 
             Assert.IsTrue( parsed.EnumerableComplexTypeProperty
                 .SequenceEqual( new[] { new Complex( 1, 2 ), new Complex( 3, 4 ), new Complex( 5, 6 ) } ) );
@@ -249,7 +249,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ListNoConversionMethod()
         {
             var args = $"--{nameof( CommandsList.ListNoConversionMethod )} [1 2 3 4 5]";
-            var parsed = AutoParser.Instance.Parse<CommandsList>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsList>( args );
 
             Assert.IsTrue( parsed.ListNoConversionProperty
                 .SequenceEqual( new[] { "1", "2", "3", "4", "5" } ) );
@@ -259,7 +259,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ListConversionMethod()
         {
             var args = $"--{nameof( CommandsList.ListConversionMethod )} [1 2 3 4 5]";
-            var parsed = AutoParser.Instance.Parse<CommandsList>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsList>( args );
 
             Assert.IsTrue( parsed.ListConversionProperty
                 .SequenceEqual( new[] { 1, 2, 3, 4, 5 } ) );
@@ -269,7 +269,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ListComplexMethod()
         {
             var args = $"--{nameof( CommandsList.ListComplexMethod )} [(1 2) (3 4) (5 6)]";
-            var parsed = AutoParser.Instance.Parse<CommandsList>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsList>( args );
 
             Assert.IsTrue( parsed.ListComplexProperty
                 .SequenceEqual( new[] { new Complex( 1, 2 ), new Complex( 3, 4 ), new Complex( 5, 6 ) } ) );
@@ -279,7 +279,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void EnumerableNoConversionMethod()
         {
             var args = $"--{nameof( CommandsEnumerable.EnumerableNoConversionMethod )} [1 2 3 4 5]";
-            var parsed = AutoParser.Instance.Parse<CommandsEnumerable>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsEnumerable>( args );
 
             Assert.IsTrue( parsed.EnumerableNoConversionProperty
                 .SequenceEqual( new[] { "1", "2", "3", "4", "5" } ) );
@@ -289,7 +289,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void EnumerableConversionMethod()
         {
             var args = $"--{nameof( CommandsEnumerable.EnumerableConversionMethod )} [1 2 3 4 5]";
-            var parsed = AutoParser.Instance.Parse<CommandsEnumerable>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsEnumerable>( args );
 
             Assert.IsTrue( parsed.EnumerableConversionProperty
                 .SequenceEqual( new[] { 1, 2, 3, 4, 5 } ) );
@@ -299,7 +299,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void EnumerableComplexProperty()
         {
             var args = $"--{nameof( CommandsEnumerable.EnumerableComplexMethod )} [(1 2) (3 4) (5 6)]";
-            var parsed = AutoParser.Instance.Parse<CommandsEnumerable>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsEnumerable>( args );
 
             Assert.IsTrue( parsed.EnumerableComplexTypeProperty
                 .SequenceEqual( new[] { new Complex( 1, 2 ), new Complex( 3, 4 ), new Complex( 5, 6 ) } ) );
@@ -309,7 +309,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ArrayNoConversionMethod()
         {
             var args = $"--{nameof( CommandsArray.ArrayNoConversionMethod )} [1 2 3 4 5]";
-            var parsed = AutoParser.Instance.Parse<CommandsArray>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsArray>( args );
 
             Assert.IsTrue( parsed.ArrayNoConversionProperty
                 .SequenceEqual( new[] { "1", "2", "3", "4", "5" } ) );
@@ -319,7 +319,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ArrayConversionMethod()
         {
             var args = $"--{nameof( CommandsArray.ArrayConversionMethod )} [1 2 3 4 5]";
-            var parsed = AutoParser.Instance.Parse<CommandsArray>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsArray>( args );
 
             Assert.IsTrue( parsed.ArrayConversionProperty
                 .SequenceEqual( new[] { 1, 2, 3, 4, 5 } ) );
@@ -329,7 +329,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void ArrayComplex()
         {
             var args = $"--{nameof( CommandsArray.ArrayComplexMethod )} [(1 2) (3 4) (5 6)]";
-            var parsed = AutoParser.Instance.Parse<CommandsArray>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsArray>( args );
 
             Assert.IsTrue( parsed.ArrayComplexTypeProperty
                 .SequenceEqual( new[] { new Complex( 1, 2 ), new Complex( 3, 4 ), new Complex( 5, 6 ) } ) );

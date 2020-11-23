@@ -2,7 +2,7 @@
 using System.Reflection;
 using UltraMapper.Internals;
 
-namespace CommandLine.AutoParser.Tree
+namespace UltraMapper.CommandLine.Tree
 {
     internal class TypeStructure
     {

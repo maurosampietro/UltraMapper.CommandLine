@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CommandLine.AutoParser.Parsers
+namespace UltraMapper.CommandLine.Parsers
 {
     /// <summary>
     /// Analyzes a string and identifies commands and parameters

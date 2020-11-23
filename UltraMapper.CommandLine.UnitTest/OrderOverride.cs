@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace CommandLine.AutoParser.UnitTest
+namespace UltraMapper.CommandLine.UnitTest
 {
     [TestClass]
     public class OrderOverride
@@ -37,7 +37,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void RequiredConvention()
         {
             var args = "--move tohere fromhere";
-            var parsed = AutoParser.Instance.Parse<CommandsOrderOverride>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsOrderOverride>( args );
             Assert.IsTrue( parsed.Move.From == "fromhere" );
             Assert.IsTrue( parsed.Move.To == "tohere" );
         }
@@ -46,7 +46,7 @@ namespace CommandLine.AutoParser.UnitTest
         public void RequiredConvention2()
         {
             var args = "--move fromhere tohere";
-            var parsed = AutoParser.Instance.Parse<CommandsOrderOverrideWithOptionalParams>( args );
+            var parsed = CommandLine.Instance.Parse<CommandsOrderOverrideWithOptionalParams>( args );
             Assert.IsTrue( parsed.Move.From == "fromhere" );
             Assert.IsTrue( parsed.Move.To == "tohere" );
         }

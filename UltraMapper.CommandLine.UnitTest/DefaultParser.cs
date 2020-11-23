@@ -1,9 +1,9 @@
-﻿using CommandLine.AutoParser.Parsers;
+﻿using UltraMapper.CommandLine.Parsers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 
-namespace CommandLine.AutoParser.UnitTest
+namespace UltraMapper.CommandLine.UnitTest
 {
     [TestClass]
     public class DefaultParser

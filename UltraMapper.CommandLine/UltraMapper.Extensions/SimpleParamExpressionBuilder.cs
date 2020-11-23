@@ -1,11 +1,11 @@
-﻿using CommandLine.AutoParser.Parsers;
+﻿using UltraMapper.CommandLine.Parsers;
 using System;
 using System.Linq.Expressions;
 using UltraMapper;
 using UltraMapper.Internals;
 using UltraMapper.MappingExpressionBuilders;
 
-namespace CommandLine.AutoParser.UltraMapper.Extensions
+namespace UltraMapper.CommandLine.Extensions
 {
     public class SimpleParamExpressionBuilder : PrimitiveMapperBase
     {

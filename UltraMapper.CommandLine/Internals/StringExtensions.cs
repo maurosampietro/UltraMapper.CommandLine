@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CommandLine.AutoParser.Mappers.Internals
+namespace UltraMapper.CommandLine.Mappers.Internals
 {
     internal static class StringExtensions
     {

@@ -1,7 +1,7 @@
-﻿using CommandLine.AutoParser.Parsers;
+﻿using UltraMapper.CommandLine.Parsers;
 using System;
 
-namespace CommandLine.AutoParser
+namespace UltraMapper.CommandLine
 {
     [Serializable]
     public class CommandLineException : Exception

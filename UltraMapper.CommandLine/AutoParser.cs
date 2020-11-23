@@ -1,24 +1,24 @@
-﻿using CommandLine.AutoParser.Mappers;
-using CommandLine.AutoParser.Parsers;
-using CommandLine.AutoParser.UltraMapper.Extensions;
+﻿using UltraMapper.CommandLine.Mappers;
+using UltraMapper.CommandLine.Parsers;
+using UltraMapper.CommandLine.Extensions;
 using System;
 
-namespace CommandLine.AutoParser
+namespace UltraMapper.CommandLine
 {
-    public class AutoParser
+    public class CommandLine
     {
         public ICommandParser Parser { get; private set; }
         public IMapper Mapper { get; private set; }
         public IHelpProvider HelpProvider { get; private set; }
         public ParsedParametersAdapter ParamsAdapter { get; private set; }
 
-        public static AutoParser Instance = new AutoParser(
+        public static CommandLine Instance = new CommandLine(
             new CommandParser(), new UltraMapperBinding() );
 
-        public AutoParser( ICommandParser parser, IMapper mapper )
+        public CommandLine( ICommandParser parser, IMapper mapper )
             : this( parser, mapper, new DefaultHelpProvider() ) { }
 
-        public AutoParser( ICommandParser parser, IMapper mapper,
+        public CommandLine( ICommandParser parser, IMapper mapper,
             IHelpProvider helpProvider )
         {
             this.ParamsAdapter = new ParsedParametersAdapter();

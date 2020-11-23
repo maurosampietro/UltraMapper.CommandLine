@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace CommandLine.AutoParser
+namespace UltraMapper.CommandLine
 {
     public class ConsoleLoop
     {
         public static void Start<T>( string[] args ) where T : class, new()
         {
-            var autoparser = AutoParser.Instance;
+            var autoparser = CommandLine.Instance;
 
             while( true )
             {
