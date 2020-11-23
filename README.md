@@ -103,6 +103,9 @@ UltraMapper.CommandLine uses Expressions to generate all the code needed to deal
         Assert.IsTrue( parsedObj.Move.From = "C:\text.txt" );
         Assert.IsTrue( parsedObj.Move.To = "C:\subfolder\text.txt" );
       
+      Complex types support make UltraMapper.CommandLine especially useful when trying to organize
+      a non trivial number of parameters in a natural way.
+      
 - Array and IEnumerable support
 
         public class Commands
