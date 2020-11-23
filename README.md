@@ -53,25 +53,25 @@ All of this can be done by convention writing the following command line:
 Parse and map command line args to built-in and complex (custom user defined) types. then invoke methods automatically.
 UltraMapper.CommandLine uses Expressions to generate all the code needed to deal with your commands, instead of Reflection to guarantee good performances.     
 
-Default parser syntax:
+## Default parser syntax:
 
   example 1: --move C:\ThisFile.exe "C:\New Directory\ThisFile.exe" 
   
   - --<commmandName> a <b>double dash</b> indentifies a command      
-  - Whitespaces characters delimit commmands and values
+  - <b>Whitespaces</b> characters delimit commmands and values
   - Double quotes escape special characters and whitespace.
   
-  - if your param is a complex type, round brackets identies the object
+  - if your param is a complex type, <b>round brackets</b> identies the object
     example: --sum ()
     
-  - If your param is a collection square brackets identifies the collection
+  - If your param is a collection <b>square brackets</b> identifies the collection
     example: --sum [[1 2 3 4 5]]  
     
-  - Collections of complex type are supported, recursively, without limits
+  - <b>Collections of complex types</b> are supported, recursively, without limits
     example: --sum [( a b) ( c d ) (e f) ]  
   
   
-Multiple advancements compared to other similar projects include:
+## Multiple advancements compared to other similar projects include:
 
   - The ability to invoke a method directly:
 
@@ -131,34 +131,26 @@ Multiple advancements compared to other similar projects include:
         //Open method gets executed on parse
         AutoParser.Instance.Parse<Commands>( args );      
 
-- Simple syntax:
 
-  Whitespaces characters delimits commmands and values.     
-  --{commmandName} a double dash indentifies a command.      
-  [value1 value2 value3] identifies a sequence of values.      
-  "escape a whitespace" double quotes escape special characters as whitespace.   
-  
-
-Remarks:
-
-- AutoParser works with with properties and methods but not with fields.
-- Methods are only supported at first level (makes no sense otherwise)
-- Methods can be called directly only if void, non abstract, non generic.    
-
-
-ICommandParser:
+## Provide your very own syntax!
     You can provide and use a new syntax along with UltraMapper.CommandLine by implementing ICommandParser.
     A few rules apply to it. Read more here.
     
-Help command:
+## --help command and IHelpProvider:
     If you manually define a help command in your commands class, it will be invoked when invoking --help
     
     If you do not define a help command, a help command is automatically generated for you.   
     The default help provider used in this latter case will analyze your commands class and generate adequate usage documentation keeping into account both operations and parameters.
     
     You can also provide a new helper by implementing an IHelpProvider. A few rules apply to it. Read more here.
+    
+## Remarks:
 
-How can you contribute?
+- AutoParser works with with properties and methods but not with fields.
+- Methods are only supported at first level (makes no sense otherwise)
+- Methods can be called directly only if void, non abstract, non generic.    
+
+## How can you contribute?
 
 - Support standard command line dialects:
     
