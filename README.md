@@ -54,13 +54,16 @@ Parse and map command line args to built-in and complex (custom user defined) ty
 UltraMapper.CommandLine uses Expressions to generate all the code needed to deal with your commands, instead of Reflection to guarantee good performances.     
 
 ## Default parser syntax:
-
-  example 1: --move C:\ThisFile.exe "C:\New Directory\ThisFile.exe" 
-  
-  - --<commmandName> a <b>double dash</b> indentifies a command      
+ 
+  - --<commmandName> a <b>double dash</b> indentifies a command
+    example: --close
+    
   - <b>Whitespaces</b> characters delimit commmands and values
-  - Double quotes escape special characters and whitespace.
-  
+    example: --move C:\Temp\file.txt C:\Archive\file.txt 
+    
+  - Double quotes escape special characters including whitespaces.
+    example: --move "C:\folder with spaces in the name\file.txt" C:\Archive\file.txt 
+    
   - if your param is a complex type, <b>round brackets</b> identies the object
     example: --sum ()
     
@@ -68,8 +71,7 @@ UltraMapper.CommandLine uses Expressions to generate all the code needed to deal
     example: --sum [[1 2 3 4 5]]  
     
   - <b>Collections of complex types</b> are supported, recursively, without limits
-    example: --sum [( a b) ( c d ) (e f) ]  
-  
+    example: --sum [( a b) ( c d ) (e f) ]    
   
 ## Multiple advancements compared to other similar projects include:
 
