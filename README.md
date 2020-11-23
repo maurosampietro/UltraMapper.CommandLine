@@ -71,7 +71,7 @@ UltraMapper.CommandLine uses Expressions to generate all the code needed to deal
   example: --sum [[1 2 3 4 5]]  
     
   - <b>Collections of complex types</b> are supported, recursively, without limits     
-  example: --sum [( a b) ( c d ) (e f) ]    
+  example: --sum [ (a b) (c d) (e f) ]    
   
 ## Multiple advancements compared to other similar projects include:
 
