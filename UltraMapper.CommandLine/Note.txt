@@ -1,0 +1,20 @@
+﻿General Info:
+	
+	- Working on target class's public properties and methods but not fields 
+		(map by index problems since reflection returns members in non-declaring order, 
+		avoiding fields allows the functioning without forcing OptionAttribute.Order param)
+
+	- All of the required params should appear before optional and named ones
+	- 'Order' attribute overrides class declaration order
+
+	- Collections: only IEnumerable or Arrays or List are tested as parameters
+
+Potential problems:
+
+	-	What if i set order 0 to an optional param that should be passed as last for example?
+
+Known to be not supported scenarios:
+	-	Method overloads not taken into account (every method should be renamed to be unique via OptionAttribute).
+		It's solvable, but i don't think if it's worth the complexity right now.
+
+	-   Generics not even tested and probably not supported
