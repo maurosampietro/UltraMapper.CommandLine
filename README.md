@@ -1,6 +1,44 @@
 # UltraMapper.CommandLine
 
-Parse and map command line args, then invoke methods automatically.
+Suppose you have a console program capable of executing multiple complex tasks.
+You tipically will control the program by passing arguments to it.
+
+You will face the need to give that text a sense by defining rules that will allow you to split it into meaningful chuncks;
+usually those rules will allow you to split the text in such a way that it easy to identity the parameter you want to assign the value to, and the value itself.
+
+This process is called parsing.
+
+Once you identified all of the parameters and the related values you will need to cast the values from plain text into a more specific strong-type (int, double, etc..)
+Once that is done, you can read those strongly-typed values to call appropriate methods.
+
+With UltraMapper.CommandLine all of this is automatic, you just need to define your operations to be executed.
+You can directly call methods taking as arguments, built-in types (eg: bool, int, double, string, etc..) and complex user defined types (eg: your classes)
+and collections of built-in and user-defined types.
+
+An example:
+
+    static void Main( string[] args )
+    {
+        CommandLine.Instance.Parse<Commands>( args );
+    }
+
+    public class Commands
+    {
+        public int SleepingTime { get; set; }
+        
+        public void ClearScreen() { Console.Clear(); }
+        public void OpenDir( string path ) { Process.Start( path ); }
+        public void Sum( IEnumerable<int> numbers ) {  Console.WriteLine( $"The sum is: {numbers.Sum()}" ); }
+        
+        public void Exit()
+        {
+            Console.WriteLine( "Application will close in 5 seconds" );
+            Thread.Sleep( this.SleepingTime );
+            Environment.Exit( 0 );
+        }
+    }
+
+Parse and map command line args to built-in and complex (custom user defined) types. then invoke methods automatically.
 UltraMapper.CommandLine uses Expressions to generate all the code needed to deal with your commands, instead of Reflection to guarantee good performances.     
 
 Default syntax:
