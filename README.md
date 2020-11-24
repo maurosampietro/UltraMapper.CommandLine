@@ -1,6 +1,6 @@
 # UltraMapper.CommandLine
 
-THIS DOCUMENTATION IS A WORK IN PROGRESS. BE PATIENT [2020-NOV-23].
+THIS DOCUMENTATION IS A WORK IN PROGRESS. BE PATIENT [2020-NOV-24].
 
 
 Suppose you have a console program capable of executing multiple complex tasks.
@@ -76,8 +76,8 @@ UltraMapper.CommandLine uses Expressions to generate all the code needed to deal
   - Parameters can be specified indicating the param name.
     Named params must appear after non-named params.
     Non-named params must be provided in a exact order.
-    By default the order the definition order of your params inside the commands class is used.
-    You can override the definition order by setting the property 'Order' via the 'Option' attribute
+    By default the order is the definition order of your params inside your commands class.
+    You can override the definition order by setting the property 'Order' via the 'Option' attribute.
   
 ## Multiple advancements compared to other similar projects include:
 
