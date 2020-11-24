@@ -61,9 +61,9 @@ UltraMapper.CommandLine uses Expressions to generate all the code needed to deal
   - <b>Whitespaces</b> characters delimit commmands and values       
   example: --move C:\Temp\file.txt C:\Archive\file.txt 
     
-  - Double quotes escape special characters including whitespaces.      
+  - <b>Double quotes</b> escape special characters, including whitespaces.      
   example: --move "C:\folder with spaces in the name\file.txt" C:\Archive\file.txt 
-    
+        
   - if your param is a complex type, <b>round brackets</b> identies the object      
   example: --sum ()
     
@@ -72,6 +72,12 @@ UltraMapper.CommandLine uses Expressions to generate all the code needed to deal
     
   - <b>Collections of complex types</b> are supported, recursively, without limits     
   example: --sum [ (a b) (c d) (e f) ]    
+  
+  - Parameters can be specified indicating the param name.
+    Named params must appear after non-named params.
+    Non-named params must be provided in a exact order.
+    By default the order the definition order of your params inside the commands class is used.
+    You can override the definition order by setting the property 'Order' via the 'Option' attribute
   
 ## Multiple advancements compared to other similar projects include:
 
