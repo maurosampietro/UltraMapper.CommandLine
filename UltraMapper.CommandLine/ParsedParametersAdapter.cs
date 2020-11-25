@@ -43,56 +43,70 @@ namespace UltraMapper.CommandLine
         {
             if( param == null ) return null;
 
-            if( param is SimpleParam sp )
+            switch( param )
             {
-                if( def.Type.IsBuiltIn( false ) )
-                {
-                    return sp;
-                }
-                else
-                {
+                case ArrayParam _: return param;
+
+                case SimpleParam sp:
+
+                    if( def.Type.IsBuiltIn( false ) )
+                        return sp;
+
                     return new ComplexParam()
                     {
                         Name = def.Name,
                         Index = 0,
                         SubParams = new[] { sp }
                     };
-                }
-            }
-            else if( param is ComplexParam cp )
-            {
-                _complexParamChecks.Checks( cp, def.Type, def.SubParams );
 
-                var subParamsDef = def.SubParams;
-                if( subParamsDef.All( s => s.Type.IsBuiltIn( false ) ) )
-                    return cp;
-                else
+                case ComplexParam cp:
                 {
-                    //fare il check di ogni parametro contro la definizione cercando i possibili match.
-                    //E' possibile effettuare tutti i vari check dei parametri qui.
-
-                    IEnumerable<IParsedParam> getSubparams()
+                    var subParamsDef = def.SubParams;
+                    if( subParamsDef.All( s => s.Type.IsBuiltIn( false ) ) )
                     {
-                        for( int i = 0; i < cp.SubParams.Length; i++ )
+                        _complexParamChecks.Checks( cp, def.Type, def.SubParams );
+                        return cp;
+                    }
+
+                    IEnumerable<IParsedParam> getSubparams( ComplexParam localcp )
+                    {
+                        for( int i = 0; i < localcp.SubParams.Length; i++ )
                         {
-                            var item = cp.SubParams[ i ];
+                            var item = localcp.SubParams[ i ];
                             var newitem = Internal( item, def.SubParams[ i ] );
                             yield return newitem;
                         }
                     };
 
-                    var subparams = getSubparams().ToArray();
-
-                    return new ComplexParam()
+                    if( def.SubParams.Length == 1 )
                     {
-                        Name = def.Name,
-                        Index = 0,
-                        SubParams = subparams
-                    };
+                        //nesting just to check properly
+                        var temp = new ComplexParam()
+                        {
+                            Name = "",
+                            SubParams = new[] { cp }
+                        };
+
+                        _complexParamChecks.Checks( temp, def.Type, def.SubParams );
+
+                        var subparams = getSubparams( temp ).ToArray();
+                        return subparams.First();
+                    }
+                    else
+                    {
+                        _complexParamChecks.Checks( cp, def.Type, def.SubParams );
+
+                        var subparams = getSubparams( cp ).ToArray();
+
+                        return new ComplexParam()
+                        {
+                            Name = def.Name,
+                            Index = 0,
+                            SubParams = subparams
+                        };
+                    }
                 }
             }
-            else if( param is ArrayParam )
-                return param;
 
             throw new NotSupportedException();
         }
@@ -200,19 +214,33 @@ namespace UltraMapper.CommandLine
                     throw new ArgumentException( errorMsg );
                 }
 
-                if( param.Param is SimpleParam )
+                if( param.Param is ComplexParam cp )
                 {
-
-                }
-                else if( param.Param is ComplexParam cp )
-                {
-                    if( cp.SubParams.Length < requiredParams ||
-                        cp.SubParams.Length > paramsCount )
+                    var tempDef = paramDef.SubParams?.FirstOrDefault();
+                    if( paramDef.SubParams.Length == 1 && tempDef != null && !tempDef.Type.IsBuiltIn( false ) )
                     {
-                        string errorMsg = $"Wrong number of parameters for command " +
-                            $"'{String.Join( ",", param.Name )}'";
+                        requiredParams = tempDef.SubParams
+                            .Count( cmdi => cmdi.Options?.IsRequired ?? false );
 
-                        throw new ArgumentException( errorMsg );
+                        if( cp.SubParams.Length < requiredParams ||
+                            cp.SubParams.Length > tempDef.SubParams.Length )
+                        {
+                            string errorMsg = $"Wrong number of parameters for command " +
+                                $"'{String.Join( ",", param.Name )}'";
+
+                            throw new ArgumentException( errorMsg );
+                        }
+                    }
+                    else
+                    {
+                        if( cp.SubParams.Length < requiredParams ||
+                            cp.SubParams.Length > paramsCount )
+                        {
+                            string errorMsg = $"Wrong number of parameters for command " +
+                                $"'{String.Join( ",", param.Name )}'";
+
+                            throw new ArgumentException( errorMsg );
+                        }
                     }
                 }
             }

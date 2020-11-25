@@ -65,6 +65,29 @@ namespace UltraMapper.CommandLine.UnitTest
             }
         }
 
+        public class Commands3
+        {
+            [Option( IsIgnored = true )] public bool IsExecuted { get; protected set; } = false;
+            [Option( IsIgnored = true )] public string From { get; private set; }
+            [Option( IsIgnored = true )] public string To { get; private set; }
+
+            public class MoveParams
+            {
+                [Option( IsRequired = true, HelpText = "The source location of the file" )]
+                public string From { get; set; }
+
+                [Option( IsRequired = true, HelpText = "The destination location of the file" )]
+                public string To { get; set; }
+            }
+
+            public void MoveMethod1( MoveParams moveParams )
+            {
+                this.IsExecuted = true;
+                this.From = moveParams.From;
+                this.To = moveParams.To;
+            }
+        }
+
         [TestMethod]
         public void StandardCall()
         {
@@ -130,6 +153,17 @@ namespace UltraMapper.CommandLine.UnitTest
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.IsCallBoolParam == true );
         }
+
+        [TestMethod]
+        public void CallComplexParam()
+        {
+            var args = $"--{nameof( Commands3.MoveMethod1 )} (from to)";
+            var parsed = CommandLine.Instance.Parse<Commands3>( args );
+
+            Assert.IsTrue( parsed.IsExecuted );
+            Assert.IsTrue( parsed.From == "from" );
+            Assert.IsTrue( parsed.To == "to" );
+        }
     }
 
     [TestClass]
@@ -179,6 +213,35 @@ namespace UltraMapper.CommandLine.UnitTest
                 this.IsExecuted = true;
                 this.FromParam = from;
                 this.ToParam = to;
+            }
+        }
+
+        public class Commands4
+        {
+            [Option( IsIgnored = true )] public bool IsExecuted { get; protected set; } = false;
+            [Option( IsIgnored = true )] public string From1 { get; private set; }
+            [Option( IsIgnored = true )] public string To1 { get; private set; }
+            [Option( IsIgnored = true )] public string From2 { get; private set; }
+            [Option( IsIgnored = true )] public string To2 { get; private set; }
+
+            public class MoveParams
+            {
+                [Option( IsRequired = true, HelpText = "The source location of the file" )]
+                public string From { get; set; }
+
+                [Option( IsRequired = true, HelpText = "The destination location of the file" )]
+                public string To { get; set; }
+            }
+
+            public void MoveMethod1( MoveParams moveParams, MoveParams moveParams2 )
+            {
+                this.IsExecuted = true;
+
+                this.From1 = moveParams.From;
+                this.To1 = moveParams.To;
+
+                this.From2 = moveParams2.From;
+                this.To2 = moveParams2.To;
             }
         }
 
@@ -302,6 +365,19 @@ namespace UltraMapper.CommandLine.UnitTest
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.FromParam == "fromhere" );
             Assert.IsTrue( parsed.ToParam == "tohere" );
+        }
+
+        [TestMethod]
+        public void CallComplexParam()
+        {
+            var args = $"--{nameof( Commands4.MoveMethod1 )} (from to) (from to)";
+            var parsed = CommandLine.Instance.Parse<Commands4>( args );
+
+            Assert.IsTrue( parsed.IsExecuted );
+            Assert.IsTrue( parsed.From1 == "from" );
+            Assert.IsTrue( parsed.To1 == "to" );
+            Assert.IsTrue( parsed.From2 == "from" );
+            Assert.IsTrue( parsed.To2 == "to" );
         }
     }
 

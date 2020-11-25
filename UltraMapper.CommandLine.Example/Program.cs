@@ -10,8 +10,7 @@ namespace UltraMapper.CommandLine.Example
     {
         static void Main( string[] args )
         {
-            CommandLine.Instance.Parse<Commands>( args );
-            //ConsoleLoop.Start<Commands>( args );
+            ConsoleLoop.Start<Commands>( args );
         }
 
         public class Commands
@@ -44,66 +43,42 @@ namespace UltraMapper.CommandLine.Example
             {
                 Process.Start( path );
             }
-        }
 
-        public class MyCommands
-        {
-            public class MoveCommand
+            public class MoveParams
             {
                 [Option( IsRequired = true, HelpText = "The source location of the file" )]
                 public string From { get; set; }
 
                 [Option( IsRequired = true, HelpText = "The destination location of the file" )]
                 public string To { get; set; }
+
+                public class Test
+                {
+                    public int A { get; set; }
+                    public int B { get; set; }
+                }
+
+                public Test TestParam { get; set; }
             }
 
             [Option( HelpText = "Moves the file located in a to location b" )]
-            public MoveCommand Move { get; set; }
-
-            [Option( Name = "quit", HelpText = "Closes this application" )]
-            public void Exit()
+            public void MoveMethod1( MoveParams moveParams )
             {
-                Console.WriteLine( "Application will close in 5 seconds" );
-                Thread.Sleep( 5000 );
-                Environment.Exit( 0 );
-            }
-
-            [Option( HelpText = "Opens a given path in explorer" )]
-            public void Open( string path )
-            {
-                Console.WriteLine( $"opening {path}" );
+                Console.WriteLine( $"You want to move from:{moveParams.From} to:{moveParams.To}" );
+                Console.WriteLine( $"test params: {moveParams.TestParam.A}, {moveParams.TestParam.B}");
             }
 
             [Option( HelpText = "Moves the file located in a to location b" )]
-            public void MoveMethod( [Option( Name = "f", HelpText = "The source location of the file" )] string from, string to )
+            public void MoveMethod2( [Option( Name = "f", HelpText = "The source location of the file" )] string from, string to )
             {
                 Console.WriteLine( $"moving file from '{from}' to '{to}'" );
             }
-
-            [Option( HelpText = "Echoes stuff on this console" )]
-            public void Print( string line, string[] lines, IEnumerable<int> numbers )
-            {
-                Console.WriteLine( line );
-
-                foreach( var l in lines )
-                    Console.WriteLine( l );
-
-                Console.WriteLine( String.Join( " ", numbers ) );
-            }
-
-            [Option( HelpText = "Clears the screen" )]
-            public void Clear()
-            {
-                Console.Clear();
-            }
-
-            [Option( HelpText = "Tests complex type input as argument" )]
-            public void Complex( MoveCommand command )
-            {
-                Console.WriteLine( $"You want to move from:{command.From} to:{command.To}" );
-            }
-
-            //public (string from, string to) Move2 { get; set; }
         }
+
+        //TUPLE!
+        //public class MyCommands
+        //{
+        //   //public (string from, string to) Move2 { get; set; }
+        //}
     }
 }
