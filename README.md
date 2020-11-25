@@ -85,7 +85,7 @@ You can call the following utility method to setup an infinite loop reading and 
   
       static void Main( string[] args )
       {
-          var parsedCommands = CommandLine.Instance.Parse<UserInfo>( args );
+          var userInfo = CommandLine.Instance.Parse<UserInfo>( args );
       }
     
       public class UserInfo
@@ -101,16 +101,29 @@ You can call the following utility method to setup an infinite loop reading and 
           }
           public BankAccountInfo BankAccount { get; set; }
       }
-      
-You can set the previous properties like this:        
-    --name "John Smith"    
-    --age 26    
-    --ismarried    
-    --bankaccount (aa5500001123 1500,50)    
-    
+         
 You can set multiple properties with a single commandline just by separating each command with a whitespace like this:    
     --name "John Smith" --age 26 --ismarried --bankaccount (aa5500001123 1500,50)
-  
+     
+You can also set individual properties like this:        
+    --name "John Smith"
+    --age 26    
+    --ismarried 
+    --bankaccount (aa5500001123 1500,50)
+    
+### Bool properties
+
+Bool propeties are special: if you want to set a boolean property to 'true', you can omit to write 'true' as value
+
+example:
+
+    --isMarried true   
+    
+is equivalent to   
+
+    --isMarried
+
+    
 ## Method call
 
 While other commandline parser libraries only allow you to set properties (and thus force you to set up fake flags
