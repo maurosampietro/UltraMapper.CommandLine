@@ -23,7 +23,7 @@ An example:
 The following program supports 5 commands or operations: it can sum a given amount of numbers, open any directory in explorer, clear the conosle screen, exit the program and set how much time to wait before exiting the program. 
 Parsing the arguments onto the class Commands will start the process of analyzing the Commands class and generating the necessary code capable of calling its properties and methods.
 
-# Getting started
+## Getting started
 
 In order to parse and execute your args commands you need to call CommandLine.Instance.Parse<Commands>( args )
 where 'Commands' is a class where you define the operations that you want to allow at commandline level.
@@ -39,7 +39,7 @@ where 'Commands' is a class where you define the operations that you want to all
     }
     
    
-# Set property
+## Set property
   
   Conversion from string to any primitive type is supported.
   Complex types, collections and collections of complex types are supported too.
@@ -72,7 +72,7 @@ You can set the previous properties like this:
 You can set multiple properties with a single commandline just by separating each command with a whitespace like this:    
     --name "John Smith" --age 26 --ismarried --bankaccount (aa5500001123 1500,50)
   
-# Method call
+## Method call
 
 While other commandline parser libraries only allow you to set properties (and thus force you to set up fake flags
 indicating what methods to call, and, more importantly, force you to write the logic responsible of executing the relevant methods);
