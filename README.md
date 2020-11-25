@@ -20,19 +20,63 @@ and collections of built-in and user-defined types.
 
 ## Getting started
 
+All of the examples use the default built-in syntax. Read more about the syntax here.
+
 In order to parse and execute your args commands you need to call CommandLine.Instance.Parse<Commands>( args )
 where 'Commands' is a class where you define the operations that you want to allow at commandline level.
 
     static void Main( string[] args )
     {
-        var parsedCommands = CommandLine.Instance.Parse<Commands>( args );
+        //Creates a new instance of type UserInfo and writes on it
+        var userInfo = CommandLine.Instance.Parse<UserInfo>( args );
     }
     
-    public class Commands
+    public class UserInfo
     {
         ...
     }
     
+You can work with the same instance preserving state.
+(Subsequent calls write on the same instance instead of creating a new one each time)
+
+    static void Main( string[] args )
+    {
+        //--name "John Smith"
+        var userInfo = new UserInfo()
+        CommandLine.Instance.Parse<UserInfo>( args, userInfo );
+        
+        //--age 26
+        string newArgs = Console.Readline()
+        CommandLine.Instance.Parse<UserInfo>( newArgs, userInfo );
+        
+        Assert.IsTrue( userInfo.Name == "John Smith" && userInfo.Age == 26)
+    }
+    
+    public class UserInfo
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+    }
+    
+You can call the following utility method to setup an infinite loop reading and parsing args:
+
+  - Creating a new instance each time:
+
+        ConsoleLoop.Start<UserInfo>( args, parsed =>
+        {
+            //do what you want with your strongly-type parsed args
+        } );
+
+   - Writing on the same instance:
+
+        static void Main( string[] args )
+        {
+            var userInfo = new UserInfo();
+            ConsoleLoop.Start( args, userInfo, parsed =>
+            {
+                //do what you want with your strongly-type parsed args
+            } );
+        }
    
 ## Set property
   
