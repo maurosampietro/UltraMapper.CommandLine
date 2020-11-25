@@ -72,7 +72,7 @@ You can set the previous properties like this:
 You can set multiple properties with a single commandline just by separating each command with a whitespace like this:    
     --name "John Smith" --age 26 --ismarried --bankaccount (aa5500001123 1500,50)
   
-# Method calls
+# Method call
 
 While other commandline parser libraries only allow you to set properties (and thus force you to set up fake flags
 indicating what methods to call, and, more importantly, force you to write the logic responsible of executing the relevant methods);
