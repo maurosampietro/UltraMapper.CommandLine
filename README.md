@@ -18,11 +18,6 @@ With UltraMapper.CommandLine will drastically simplify your code as all of this 
 You can directly set properties and call methods taking as arguments built-in types (eg: bool, int, double, string, etc..), complex user defined types (eg: your classes)
 and collections of built-in and user-defined types.
 
-An example:
-
-The following program supports 5 commands or operations: it can sum a given amount of numbers, open any directory in explorer, clear the conosle screen, exit the program and set how much time to wait before exiting the program. 
-Parsing the arguments onto the class Commands will start the process of analyzing the Commands class and generating the necessary code capable of calling its properties and methods.
-
 ## Getting started
 
 In order to parse and execute your args commands you need to call CommandLine.Instance.Parse<Commands>( args )
