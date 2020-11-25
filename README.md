@@ -67,7 +67,7 @@ You can call the following utility method to setup an infinite loop reading and 
             //do what you want with your strongly-type parsed args
         } );
 
-   - Writing on the same instance:
+  - Writing on the same instance:     
 
         static void Main( string[] args )
         {
