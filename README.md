@@ -78,7 +78,7 @@ While other commandline parser libraries only allow you to set properties (and t
 indicating what methods to call, and, more importantly, force you to write the logic responsible of executing the relevant methods);
 
 UltraMapper.CommandLine allows you to call methods directly, avoiding a whole lot messy boilerplate code, 
-and virtually eliminating the need to define properties at Commands class level all together, 
+and virtually eliminating the need to define properties at Commands class level altogether, 
 since you can define a method taking as input as many params as you want.
 
     public class Commands
