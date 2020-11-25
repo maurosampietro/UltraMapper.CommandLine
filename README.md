@@ -63,13 +63,13 @@ where 'Commands' is a class where you define the operations that you want to all
           public BankAccountInfo BankAccount { get; set; }
       }
       
-You can set the previous properties like this:
-    --name "John Smith"
-    --age 26
-    --ismarried
-    --bankaccount (aa5500001123 1500,50)
+You can set the previous properties like this:        
+    --name "John Smith"    
+    --age 26    
+    --ismarried    
+    --bankaccount (aa5500001123 1500,50)    
     
-You can set multiple properties with a single commandline just by separating each command with a whitespace like this:
+You can set multiple properties with a single commandline just by separating each command with a whitespace like this:    
     --name "John Smith" --age 26 --ismarried --bankaccount (aa5500001123 1500,50)
   
 # Method calls
