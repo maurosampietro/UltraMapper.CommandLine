@@ -1,6 +1,6 @@
 # UltraMapper.CommandLine
 
-THIS DOCUMENTATION IS A WORK IN PROGRESS. BE PATIENT [2020-NOV-23].
+THIS DOCUMENTATION IS A WORK IN PROGRESS. BE PATIENT [2020-NOV-24].
 
 
 Suppose you have a console program capable of executing multiple complex tasks.
@@ -54,22 +54,30 @@ Parse and map command line args to built-in and complex (custom user defined) ty
 UltraMapper.CommandLine uses Expressions to generate all the code needed to deal with your commands, instead of Reflection to guarantee good performances.     
 
 ## Default parser syntax:
-
-  example 1: --move C:\ThisFile.exe "C:\New Directory\ThisFile.exe" 
-  
+ 
   - --<commmandName> a <b>double dash</b> indentifies a command      
-  - <b>Whitespaces</b> characters delimit commmands and values
-  - Double quotes escape special characters and whitespace.
-  
-  - if your param is a complex type, <b>round brackets</b> identies the object
-    example: --sum ()
+    example: --close
     
-  - If your param is a collection <b>square brackets</b> identifies the collection
-    example: --sum [[1 2 3 4 5]]  
+  - <b>Whitespaces</b> characters delimit commmands and values       
+  example: --move C:\Temp\file.txt C:\Archive\file.txt 
     
-  - <b>Collections of complex types</b> are supported, recursively, without limits
-    example: --sum [( a b) ( c d ) (e f) ]  
+  - <b>Double quotes</b> escape special characters, including whitespaces.      
+  example: --move "C:\folder with spaces in the name\file.txt" C:\Archive\file.txt 
+        
+  - if your param is a complex type, <b>round brackets</b> identies the object      
+  example: --sum ()
+    
+  - If your param is a collection <b>square brackets</b> identifies the collection       
+  example: --sum [1 2 3 4 5]    
+    
+  - <b>Collections of complex types</b> are supported, recursively, without limits     
+  example: --sum [ (a b) (c d) (e f) ]    
   
+  - Parameters can be specified indicating the param name.
+    Named params must appear after non-named params.
+    Non-named params must be provided in a exact order.
+    By default the order is the definition order of your params inside your commands class.
+    You can override the definition order by setting the property 'Order' via the 'Option' attribute.
   
 ## Multiple advancements compared to other similar projects include:
 
@@ -102,6 +110,9 @@ UltraMapper.CommandLine uses Expressions to generate all the code needed to deal
         var parsedObj = AutoParser.Instance.Parse<Commands>( args );       
         Assert.IsTrue( parsedObj.Move.From = "C:\text.txt" );
         Assert.IsTrue( parsedObj.Move.To = "C:\subfolder\text.txt" );
+      
+      Complex types support make UltraMapper.CommandLine especially useful when trying to organize
+      a non trivial number of parameters in a natural way.
       
 - Array and IEnumerable support
 
