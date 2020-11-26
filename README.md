@@ -2,56 +2,192 @@
 
 THIS DOCUMENTATION IS A WORK IN PROGRESS. BE PATIENT [2020-NOV-24].
 
+Parse commandline args and map values to primitive and non-primitive user-defined types (eg: your classes, here after called 'complex types').
+Set properties and invoke methods automatically, passing as arguments any number of parameters. 
+IEnumerable, List and arrays are supported
 
-Suppose you have a console program capable of executing multiple complex tasks.
-You tipically will control the program by passing arguments to it.
+UltraMapper.CommandLine will drastically simplify your code: just define the operations you want to be available in the 'commands' class.
 
-You will face the need to give that text a sense by defining rules that will allow you to split it into meaningful chuncks;
-usually those rules will allow you to split the text in such a way that it easy to identity the parameter you want to assign the value to, and the value itself.
-
-This process is called parsing. Read more about the default syntax.
-
-Once you identified all of the parameters and the related values you will need to cast the values from plain text into a more specific strong-type (int, double, etc..)
-Once that is done, you can read those strongly-typed values to call appropriate methods.
-
-With UltraMapper.CommandLine will drastically simplify your code as all of this is completly automatic: you just need to define the operations to be executed in a class.
-You can directly set properties and call methods taking as arguments built-in types (eg: bool, int, double, string, etc..), complex user defined types (eg: your classes)
-and collections of built-in and user-defined types.
-
-An example:
-
-The following program supports 5 commands or operations: it can sum a given amount of numbers, open any directory in explorer, clear the conosle screen, exit the program and set how much time to wait before exiting the program. 
-Parsing the arguments onto the class Commands will start the process of analyzing the Commands class and generating the necessary code capable of calling its properties and methods.
-
-Let's say i want to open C:\Temp, sum the numbers '1,2,3', set the sleeping time to 10000ms, clear screen and exit.
-All of this can be done by convention writing the following command line:
-
-    --opendir C:\temp --sum [1 2 3] --sleepingtime 10000 --clearscreen --exit
+Example:
+    
+    //--opendir "C:\my folder"
 
     static void Main( string[] args )
     {
         CommandLine.Instance.Parse<Commands>( args );
     }
-
+    
     public class Commands
     {
-        public int SleepingTime { get; set; }
-        
-        public void ClearScreen() { Console.Clear(); }
-        public void OpenDir( string path ) { Process.Start( path ); }
-        public void Sum( IEnumerable<int> numbers ) {  Console.WriteLine( $"The sum is: {numbers.Sum()}" ); }
-        
-        public void Exit()
+        public void OpenDir( string path )
         {
-            Console.WriteLine( "Application will close in 5 seconds" );
-            Thread.Sleep( this.SleepingTime );
-            Environment.Exit( 0 );
+            Process.Start( path );
         }
     }
     
+You can directly set properties and call methods taking as arguments as many parameters as you want, 
+built-in types (eg: bool, int, double, string, etc..), complex user defined types (eg: your classes)
+and collections of built-in and user-defined types.
 
-Parse and map command line args to built-in and complex (custom user defined) types. then invoke methods automatically.
-UltraMapper.CommandLine uses Expressions to generate all the code needed to deal with your commands, instead of Reflection to guarantee good performances.     
+UltraMapper.CommandLine is powered by UltraMapper which uses Expressions to <b>generate the code</b> needed to deal with your commands, instead of Reflection, to guarantee good performances.
+
+
+
+## Getting started
+
+All of the examples use the default built-in syntax. Read more about the syntax here.
+
+In order to parse and execute your args commands you need to call CommandLine.Instance.Parse<Commands>( args )
+where 'Commands' is a class where you define the operations that you want to allow at commandline level.
+
+    static void Main( string[] args )
+    {
+        //Creates a new instance of type UserInfo and writes on it
+        var userInfo = CommandLine.Instance.Parse<UserInfo>( args );
+    }
+    
+    public class UserInfo
+    {
+        ...
+    }
+    
+You can work with the same instance preserving state.
+(Subsequent calls write on the same instance instead of creating a new one each time)
+
+    static void Main( string[] args )
+    {
+        //--name "John Smith"
+        var userInfo = new UserInfo()
+        CommandLine.Instance.Parse<UserInfo>( args, userInfo );
+        
+        //--age 26
+        string newArgs = Console.Readline()
+        CommandLine.Instance.Parse<UserInfo>( newArgs, userInfo );
+        
+        Assert.IsTrue( userInfo.Name == "John Smith" && userInfo.Age == 26)
+    }
+    
+    public class UserInfo
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+    }
+    
+You can call the following utility method to setup an infinite loop reading and parsing args:
+
+  - Creating a new instance each time:
+
+        ConsoleLoop.Start<UserInfo>( args, parsed =>
+        {
+            //do what you want with your strongly-type parsed args
+        } );
+
+  - Writing on the same instance:     
+
+        static void Main( string[] args )
+        {
+            var userInfo = new UserInfo();
+            ConsoleLoop.Start( args, userInfo, parsed =>
+            {
+                //do what you want with your strongly-type parsed args
+            } );
+        }
+   
+## Set property
+  
+  Conversion from string to any primitive type is supported.
+  Complex types, collections and collections of complex types are supported too.
+  
+      static void Main( string[] args )
+      {
+          var userInfo = CommandLine.Instance.Parse<UserInfo>( args );
+      }
+    
+      public class UserInfo
+      {
+          public string Name { get; set; }
+          public int Age { get; set; }
+          public bool IsMarried { get; set; }
+
+          public class BankAccountInfo
+          {
+              public string AccountNumber { get; set; }
+              public double Balance { get; set; }
+          }
+          public BankAccountInfo BankAccount { get; set; }
+      }
+         
+You can set multiple properties with a single commandline just by separating each command with a whitespace like this:    
+    --name "John Smith" --age 26 --ismarried --bankaccount (aa5500001123 1500,50)
+     
+You can also set individual properties like this:        
+    --name "John Smith"
+    --age 26    
+    --ismarried 
+    --bankaccount (aa5500001123 1500,50)
+    
+### Bool properties
+
+Bool propeties are special: if you want to set a boolean property to 'true', you can omit to write 'true' as value
+
+example:
+
+    --isMarried true   
+    
+is equivalent to   
+
+    --isMarried
+
+    
+## Method call
+
+While other commandline parser libraries only allow you to set properties (and thus force you to set up fake flags
+indicating what methods to call, and, more importantly, force you to write the logic responsible of executing the relevant methods);
+
+UltraMapper.CommandLine allows you to call methods directly, avoiding a whole lot messy boilerplate code, 
+and virtually eliminating the need to define properties at Commands class level altogether, 
+since you can define a method taking as input as many params as you want.
+
+    public class Commands
+    {
+        //call example from commandline: --opendir C:\
+        public void OpenDir( string path )
+        {
+            Process.Start( path );
+        }
+
+        //call example from commandline: --opendirs [C:\ C:\windows\]
+        public void OpenDirs( string[] paths )
+        {
+            foreach( var path in paths )
+                Process.Start( path );
+        }       
+    }
+    
+ If a method takes too many parameters as input and you want to organize them in a better way
+ you can define a new class and work with it. Complex types and collections of comple types are fully supported.
+ 
+    public class Commands
+    {
+        public class MoveParams
+        {
+            public string From { get; set; }
+            public string To { get; set; }
+        }
+
+        //call example from commandline: --movefile (C:\temp\file.txt C:\file.txt")
+        public void MoveFile( MoveParams moveParams )
+        {
+            Console.WriteLine( $"You want to move from:{moveParams.From} to:{moveParams.To}" );
+        }
+
+        //call example from commandline: --movefiles [(C:\temp\file1.txt C:\file1.txt") (C:\temp\file2.txt C:\file2.txt")]
+        public void MoveFiles( IEnumerable<MoveParams> moveParams )
+        {
+            foreach( var item in moveParams )
+                Console.WriteLine( $"moving file from '{item.From}' to '{item.To}'" );
+        }
+    }
 
 ## Default parser syntax:
  
@@ -157,8 +293,9 @@ You can also provide a new helper by implementing an IHelpProvider. A few rules 
     
 ## Remarks:
 
-- AutoParser works with with properties and methods but not with fields.
-- Methods are only supported at first level (makes no sense otherwise)
+- Works with with properties and methods but not with fields.
+- Value types are not supported.
+- Method calls are only supported if the method is defined in the 'Commands' class: you cannot call a parameter's method!
 - Methods can be called directly only if void, non abstract, non generic.    
 
 ## How can you contribute?
