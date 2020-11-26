@@ -89,7 +89,7 @@ Ok this will have some complexity to it, but i want to impress you!
      }
 
 
-The following example shows how to call a method taking as input a well structured complex type having defined collections and another nested complex type.
+The above example shows how to call a method taking as input a well structured complex type having defined collections and another nested complex type.
     
 The above example also shows a few features:
     
@@ -99,10 +99,10 @@ The above example also shows a few features:
         - Use _[]_ <b>square brackets</b> to provide values to a <b>collection</b>    
         - Anonymous and named params!    
    
-        Check out the wiki to more information about the syntax
-        
-   - The Option attribute:
-        -
+        Check out the wiki to more information about the syntax        
+    
+   - The Option attribute:        
+
 
 
 Getting started
