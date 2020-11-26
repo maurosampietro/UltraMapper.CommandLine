@@ -2,21 +2,36 @@
 
 THIS DOCUMENTATION IS A WORK IN PROGRESS. BE PATIENT [2020-NOV-24].
 
+Parse commandline args and map values to primitive and non-primitive user-defined types (eg: your classes, here after called 'complex types').
+Set properties and invoke methods automatically, passing as arguments any number of parameters. 
+IEnumerable, List and arrays are supported
 
-Suppose you have a console program capable of executing multiple complex tasks.
-You tipically will control the program by passing arguments to it.
+UltraMapper.CommandLine will drastically simplify your code: just define the operations you want to be available in the 'commands' class.
 
-You will face the need to give that text a sense by defining rules that will allow you to split it into meaningful chuncks;
-usually those rules will allow you to split the text in such a way that it easy to identity the parameter you want to assign the value to, and the value itself.
+Example:
+    
+    //--opendir "C:\my folder"
 
-This process is called parsing. Read more about the default syntax.
-
-Once you identified all of the parameters and the related values you will need to cast the values from plain text into a more specific strong-type (int, double, etc..)
-Once that is done, you can read those strongly-typed values to call appropriate methods.
-
-With UltraMapper.CommandLine will drastically simplify your code as all of this is completly automatic: you just need to define the operations to be executed in a class.
-You can directly set properties and call methods taking as arguments built-in types (eg: bool, int, double, string, etc..), complex user defined types (eg: your classes)
+    static void Main( string[] args )
+    {
+        CommandLine.Instance.Parse<Commands>( args );
+    }
+    
+    public class Commands
+    {
+        public void OpenDir( string path )
+        {
+            Process.Start( path );
+        }
+    }
+    
+You can directly set properties and call methods taking as arguments as many parameters as you want, 
+built-in types (eg: bool, int, double, string, etc..), complex user defined types (eg: your classes)
 and collections of built-in and user-defined types.
+
+UltraMapper.CommandLine is powered by UltraMapper which uses Expressions to <b>generate the code</b> needed to deal with your commands, instead of Reflection, to guarantee good performances.
+
+
 
 ## Getting started
 
@@ -174,9 +189,6 @@ since you can define a method taking as input as many params as you want.
         }
     }
 
-Parse and map command line args to built-in and complex (custom user defined) types. then invoke methods automatically.
-UltraMapper.CommandLine uses Expressions to generate all the code needed to deal with your commands, instead of Reflection to guarantee good performances.     
-
 ## Default parser syntax:
  
   - --<commmandName> a <b>double dash</b> indentifies a command      
@@ -281,8 +293,9 @@ You can also provide a new helper by implementing an IHelpProvider. A few rules 
     
 ## Remarks:
 
-- AutoParser works with with properties and methods but not with fields.
-- Methods are only supported at first level (makes no sense otherwise)
+- Works with with properties and methods but not with fields.
+- Value types are not supported.
+- Method calls are only supported if the method is defined in the 'Commands' class: you cannot call a parameter's method!
 - Methods can be called directly only if void, non abstract, non generic.    
 
 ## How can you contribute?
