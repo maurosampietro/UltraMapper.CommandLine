@@ -42,7 +42,7 @@ The following example shows how to call a method taking as input a well structur
 The following example also shows the basic syntax:    
  - Use _--_ <b>double dashes</b> to call a method or set a property defined in 'CustomerCommands'    
  - Use _()_ <b>round brackets</b> to provide values to a <b>complex type</b>    
- - Use _[]_ <b>square brackets</b> to privde values to a <b>collection</b>    
+ - Use _[]_ <b>square brackets</b> to provide values to a <b>collection</b>    
  - Anonymous and named params!        
     
 Check out the wiki to more information about the syntax
