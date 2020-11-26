@@ -31,7 +31,7 @@ Example
 Getting started
 --------------------------------
 
-Check out the [wiki](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki/Getting-started) for more information and advanced scenarios
+Check out the [wiki](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki) for more information and advanced scenarios
     
     
     
