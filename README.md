@@ -20,18 +20,39 @@ Game changing features!
 - <b>Nesting</b>. Complex types can be nested in other complex types.
 - Complex types support <b>unlimited inheritance</b>.
 - <b>Collections</b> (IEnumerable<>, List<>, arrays) of both <b>primitive</b> and <b>complex types</b> support
-- Automatic <b>help generator</b>
 - A <b>simple JSON like syntax</b> supporting all of this!
+- Automatic <b>help generator</b>
+
+UltraMapper.CommandLine drastically simplifies code: 
+    
+- No more flags to signal you need to execute a method and     
+  no additional code to react to the flags and call methods:
+
+  ...just execute methods directly!
+
+- No more unrelated messy properties: organize them logically in classes!
+
 
 Example
 --------------------------------
+
+Ok this will have some complexity to it, but i want to impress you!
+
+The following example shows how to call a method taking as input a well structured complex type having defined collections and another nested complex type.
+
+The following example also shows the basic syntax:    
+    -   use <b>double dashes</b> to call a method or set a property defined in 'CustomerCommands'
+    -   use <b>round brackets</b> to provide values to a <b>complex type</b>,
+    -   use <b>square brackets</b> to privde values to a <b>collection</b>
+    -   using anonymous and named params!
+
+Check out the wiki to more information about the syntax
 
     class Program
     {
         static void Main( string[] args )
         {
-            //suppose the content of args is the following string:
-            //--add ("John Smith" 26 account=(AC2903X 3500.00 [(CRD01 1000.00) (CRD02 2000.00)]))
+            //--add ("John Smith" 26 account=( number=AC2903X balance=3500.00 creditcards=[(CRD01 1000.00) (CRD02 2000.00)]))
             ConsoleLoop.Start<CustomerCommands>( args );
         }
 
@@ -63,6 +84,7 @@ Example
                     public double MonthlyLimit { get; set; }
                 }
 
+                [Option( Name = "number" )]
                 public string AccountNumber { get; set; }
                 public double Balance { get; set; }
 
@@ -74,18 +96,7 @@ Example
 
             public BankAccountInfo Account { get; set; }
         }
-    }
-
-UltraMapper.CommandLine drastically simplifies code: 
-    
-- No more flags to signal you need to execute a method and     
-  no additional code to react to the flags and call methods:
-
-  ...just execute methods directly!
-
-- No more unrelated messy properties: organize them logically in classes!
-
-
+     }
 
 Getting started
 --------------------------------
