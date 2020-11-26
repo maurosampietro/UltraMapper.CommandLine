@@ -46,5 +46,23 @@ namespace UltraMapper.CommandLine
 
             return this.Mapper.Map<T>( commands );
         }
+
+        public T Parse<T>( string[] args, T instance ) where T : class
+        {
+            return this.Parse( String.Join( " ", args ), instance );
+        }
+
+        public T Parse<T>( string str, T instance ) where T : class
+        {
+            if( String.IsNullOrWhiteSpace( str ) )
+                return default;
+
+            this.HelpProvider.Initialize( typeof( T ) );
+
+            var commands = this.Parser.Parse( str );
+            commands = this.ParamsAdapter.AdaptParsedCommandsToTargetType<T>( commands );
+
+            return this.Mapper.Map( commands, instance );
+        }
     }
 }

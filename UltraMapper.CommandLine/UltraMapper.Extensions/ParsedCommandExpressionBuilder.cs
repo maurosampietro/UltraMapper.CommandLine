@@ -30,6 +30,9 @@ namespace UltraMapper.CommandLine.Extensions
         {
             var context = this.GetMapperContext( source, target, options );
 
+            if( target.IsValueType )
+                throw new ArgumentException( $"Value types are not supported. {target.GetPrettifiedName()} is a value type." );
+
             var targetMembers = target.GetMembers( BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly )
                 .Where( m => (m is MethodInfo mi && mi.IsPublic && !mi.IsStatic && !mi.IsSpecialName) ||
                     (m is PropertyInfo pi && pi.GetSetMethod() != null) )

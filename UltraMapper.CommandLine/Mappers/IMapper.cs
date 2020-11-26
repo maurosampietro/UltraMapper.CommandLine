@@ -7,5 +7,6 @@ namespace UltraMapper.CommandLine.Mappers
     {
         void Initialize( IHelpProvider helpProvider );
         T Map<T>( IEnumerable<ParsedCommand> commands ) where T : class, new();
+        T Map<T>( IEnumerable<ParsedCommand> commands, T instance ) where T : class;
     }
 }

@@ -30,6 +30,9 @@ namespace UltraMapper.CommandLine.Extensions
             //IN PARTICULAR IF FIELDS AND PROPERTIES DECLARATION ORDER IS MIXED 
             //(eg: property, field, property, field...)
 
+            if( target.IsValueType )
+                throw new ArgumentException( $"Value types are not supported. {target.GetPrettifiedName()} is a value type." );
+
             var context = this.GetMapperContext( source, target, options );
 
             var targetMembers = target.GetProperties() //methods only supported at top level (in ParsedCommand)
@@ -52,7 +55,7 @@ namespace UltraMapper.CommandLine.Extensions
             var propertiesAssigns = TempHelper.GetMemberAssignments( context,
                 targetMembers, subParam, MapperConfiguration );
 
-            var expression = Expression.Block
+            var expression = !propertiesAssigns.Any() ? (Expression)Expression.Empty() : Expression.Block
             (
                 new[] { subParam },
 
@@ -400,8 +403,8 @@ namespace UltraMapper.CommandLine.Extensions
                             var paramExp = Expression.Block
                             (
                                 new[] { tempTarget, selectedParam },
-                                
-                                Expression.Assign(selectedParam, Expression.Convert
+
+                                Expression.Assign( selectedParam, Expression.Convert
                                 (
                                     Expression.Invoke( selectParamExp, convertExp, Expression.Constant( param ) ),
                                     paramType
