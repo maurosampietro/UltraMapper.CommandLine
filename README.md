@@ -99,7 +99,7 @@ The above example also shows a few features:
         - Use _[]_ <b>square brackets</b> to provide values to a <b>collection</b>    
         - Anonymous and named params!    
    
-        Check out the wiki to more information about the syntax        
+        Check out the [wiki](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki/Default-syntax) to more information about the syntax        
     
    - The Option attribute:        
 
