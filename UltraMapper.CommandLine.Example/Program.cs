@@ -20,8 +20,8 @@ namespace UltraMapper.CommandLine.Example
         {
             //public string Name { get; set; }
             //public int Age { get; set; }
-            public bool IsMarried { get; set; }
-
+            //public bool IsMarried { get; set; }
+            public int? Int { get; set; }
             //public class BankAccountInfo
             //{
             //    public string AccountNumber { get; set; }

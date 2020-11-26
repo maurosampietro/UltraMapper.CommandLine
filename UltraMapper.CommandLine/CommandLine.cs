@@ -2,6 +2,7 @@
 using UltraMapper.CommandLine.Parsers;
 using UltraMapper.CommandLine.Extensions;
 using System;
+using System.Linq;
 
 namespace UltraMapper.CommandLine
 {
@@ -41,10 +42,10 @@ namespace UltraMapper.CommandLine
 
             this.HelpProvider.Initialize( typeof( T ) );
 
-            var commands = this.Parser.Parse( str );
-            commands = this.ParamsAdapter.AdaptParsedCommandsToTargetType<T>( commands );
+            var parsedCommands = this.Parser.Parse( str ).ToList();
+            var adaptedCommands = this.ParamsAdapter.AdaptParsedCommandsToTargetType<T>( parsedCommands ).ToList();
 
-            return this.Mapper.Map<T>( commands );
+            return this.Mapper.Map<T>( adaptedCommands );
         }
 
         public T Parse<T>( string[] args, T instance ) where T : class

@@ -30,8 +30,8 @@ namespace UltraMapper.CommandLine.Extensions
             //IN PARTICULAR IF FIELDS AND PROPERTIES DECLARATION ORDER IS MIXED 
             //(eg: property, field, property, field...)
 
-            if( target.IsValueType )
-                throw new ArgumentException( $"Value types are not supported. {target.GetPrettifiedName()} is a value type." );
+            //if( target.IsValueType && !target.IsNullable() )
+            //    throw new ArgumentException( $"Value types are not supported. {target.GetPrettifiedName()} is a value type." );
 
             var context = this.GetMapperContext( source, target, options );
 
@@ -198,7 +198,7 @@ namespace UltraMapper.CommandLine.Extensions
             {
                 var setter = memberInfo.GetSetterLambdaExpression();
 
-                if( propertyInfo.PropertyType.IsBuiltIn( false ) )
+                if( propertyInfo.PropertyType.IsBuiltIn( true ) )
                 {
                     var conversion = MapperConfiguration[ typeof( SimpleParam ), propertyInfo.PropertyType ].MappingExpression;
 
@@ -324,7 +324,7 @@ namespace UltraMapper.CommandLine.Extensions
                 {
                     var param = methodParams[ i ];
 
-                    var paramType = param.ParameterType.IsBuiltIn( false ) ?
+                    var paramType = param.ParameterType.IsBuiltIn( true ) ?
                         typeof( SimpleParam ) : typeof( ComplexParam );
 
                     if( !param.ParameterType.IsBuiltIn( false ) &&

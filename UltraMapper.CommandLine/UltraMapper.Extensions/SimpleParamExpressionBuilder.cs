@@ -14,7 +14,7 @@ namespace UltraMapper.CommandLine.Extensions
 
         public override bool CanHandle( Type source, Type target )
         {
-            return source == typeof( SimpleParam ) && target.IsBuiltIn( false );
+            return source == typeof( SimpleParam ) && target.IsBuiltIn( true );
         }
 
         protected override Expression GetValueExpression( MapperContext context )

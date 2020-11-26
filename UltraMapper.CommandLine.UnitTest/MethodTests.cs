@@ -184,7 +184,7 @@ namespace UltraMapper.CommandLine.UnitTest
             }
         }
 
-        public class Commands2
+        private class Commands2
         {
             [Option( IsIgnored = true )] public bool IsExecuted { get; protected set; } = false;
             [Option( IsIgnored = true )] public string FromParam { get; private set; } = String.Empty;
@@ -200,11 +200,11 @@ namespace UltraMapper.CommandLine.UnitTest
             }
         }
 
-        public class Commands3
+        private class Commands3
         {
-            public bool IsExecuted { get; protected set; } = false;
-            public string FromParam { get; private set; } = String.Empty;
-            public string ToParam { get; private set; } = String.Empty;
+            [Option( IsIgnored = true )] public bool IsExecuted { get; protected set; } = false;
+            [Option( IsIgnored = true )] public string FromParam { get; private set; } = String.Empty;
+            [Option( IsIgnored = true )] public string ToParam { get; private set; } = String.Empty;
 
             public void MoveParamOrderOverride(
                 [Option( Order = 1 )] string from,
@@ -216,7 +216,7 @@ namespace UltraMapper.CommandLine.UnitTest
             }
         }
 
-        public class Commands4
+        private class Commands4
         {
             [Option( IsIgnored = true )] public bool IsExecuted { get; protected set; } = false;
             [Option( IsIgnored = true )] public string From1 { get; private set; }
@@ -242,6 +242,20 @@ namespace UltraMapper.CommandLine.UnitTest
 
                 this.From2 = moveParams2.From;
                 this.To2 = moveParams2.To;
+            }
+        }
+
+        private class Commands5
+        {
+            [Option( IsIgnored = true )] public bool IsExecuted { get; protected set; } = false;
+            [Option( IsIgnored = true )] public string FromParam { get; private set; } = String.Empty;
+            [Option( IsIgnored = true )] public string ToParam { get; private set; } = String.Empty;
+
+            public void Move( string from, string to, string anotherParam )
+            {
+                this.IsExecuted = true;
+                this.FromParam = from;
+                this.ToParam = to;
             }
         }
 
@@ -300,6 +314,22 @@ namespace UltraMapper.CommandLine.UnitTest
             args = "--move from=fromhere";
             Assert.ThrowsException<ArgumentException>(
                    () => CommandLine.Instance.Parse<Commands1>( args ) );
+        }
+
+        [TestMethod]
+        public void MissingParams2()
+        {
+            var args = "--move from to";
+            Assert.ThrowsException<ArgumentException>(
+                () => CommandLine.Instance.Parse<Commands5>( args ) );
+
+            args = "--move anotherparam=dunno to=tohere";
+            Assert.ThrowsException<ArgumentException>(
+                   () => CommandLine.Instance.Parse<Commands5>( args ) );
+
+            args = "--move from=fromhere to=to";
+            Assert.ThrowsException<ArgumentException>(
+                   () => CommandLine.Instance.Parse<Commands5>( args ) );
         }
 
         [TestMethod]

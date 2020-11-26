@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="UltraMapper" Version="0.2.49" />
+    <ProjectReference Include="..\..\..\OnlineRepos\UltraMapper\UltraMapper\UltraMapper.csproj" />
   </ItemGroup>
 
 </Project>

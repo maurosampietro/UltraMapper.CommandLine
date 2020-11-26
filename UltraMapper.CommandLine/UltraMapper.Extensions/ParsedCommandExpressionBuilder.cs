@@ -28,10 +28,7 @@ namespace UltraMapper.CommandLine.Extensions
 
         public override LambdaExpression GetMappingExpression( Type source, Type target, IMappingOptions options )
         {
-            var context = this.GetMapperContext( source, target, options );
-
-            if( target.IsValueType )
-                throw new ArgumentException( $"Value types are not supported. {target.GetPrettifiedName()} is a value type." );
+            var context = this.GetMapperContext( source, target, options );          
 
             var targetMembers = target.GetMembers( BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly )
                 .Where( m => (m is MethodInfo mi && mi.IsPublic && !mi.IsStatic && !mi.IsSpecialName) ||

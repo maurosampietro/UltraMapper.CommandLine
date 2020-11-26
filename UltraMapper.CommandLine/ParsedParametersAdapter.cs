@@ -49,7 +49,7 @@ namespace UltraMapper.CommandLine
 
                 case SimpleParam sp:
 
-                    if( def.Type.IsBuiltIn( false ) )
+                    if( def.Type?.IsBuiltIn( true ) == true )
                         return sp;
 
                     return new ComplexParam()
@@ -62,7 +62,7 @@ namespace UltraMapper.CommandLine
                 case ComplexParam cp:
                 {
                     var subParamsDef = def.SubParams;
-                    if( subParamsDef.All( s => s.Type.IsBuiltIn( false ) ) )
+                    if( subParamsDef.All( s => s.Type.IsBuiltIn( true ) ) )
                     {
                         _complexParamChecks.Checks( cp, def.Type, def.SubParams );
                         return cp;
