@@ -23,6 +23,15 @@ Game changing features!
 - Automatic <b>help generator</b>
 - A <b>simple JSON like syntax</b> supporting all of this!
 
+UltraMapper.CommandLine drastically simplifies code: 
+    
+- no more flags to signal you need to execute a method and     
+  no more additional code to react to the flags you setup:
+
+  just execute methods directly!
+
+- no more unrelated messy properties: organize them logically in classes
+
 Example
 --------------------------------
 
