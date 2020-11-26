@@ -52,7 +52,7 @@
   <ItemGroup>
     <ProjectReference Include="..\UltraMapper.CommandLine\UltraMapper.CommandLine.csproj">
       <Project>{918260b1-bbc3-4623-882b-f17e0c5bf782}</Project>
-      <Name>CommandLine.AutoParser</Name>
+      <Name>UltraMapper.CommandLine</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

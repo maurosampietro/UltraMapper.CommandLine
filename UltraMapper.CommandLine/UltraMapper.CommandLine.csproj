@@ -7,6 +7,9 @@
     <Copyright>2020</Copyright>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageVersion>1.0.0.0</PackageVersion>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>UltraMapper.CommandLine</RootNamespace>
+    <AssemblyName>UltraMapper.CommandLine</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
