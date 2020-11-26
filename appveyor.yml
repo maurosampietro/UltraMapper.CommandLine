@@ -1,4 +1,4 @@
-version: 1.0.{build}
+version: 0.2.{build}
 pull_requests:
   do_not_increment_build_number: true
 image: Visual Studio 2017
@@ -8,22 +8,22 @@ assembly_info:
   assembly_version: '{version}'
   assembly_file_version: '{version}'
   assembly_informational_version: '{version}'
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  version_prefix: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
 before_build:
 - cmd: nuget restore
 build:
   publish_nuget: true
-  publish_aspnet_core: true
-  publish_core_console: true
-  verbosity: minimal
+  verbosity: detailed
 deploy:
 - provider: NuGet
   api_key:
-    secure: n+qB39R9myZaMoWw4SG9Ra1VuUX96YcCMByW43v/Xuu768TpI8uJ5RY07s0oQIly
-  skip_symbols: true
-  artifact: '**\*.nupkg'
-- provider: GitHub
-  tag: CommandLine.AutoParser v$(appveyor_build_version)
-  release: CommandLine.AutoParser v$(appveyor_build_version)
-  auth_token:
-    secure: 6hoZSmZskXUrehWMvL3i+FwSfZr+rMKwOxdIG2usuVOG5zUhXQ/Hcq/TzNqUigfF
-  artifact: '**\*.nupkg'
+    secure: F/AkZSLJHX8tWvRwFal7sgeOrkS9g0v2RtxxZd/Aqi6mRc9xq7xBEM9EOdlV86ni
+  skip_symbols: false
