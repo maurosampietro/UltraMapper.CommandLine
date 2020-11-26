@@ -30,6 +30,7 @@ Example
     {
         static void Main( string[] args )
         {
+            //suppose the content of args is the following string:
             //--add ("John Smith" 26 account=(AC2903X 3500.00 [(CRD01 1000.00) (CRD02 2000.00)]))
             ConsoleLoop.Start<CustomerCommands>( args );
         }
@@ -74,7 +75,6 @@ Example
             public BankAccountInfo Account { get; set; }
         }
     }
-
 
 UltraMapper.CommandLine drastically simplifies code: 
     
