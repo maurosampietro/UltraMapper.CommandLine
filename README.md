@@ -40,10 +40,10 @@ Ok this will have some complexity to it, but i want to impress you!
 The following example shows how to call a method taking as input a well structured complex type having defined collections and another nested complex type.
     
 The following example also shows the basic syntax:    
- - use <b>double dashes</b> to call a method or set a property defined in 'CustomerCommands'    
- - use <b>round brackets</b> to provide values to a <b>complex type</b>    
- - use <b>square brackets</b> to privde values to a <b>collection</b>    
- - using anonymous and named params!        
+ - Use _--_ <b>double dashes</b> to call a method or set a property defined in 'CustomerCommands'    
+ - Use _()_ <b>round brackets</b> to provide values to a <b>complex type</b>    
+ - Use _[]_ <b>square brackets</b> to privde values to a <b>collection</b>    
+ - Anonymous and named params!        
     
 Check out the wiki to more information about the syntax
 
