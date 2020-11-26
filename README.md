@@ -23,17 +23,67 @@ Game changing features!
 - Automatic <b>help generator</b>
 - A <b>simple JSON like syntax</b> supporting all of this!
 
-UltraMapper.CommandLine drastically simplifies code: 
-    
-- no more flags to signal you need to execute a method and     
-  no more additional code to react to the flags you setup:
-
-  just execute methods directly!
-
-- no more unrelated messy properties: organize them logically in classes
-
 Example
 --------------------------------
+
+    class Program
+    {
+        static void Main( string[] args )
+        {
+            //--add ("John Smith" 26 account=(AC2903X 3500.00 [(CRD01 1000.00) (CRD02 2000.00)]))
+            ConsoleLoop.Start<CustomerCommands>( args );
+        }
+
+        public class CustomerCommands
+        {
+            [Option( Name = "add", HelpText = "Adds new customer to db" )]
+            public void AddToDatabase( CustomerInfo customer )
+            {
+                Assert.IsTrue( customer.Name == "John Smith" );
+                Assert.IsTrue( customer.Age == 26 );
+                Assert.IsTrue( customer.Account.AccountNumber == "AC2903X" );
+                Assert.IsTrue( customer.Account.Balance == 3500 );
+                Assert.IsTrue( customer.Account.CreditCards[ 0 ].CardNumber == "CRD01" );
+                Assert.IsTrue( customer.Account.CreditCards[ 0 ].MonthlyLimit == 1000 );
+                Assert.IsTrue( customer.Account.CreditCards[ 1 ].CardNumber == "CRD02" );
+                Assert.IsTrue( customer.Account.CreditCards[ 1 ].MonthlyLimit == 2000 );
+
+                Console.WriteLine( "new customer inserted!" );
+            }
+        }
+
+        public class CustomerInfo
+        {
+            public class BankAccountInfo
+            {
+                public class CreditCardInfo
+                {
+                    public string CardNumber { get; set; }
+                    public double MonthlyLimit { get; set; }
+                }
+
+                public string AccountNumber { get; set; }
+                public double Balance { get; set; }
+
+                public List<CreditCardInfo> CreditCards { get; set; }
+            }
+
+            public string Name { get; set; }
+            public int Age { get; set; }
+
+            public BankAccountInfo Account { get; set; }
+        }
+    }
+
+
+UltraMapper.CommandLine drastically simplifies code: 
+    
+- No more flags to signal you need to execute a method and     
+  no additional code to react to the flags and call methods:
+
+  ...just execute methods directly!
+
+- No more unrelated messy properties: organize them logically in classes!
 
 
 
