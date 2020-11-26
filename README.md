@@ -28,7 +28,7 @@ Key features
 
 - <b>Direct method call</b> supporting unlimited input parameters
 - <b>Complex types</b> support for both <b>properties</b> and <b>methods</b>
-- <b>Nesting</b>. Complex types can nest other complex types.
+- <b>Nesting</b>. Complex types can be nested in other complex types.
 - Complex types support <b>unlimited inheritance</b>.
 - <b>Collections</b> (IEnumerable<>, List<>, arrays) of both <b>primitive</b> and <b>complex types</b> support
 - Automatic <b>help generator</b>
