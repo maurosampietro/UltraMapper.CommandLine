@@ -36,22 +36,7 @@ UltraMapper.CommandLine drastically simplifies code:
 Example
 --------------------------------
 
-Ok this will have some complexity to it, but i want to impress you!       
-The following example shows how to call a method taking as input a well structured complex type having defined collections and another nested complex type.
-    
-The following example also shows a few features:
-    
-   - The basic syntax:        
-        - Use _--_ <b>double dashes</b> to call a method or set a property defined in 'CustomerCommands'    
-        - Use _()_ <b>round brackets</b> to provide values to a <b>complex type</b>    
-        - Use _[]_ <b>square brackets</b> to provide values to a <b>collection</b>    
-        - Anonymous and named params!    
-   
-   - The Option attribute:
-        -
-    
-    
-Check out the wiki to more information about the syntax
+Ok this will have some complexity to it, but i want to impress you!          
 
     class Program
     {
@@ -102,6 +87,23 @@ Check out the wiki to more information about the syntax
             public BankAccountInfo Account { get; set; }
         }
      }
+
+
+The following example shows how to call a method taking as input a well structured complex type having defined collections and another nested complex type.
+    
+The above example also shows a few features:
+    
+   - The basic syntax:        
+        - Use _--_ <b>double dashes</b> to call a method or set a property defined in 'CustomerCommands'    
+        - Use _()_ <b>round brackets</b> to provide values to a <b>complex type</b>    
+        - Use _[]_ <b>square brackets</b> to provide values to a <b>collection</b>    
+        - Anonymous and named params!    
+   
+        Check out the wiki to more information about the syntax
+        
+   - The Option attribute:
+        -
+
 
 Getting started
 --------------------------------
