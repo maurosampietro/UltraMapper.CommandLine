@@ -9,7 +9,7 @@ A nicely coded commandline parser for .NET
 What is UltraMapper.CommandLine?
 --------------------------------
 
-UltraMapper.CommandLine is a .NET <b>command line parser</b>, that is, a tool that parse and map command line arguments to strongly typed objects.    
+UltraMapper.CommandLine is a .NET <b>command line parser</b>: a tool that parse and map command line arguments to strongly typed objects.    
 UltraMapper.CommandLine is powered by [UltraMapper](https://github.com/maurosampietro/UltraMapper), a powerful .NET mapper!
 
 Game changing features!
