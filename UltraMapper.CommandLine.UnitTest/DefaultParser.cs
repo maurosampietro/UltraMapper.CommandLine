@@ -1,7 +1,7 @@
-﻿using UltraMapper.CommandLine.Parsers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
+using UltraMapper.CommandLine.Parsers;
 
 namespace UltraMapper.CommandLine.UnitTest
 {

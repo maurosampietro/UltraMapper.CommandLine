@@ -1,9 +1,8 @@
-﻿using UltraMapper.CommandLine.Parsers;
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using UltraMapper;
+using UltraMapper.CommandLine.Parsers;
 using UltraMapper.MappingExpressionBuilders;
 
 namespace UltraMapper.CommandLine.Extensions

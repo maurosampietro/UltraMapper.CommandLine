@@ -1,7 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-
-namespace UltraMapper.CommandLine.UnitTest
+﻿namespace UltraMapper.CommandLine.UnitTest
 {
     //[TestClass]
     //public class Commanding

@@ -1,13 +1,11 @@
-﻿using UltraMapper.CommandLine.Parsers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using UltraMapper;
+using UltraMapper.CommandLine.Parsers;
 using UltraMapper.Internals;
 using UltraMapper.MappingExpressionBuilders;
-using UltraMapper.MappingExpressionBuilders.MapperContexts;
 
 namespace UltraMapper.CommandLine.Extensions
 {

@@ -1,9 +1,7 @@
-﻿using UltraMapper.CommandLine.Mappers;
+﻿using System.Collections.Generic;
+using UltraMapper.CommandLine.Mappers;
 using UltraMapper.CommandLine.Parsers;
-using System.Collections.Generic;
-using UltraMapper;
 using UltraMapper.MappingExpressionBuilders;
-using System;
 
 namespace UltraMapper.CommandLine.Extensions
 {

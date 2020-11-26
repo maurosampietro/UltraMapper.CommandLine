@@ -1,8 +1,8 @@
-﻿using UltraMapper.CommandLine.Mappers;
-using UltraMapper.CommandLine.Parsers;
-using UltraMapper.CommandLine.Extensions;
-using System;
+﻿using System;
 using System.Linq;
+using UltraMapper.CommandLine.Extensions;
+using UltraMapper.CommandLine.Mappers;
+using UltraMapper.CommandLine.Parsers;
 
 namespace UltraMapper.CommandLine
 {

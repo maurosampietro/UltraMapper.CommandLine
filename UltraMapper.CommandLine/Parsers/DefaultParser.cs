@@ -1,8 +1,8 @@
-﻿using UltraMapper.CommandLine.Mappers.Internals;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using UltraMapper.CommandLine.Mappers.Internals;
 
 namespace UltraMapper.CommandLine.Parsers
 {

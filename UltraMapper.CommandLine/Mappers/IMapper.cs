@@ -1,5 +1,5 @@
-﻿using UltraMapper.CommandLine.Parsers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UltraMapper.CommandLine.Parsers;
 
 namespace UltraMapper.CommandLine.Mappers
 {

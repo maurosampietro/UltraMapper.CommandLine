@@ -1,9 +1,5 @@
-﻿using UltraMapper.CommandLine.Parsers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using UltraMapper.CommandLine.Parsers;
 
 namespace UltraMapper.CommandLine
 {

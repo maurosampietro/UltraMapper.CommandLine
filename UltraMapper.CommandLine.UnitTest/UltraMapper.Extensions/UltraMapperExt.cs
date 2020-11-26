@@ -1,7 +1,6 @@
-﻿using UltraMapper.CommandLine.Parsers;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UltraMapper.CommandLine.Extensions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltraMapper;
+using UltraMapper.CommandLine.Parsers;
 using UltraMapper.MappingExpressionBuilders;
 
 namespace UltraMapper.CommandLine.UnitTest.UltraMapper.Extensions
