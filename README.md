@@ -43,7 +43,7 @@ The following example shows how to call the _AddToDatabase_ method from commandl
         static void Main( string[] args )
         {
             //--add ("John Smith" 26 account=( number=AC2903X balance=3500.00 creditcards=[(CRD01 1000.00) (CRD02 2000.00)]))
-            ConsoleLoop.Start<CustomerCommands>( args );
+            CommandLine.Instance.Parse<CustomerCommands>( args );
         }
 
         public class CustomerCommands
@@ -60,7 +60,7 @@ The following example shows how to call the _AddToDatabase_ method from commandl
                 Assert.IsTrue( customer.Account.CreditCards[ 1 ].CardNumber == "CRD02" );
                 Assert.IsTrue( customer.Account.CreditCards[ 1 ].MonthlyLimit == 2000 );
 
-                Console.WriteLine( "new customer inserted!" );
+                Console.WriteLine( "New customer inserted!" );
             }
         }
 
