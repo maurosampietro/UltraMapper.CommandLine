@@ -87,7 +87,7 @@ class Program
 }
 ````
 
-The above example also shows a few features:
+The above example shows a few features:
     
    - The basic syntax:        
         - Use _--_ <b>double dashes</b> to call a method or set a property defined in your commands class
