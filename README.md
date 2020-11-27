@@ -107,7 +107,8 @@ The above example shows a few features:
        [Read more about the Option attribute here](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki/OptionAttribute)     
 
 
-There are a couple more things and a few remarks you should know about UltraMapper.CommandLine
+
+There are a couple more things and a few remarks you should know about **UltraMapper.CommandLine**    
 Check out the [wiki](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki) for more information
        
 **ANY FEEDBACK IS WELCOME**
