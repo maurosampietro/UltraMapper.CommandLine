@@ -97,7 +97,7 @@ The above example shows a few basic features to start with:
      
      The line of code above does all the job.    
      The generic argument _T_ is your _'commands class'_.     
-     In your _'commands class'_ you define all of the operation you want to support at commandline level.    
+     In your _'commands class'_ you define all of the **operations you want to support at commandline level**.    
          
    - The basic syntax:        
         - Use _--_ <b>double dashes</b> to call a method or set a property defined in your _'commands class'_
