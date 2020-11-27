@@ -38,55 +38,55 @@ Ok this will have some complexity to it, but i want to impress you!
 The following example shows how to call the _AddToDatabase_ method from commandline, passing as input a string representation of the well structured complex-type _CustomerInfo_, which the method _AddToDatabase_ takes as input.   
 
 ````c#
-    class Program
+class Program
+{
+    static void Main( string[] args )
     {
-        static void Main( string[] args )
+        //--add ("John Smith" 26 account=( number=AC2903X balance=3500.00 creditcards=[(CRD01 1000.00) (CRD02 2000.00)]))
+        CommandLine.Instance.Parse<CustomerCommands>( args );
+    }
+
+    public class CustomerCommands
+    {
+        [Option( Name = "add", HelpText = "Adds new customer to db" )]
+        public void AddToDatabase( CustomerInfo customer )
         {
-            //--add ("John Smith" 26 account=( number=AC2903X balance=3500.00 creditcards=[(CRD01 1000.00) (CRD02 2000.00)]))
-            CommandLine.Instance.Parse<CustomerCommands>( args );
+            Assert.IsTrue( customer.Name == "John Smith" );
+            Assert.IsTrue( customer.Age == 26 );
+            Assert.IsTrue( customer.Account.AccountNumber == "AC2903X" );
+            Assert.IsTrue( customer.Account.Balance == 3500 );
+            Assert.IsTrue( customer.Account.CreditCards[ 0 ].CardNumber == "CRD01" );
+            Assert.IsTrue( customer.Account.CreditCards[ 0 ].MonthlyLimit == 1000 );
+            Assert.IsTrue( customer.Account.CreditCards[ 1 ].CardNumber == "CRD02" );
+            Assert.IsTrue( customer.Account.CreditCards[ 1 ].MonthlyLimit == 2000 );
+
+            Console.WriteLine( "New customer inserted!" );
         }
+    }
 
-        public class CustomerCommands
+    public class CustomerInfo
+    {
+        public class BankAccountInfo
         {
-            [Option( Name = "add", HelpText = "Adds new customer to db" )]
-            public void AddToDatabase( CustomerInfo customer )
+            public class CreditCardInfo
             {
-                Assert.IsTrue( customer.Name == "John Smith" );
-                Assert.IsTrue( customer.Age == 26 );
-                Assert.IsTrue( customer.Account.AccountNumber == "AC2903X" );
-                Assert.IsTrue( customer.Account.Balance == 3500 );
-                Assert.IsTrue( customer.Account.CreditCards[ 0 ].CardNumber == "CRD01" );
-                Assert.IsTrue( customer.Account.CreditCards[ 0 ].MonthlyLimit == 1000 );
-                Assert.IsTrue( customer.Account.CreditCards[ 1 ].CardNumber == "CRD02" );
-                Assert.IsTrue( customer.Account.CreditCards[ 1 ].MonthlyLimit == 2000 );
-
-                Console.WriteLine( "New customer inserted!" );
-            }
-        }
-
-        public class CustomerInfo
-        {
-            public class BankAccountInfo
-            {
-                public class CreditCardInfo
-                {
-                    public string CardNumber { get; set; }
-                    public double MonthlyLimit { get; set; }
-                }
-
-                [Option( Name = "number" )]
-                public string AccountNumber { get; set; }
-                public double Balance { get; set; }
-
-                public List<CreditCardInfo> CreditCards { get; set; }
+                public string CardNumber { get; set; }
+                public double MonthlyLimit { get; set; }
             }
 
-            public string Name { get; set; }
-            public int Age { get; set; }
+            [Option( Name = "number" )]
+            public string AccountNumber { get; set; }
+            public double Balance { get; set; }
 
-            public BankAccountInfo Account { get; set; }
+            public List<CreditCardInfo> CreditCards { get; set; }
         }
-     }
+
+        public string Name { get; set; }
+        public int Age { get; set; }
+
+        public BankAccountInfo Account { get; set; }
+    }
+ }
 ````
 
 The above example also shows a few features:
