@@ -35,6 +35,9 @@ Example
 
 Ok this will have some complexity to it, but i want to impress you!          
 
+The following example shows how to call the _AddToDatabase_ method from commandline, passing as input a string representation of the well structured complex-type _CustomerInfo_, which the method _AddToDatabase_ takes as input.   
+
+
     class Program
     {
         static void Main( string[] args )
@@ -84,25 +87,21 @@ Ok this will have some complexity to it, but i want to impress you!
             public BankAccountInfo Account { get; set; }
         }
      }
-
-
-The above example shows how to call the _add_ method from commandline, passing as input a string representation of the well structured complex-type _CustomerInfo_ as parameter.   
-
-The parameter passed as input to the method _add_ is a compex-type of type _CustomerInfo_ which internally refers to another complex-type of type _BankAccountInfo_ 
-which internally defines a collection of yet another complex-type of type '_CreditCardInfo_'.    
-    
+   
 The above example also shows a few features:
     
    - The basic syntax:        
-        - Use _--_ <b>double dashes</b> to call a method or set a property defined in 'CustomerCommands'    
+        - Use _--_ <b>double dashes</b> to call a method or set a property defined in your commands class
         - Use _()_ <b>round brackets</b> to provide values to a <b>complex type</b>    
         - Use _[]_ <b>square brackets</b> to provide values to a <b>collection</b>    
-        - Anonymous and named params!    
+        - Anonymous and named params
    
        [Read more about the syntax here](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki/Default-syntax)     
     
    - The Option attribute:        
-        Allows you to override a member's name, ignore a member or provide a help description.
+        - Allows you to override a member's name to make it easier to call from commandline, 
+        - Allows you to mark a member as optional
+        - Allows you to provide a help description.
 
         [Read more about the Option attribute here](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki/OptionAttribute)     
 
