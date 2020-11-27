@@ -86,7 +86,7 @@ class Program
 
         public BankAccountInfo Account { get; set; }
     }
- }
+}
 ````
 
 The above example also shows a few features:
