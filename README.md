@@ -4,8 +4,6 @@
 
 A commandline parser supporting direct method calls taking as input an unlimited number of primitive and complex-type parameters
 
-
-
 What is UltraMapper.CommandLine?
 --------------------------------
 
@@ -30,7 +28,7 @@ Game changing features!
 - Automatic **help generator**
 
 
-Example
+Getting started by example
 --------------------------------
 
 Ok this will have some complexity to it, but i want to impress you!          
@@ -108,13 +106,8 @@ The above example also shows a few features:
        This is not all you need to know about the option attribute    
        [Read more about the Option attribute here](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki/OptionAttribute)     
 
-Getting started
---------------------------------
 
-Check out the [wiki](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki) for more information and advanced scenarios
-    
-    
-    
-    
-    
+There are a couple more things and a few remarks you should know about UltraMapper.CommandLine
+Check out the [wiki](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki) for more information
+       
 **ANY FEEDBACK IS WELCOME**
