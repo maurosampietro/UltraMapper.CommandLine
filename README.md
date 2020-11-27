@@ -96,11 +96,11 @@ The above example shows a few basic features to start with:
      ```
      
      The line of code above does all the job.    
-     The generic argument _T_ is your 'commands class'.     
-     In your 'commands class' you define all of the operation you want to support at commandline level.    
+     The generic argument _T_ is your _'commands class'_.     
+     In your _'commands class'_ you define all of the operation you want to support at commandline level.    
          
    - The basic syntax:        
-        - Use _--_ <b>double dashes</b> to call a method or set a property defined in your commands class
+        - Use _--_ <b>double dashes</b> to call a method or set a property defined in your _'commands class'_
         - Use _()_ <b>round brackets</b> to provide values to a <b>complex type</b>    
         - Use _[]_ <b>square brackets</b> to provide values to a <b>collection</b>    
         - Anonymous and named params
