@@ -37,7 +37,7 @@ Ok this will have some complexity to it, but i want to impress you!
 
 The following example shows how to call the _AddToDatabase_ method from commandline, passing as input a string representation of the well structured complex-type _CustomerInfo_, which the method _AddToDatabase_ takes as input.   
 
-
+````c#
     class Program
     {
         static void Main( string[] args )
@@ -87,7 +87,8 @@ The following example shows how to call the _AddToDatabase_ method from commandl
             public BankAccountInfo Account { get; set; }
         }
      }
-   
+````
+
 The above example also shows a few features:
     
    - The basic syntax:        
