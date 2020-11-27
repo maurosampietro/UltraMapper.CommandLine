@@ -9,29 +9,25 @@ A commandline parser supporting direct method calls taking as input an unlimited
 What is UltraMapper.CommandLine?
 --------------------------------
 
-UltraMapper.CommandLine is a .NET <b>command line parser</b>: a tool that <b>parse</b> and <b>map</b> command line arguments into <b>strongly-typed</b> objects.    
+UltraMapper.CommandLine is a .NET <b>command line parser</b>: a tool that <b>parse</b> (analyze and interpret) your command line text and <b>map</b> (trasform) it into <b>strongly-typed</b> objects.    
+
+UltraMapper.CommandLine drastically simplifies your code: 
+    
+- **Methods calls support** allows you to get rid of all of the 'commandline flags' and all of the code needed to handle them
+- **Complex-type support** allows you to organize parameters logically in classes
 
 UltraMapper.CommandLine is powered by [UltraMapper](https://github.com/maurosampietro/UltraMapper), a powerful .NET mapper!
 
 Game changing features!
 --------------------------------
 
-- <b>Direct method call</b> supporting unlimited input parameters
-- <b>Complex types</b> support for both <b>properties</b> and <b>methods</b>
-- <b>Nesting</b>. Complex types can be nested in other complex types.
-- Complex types support <b>unlimited inheritance</b>.
-- <b>Collections</b> (IEnumerable<>, List<>, arrays) of both <b>primitive</b> and <b>complex types</b> support
-- A <b>simple JSON like syntax</b> supporting all of this!
-- Automatic <b>help generator</b>
-
-UltraMapper.CommandLine drastically simplifies code: 
-    
-- No more flags to signal you need to execute a method and     
-  no additional code to react to the flags and call methods:
-
-  ...just execute methods directly!
-
-- No more unrelated messy properties: organize them logically in classes!
+- **Direct method calls** supporting an **unlimited** number of **input parameters**
+- **Complex types** support for both **properties** and **methods**
+- **Nesting**. Complex types can internally define other complex-type members recursively.
+- **Type inheritance** is fully supported.
+- **Collections** (IEnumerable<>, List<>, arrays) of both **primitive** and **complex types** support
+- A **simple JSON like syntax** supporting all of this!
+- Automatic **help generator**
 
 
 Example
@@ -90,7 +86,10 @@ Ok this will have some complexity to it, but i want to impress you!
      }
 
 
-The above example shows how to call a method taking as input a well structured complex type having defined collections and another nested complex type.
+The above example shows how to call the _add_ method from commandline, passing as input a string representation of the well structured complex-type _CustomerInfo_ as parameter.   
+
+The parameter passed as input to the method _add_ is a compex-type of type _CustomerInfo_ which internally refers to another complex-type of type _BankAccountInfo_ 
+which internally defines a collection of yet another complex-type of type '_CreditCardInfo_'.    
     
 The above example also shows a few features:
     
@@ -100,11 +99,12 @@ The above example also shows a few features:
         - Use _[]_ <b>square brackets</b> to provide values to a <b>collection</b>    
         - Anonymous and named params!    
    
-        Check out the [wiki](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki/Default-syntax) to more information about the syntax        
+       [Read more about the syntax here](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki/Default-syntax)     
     
    - The Option attribute:        
+        Allows you to override a member's name, ignore a member or provide a help description.
 
-
+        [Read more about the Option attribute here](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki/OptionAttribute)     
 
 Getting started
 --------------------------------
