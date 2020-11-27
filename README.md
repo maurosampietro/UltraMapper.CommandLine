@@ -2,7 +2,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/github/maurosampietro/UltraMapper.Commandline?svg=true)](https://ci.appveyor.com/project/maurosampietro/ultramapper.Commandline/branch/master)
 [![NuGet](http://img.shields.io/nuget/v/UltraMapper.svg)](https://www.nuget.org/packages/UltraMapper.Commandline/)
 
-A nicely coded commandline parser for .NET 
+A commandline parser supporting direct method calls taking as input an unlimited number of primitive and complex-type parameters
 
 
 
@@ -10,6 +10,7 @@ What is UltraMapper.CommandLine?
 --------------------------------
 
 UltraMapper.CommandLine is a .NET <b>command line parser</b>: a tool that <b>parse</b> and <b>map</b> command line arguments into <b>strongly-typed</b> objects.    
+
 UltraMapper.CommandLine is powered by [UltraMapper](https://github.com/maurosampietro/UltraMapper), a powerful .NET mapper!
 
 Game changing features!
