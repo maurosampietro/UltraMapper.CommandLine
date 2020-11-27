@@ -87,8 +87,18 @@ class Program
 }
 ````
 
-The above example shows a few features:
+The above example shows a few basic features to start with:
+   
+   - How to parse arguments:
     
+     ```C# 
+     T parsedArgs = CommandLine.Instance.Parse<T>( args );
+     ```
+     
+     The line of code above does all the job.    
+     The generic argument _T_ is your 'commands class'.     
+     In your 'commands class' you define all of the operation you want to support at commandline level.    
+         
    - The basic syntax:        
         - Use _--_ <b>double dashes</b> to call a method or set a property defined in your commands class
         - Use _()_ <b>round brackets</b> to provide values to a <b>complex type</b>    
