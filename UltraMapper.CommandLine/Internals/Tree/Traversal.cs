@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UltraMapper.Internals;
 
@@ -56,7 +57,7 @@ namespace UltraMapper.CommandLine.Tree
                 var parameters = method.GetParameters();
                 if( parameters.Length > 0 )
                 {
-                    foreach( var param in parameters ) 
+                    foreach( var param in parameters )
                     {
                         var newParamNode = newNode.Add( param.ParameterType );
                         _propertyProvider.PopulateTree( newParamNode, param.ParameterType );
@@ -68,11 +69,19 @@ namespace UltraMapper.CommandLine.Tree
 
     internal class PropertyProvider : IMemberProvider
     {
+        private static readonly Dictionary<Type, TreeNode<MemberInfo>> _typeNodes
+            = new Dictionary<Type, TreeNode<MemberInfo>>();
+
         private const BindingFlags _bindingAttrs =
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase;
 
         public void PopulateTree( TreeNode<MemberInfo> node, Type type )
         {
+            //if( _typeNodes.ContainsKey( type ) )
+            //    return;
+
+            //_typeNodes.Add( type, node );
+
             var properties = type.GetProperties( _bindingAttrs );
             foreach( var property in properties )
             {

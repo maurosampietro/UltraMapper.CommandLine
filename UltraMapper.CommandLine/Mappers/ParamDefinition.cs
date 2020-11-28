@@ -6,11 +6,29 @@ namespace UltraMapper.CommandLine
 
     public class ParameterDefinition
     {
-        public string Name { get; internal set; }
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                if( !String.IsNullOrWhiteSpace( Options?.Name ) )
+                    return Options.Name;
+
+                return _name;
+            }
+
+            set { _name = value; }
+        }
+
         public Type Type { get; set; }
         public ParameterDefinition[] SubParams { get; set; }
-        public OptionAttribute Options { get; internal set; }
+        public OptionAttribute Options { get; set; }
         public MemberTypes MemberType { get; set; } = MemberTypes.UNDEFINED;
+
+        public ParameterDefinition()
+        {
+            this.Options = new OptionAttribute();
+        }
 
         public override string ToString()
         {

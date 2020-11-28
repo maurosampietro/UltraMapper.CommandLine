@@ -45,7 +45,7 @@ namespace UltraMapper.CommandLine.Extensions
 
             var subParam = Expression.Parameter( typeof( IParsedParam ), "param" );
 
-            var memberAssign = TempHelper.GetMemberAssignments( context,
+            var memberAssign = MemberExpressionBuilder.GetMemberAssignments( context,
                 targetMembers, subParam, MapperConfiguration );
 
             var nameToLowerCase = Expression.Call( Expression.Property( subParam,

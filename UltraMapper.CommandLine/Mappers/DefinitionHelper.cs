@@ -30,20 +30,27 @@ namespace UltraMapper.CommandLine.Mappers
             return definition;
         }
 
+        private static readonly Dictionary<MemberInfo, IEnumerable<ParameterDefinition>> _memberDefinitions =
+            new Dictionary<MemberInfo, IEnumerable<ParameterDefinition>>();
+
         private static IEnumerable<ParameterDefinition> GetDefInternal( TreeNode<MemberInfo> root )
         {
+            //if( root?.Item != null && _memberDefinitions.TryGetValue( root.Item, out IEnumerable<ParameterDefinition> subparamdefs ) )
+            //    foreach( var item in subparamdefs )
+            //        yield return item;
+
             //the roots are the commands, the leaves are the parameters
             foreach( var command in root.Children )
             {
                 var optionAttribute = command.Item.GetCustomAttribute<OptionAttribute>();
-                string name = String.IsNullOrWhiteSpace( optionAttribute?.Name ) ?
-                    command.Item.Name : optionAttribute.Name;
-
                 if( optionAttribute?.IsIgnored == true )
                     continue;
 
                 if( optionAttribute == null )
                     optionAttribute = new OptionAttribute();
+
+                string name = String.IsNullOrWhiteSpace( optionAttribute?.Name ) ?
+                    command.Item.Name : optionAttribute.Name;
 
                 if( !Regex.IsMatch( name, @"^\w+$" ) )
                     throw new InvalidNameException( name );
@@ -69,7 +76,7 @@ namespace UltraMapper.CommandLine.Mappers
                     subparameters = GetDefInternal( command ).ToArray();
                 }
 
-                yield return new ParameterDefinition()
+                var paramDefinition = new ParameterDefinition()
                 {
                     Options = optionAttribute,
                     Name = name,
@@ -77,6 +84,8 @@ namespace UltraMapper.CommandLine.Mappers
                     Type = type,
                     MemberType = memberType
                 };
+                
+                yield return paramDefinition;
             }
         }
 
@@ -88,16 +97,16 @@ namespace UltraMapper.CommandLine.Mappers
                 var methodParam = methodParams[ i ];
 
                 var optionAttribute = methodParam.GetCustomAttribute<OptionAttribute>();
-                string name = String.IsNullOrWhiteSpace( optionAttribute?.Name ) ?
-                    methodParam.Name : optionAttribute.Name;
-
-                if( !Regex.IsMatch( name, @"^\w+$" ) )
-                    throw new InvalidNameException( name );
-
                 if( optionAttribute == null )
                     optionAttribute = new OptionAttribute();
 
                 optionAttribute.IsRequired = !methodParam.IsOptional;
+
+                string name = String.IsNullOrWhiteSpace( optionAttribute.Name ) ?
+                    methodParam.Name : optionAttribute.Name;
+
+                if( !Regex.IsMatch( name, @"^\w+$" ) )
+                    throw new InvalidNameException( name );
 
                 var subparameters = GetDefInternal( node.Children[ i ] ).ToArray();
 
@@ -107,7 +116,7 @@ namespace UltraMapper.CommandLine.Mappers
                     Options = optionAttribute,
                     Type = methodParam.ParameterType,
                     SubParams = subparameters,
-                    MemberType = MemberTypes.METHOD_PARAM                    
+                    MemberType = MemberTypes.METHOD_PARAM
                 };
             }
         }

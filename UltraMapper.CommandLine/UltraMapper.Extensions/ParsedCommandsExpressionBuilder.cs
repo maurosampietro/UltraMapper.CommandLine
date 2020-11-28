@@ -7,7 +7,7 @@ using UltraMapper.MappingExpressionBuilders;
 
 namespace UltraMapper.CommandLine.Extensions
 {
-    public class ParsedCommandsExpressionBuilder : CollectionToNonCollectionExpressionBuilder
+    public class ParsedCommandsExpressionBuilder : ReferenceMapper
     {
         public ParsedCommandsExpressionBuilder( Configuration configuration )
             : base( configuration ) { }
@@ -17,11 +17,6 @@ namespace UltraMapper.CommandLine.Extensions
             return typeof( IEnumerable<ParsedCommand> ).IsAssignableFrom( source ) &&
                 !typeof( IEnumerable<ParsedCommand> ).IsAssignableFrom( target ) &&
                 !target.IsArray && !target.IsEnumerable();   //allow cloning
-        }
-
-        public override Type GetCollectionElementType()
-        {
-            return typeof( ParsedCommand );
         }
 
         public override LambdaExpression GetMappingExpression( Type source, Type target, IMappingOptions options )
