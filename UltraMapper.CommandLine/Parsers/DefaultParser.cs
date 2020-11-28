@@ -63,7 +63,7 @@ namespace UltraMapper.CommandLine.Parsers
 
         )* (?(open) (?!) )               # fail if open > 0
         $",
-            RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled );
+            RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled, TimeSpan.FromSeconds(3) );
 
         public static readonly Regex BalancedParenthesesRegex = new Regex( @"                
         (         
@@ -114,10 +114,10 @@ namespace UltraMapper.CommandLine.Parsers
             (?<params>([\w\.]+\s*=\s*){0,1}[^\s\(\)\[\]\""]+)\s*
 
         )+? (?(open) (?!) )               # fail if open > 0",
-            RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled );
+            RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled, TimeSpan.FromSeconds( 3 ) );
 
         public static readonly Regex NameValueSpitter = new Regex( @"^((?<paramName>[\w\.]+)\s*=\s*){0,1}(?<paramValue>.*)",
-            RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled );
+            RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled, TimeSpan.FromSeconds( 3 ) );
 
         public IEnumerable<ParsedCommand> Parse( string[] commands )
         {
@@ -138,14 +138,14 @@ namespace UltraMapper.CommandLine.Parsers
                 {
                     var match = BalancedParenthesesRegex.Match( commandLine );
                     if( !match.Success )
-                        throw new CommandLineSyntaxErrorException();
+                        throw new SyntaxErrorException();
 
                     var parsedParams = match.Groups[ "params" ]
                         .Captures.Cast<Capture>()
                         .Select( c => c.Value );
                 }
 
-                throw new CommandLineSyntaxErrorException();
+                throw new SyntaxErrorException();
             }
 
             int paramIndex = 0;
@@ -153,7 +153,7 @@ namespace UltraMapper.CommandLine.Parsers
             {
                 var match = CommandRegex.Match( command );
                 if( !match.Success )
-                    throw new CommandLineSyntaxErrorException();
+                    throw new SyntaxErrorException();
 
                 var cmdName = match.Groups[ "command" ].Value;
 
@@ -162,7 +162,6 @@ namespace UltraMapper.CommandLine.Parsers
                    .Select( c => c.Value );
 
                 var parameters = GetCommandParams( parsedParams ).ToList();
-                CheckThrowIfDuplicateNamedParams( parameters );
 
                 IParsedParam theparam = null;
                 if( parameters.Count > 1 )
@@ -272,23 +271,6 @@ namespace UltraMapper.CommandLine.Parsers
 
                 paramIndex++;
             }
-        }
-
-        private void CheckThrowIfDuplicateNamedParams( IEnumerable<IParsedParam> parameters )
-        {
-            //anonymous params (empty name) are not a problem
-            var groups = parameters.Where( p => !String.IsNullOrEmpty( p.Name ) )
-                .GroupBy( p => p.Name.ToLower() );
-
-            foreach( var item in groups )
-            {
-                if( item.Count() > 1 )
-                    throw new DuplicateArgumentException( item.Key );
-            }
-
-            var complexParams = parameters.OfType<ComplexParam>();
-            foreach( var complexParam in complexParams )
-                CheckThrowIfDuplicateNamedParams( complexParam.SubParams );
         }
     }
 }

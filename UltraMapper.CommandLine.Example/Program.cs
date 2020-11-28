@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -9,31 +10,49 @@ namespace UltraMapper.CommandLine.Example
     {
         static void Main( string[] args )
         {
-            ConsoleLoop.Start<UserInfo>( args, parsed =>
-            {
-                //do what you want with your strongly-type parsed args
-            } );
+            //--add ("John Smith" 26 account=( number=AC2903X balance=3500.00 creditcards=[(CRD01 1000.00) (CRD02 2000.00)]))
+            ConsoleLoop.Start<CustomerCommands>( args );
         }
 
-        public class UserInfo
+        public class CustomerCommands
         {
-            //public string Name { get; set; }
-            //public int Age { get; set; }
-            //public bool IsMarried { get; set; }
-            public int? Int { get; set; }
-            //public class BankAccountInfo
-            //{
-            //    public string AccountNumber { get; set; }
-            //    public double Balance { get; set; }
-            //}
+            [Option( Name = "add", HelpText = "Adds new customer to db" )]
+            public void AddToDatabase( CustomerInfo customer )
+            {
+                Assert.IsTrue( customer.Name == "John Smith" );
+                Assert.IsTrue( customer.Age == 26 );
+                Assert.IsTrue( customer.Account.AccountNumber == "AC2903X" );
+                Assert.IsTrue( customer.Account.Balance == 3500 );
+                Assert.IsTrue( customer.Account.CreditCards[ 0 ].CardNumber == "CRD01" );
+                Assert.IsTrue( customer.Account.CreditCards[ 0 ].MonthlyLimit == 1000 );
+                Assert.IsTrue( customer.Account.CreditCards[ 1 ].CardNumber == "CRD02" );
+                Assert.IsTrue( customer.Account.CreditCards[ 1 ].MonthlyLimit == 2000 );
 
-            //public BankAccountInfo BankAccount { get; set; }
+                Console.WriteLine( "new customer inserted!" );
+            }
+        }
 
-            //[Option( IsIgnored = true )]
-            //public override string ToString()
-            //{
-            //    return $"{Name} {Age} {IsMarried} {BankAccount?.AccountNumber}{BankAccount?.Balance}";
-            //}
+        public class CustomerInfo
+        {
+            public class BankAccountInfo
+            {
+                public class CreditCardInfo
+                {
+                    public string CardNumber { get; set; }
+                    public double MonthlyLimit { get; set; }
+                }
+
+                [Option( Name = "number" )]
+                public string AccountNumber { get; set; }
+                public double Balance { get; set; }
+
+                public List<CreditCardInfo> CreditCards { get; set; }
+            }
+
+            public string Name { get; set; }
+            public int Age { get; set; }
+
+            public BankAccountInfo Account { get; set; }
         }
 
         public class Commands

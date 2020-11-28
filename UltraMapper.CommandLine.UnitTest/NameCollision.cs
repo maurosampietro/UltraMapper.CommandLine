@@ -31,7 +31,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void CommandExistance2()
         {
             var args = "--operation true";
-            Assert.ThrowsException<UndefinedParameterException>(
+            Assert.ThrowsException<UndefinedCommandException>(
                  () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
@@ -39,7 +39,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void DuplicateCommandNames()
         {
             var args = "--open true";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<DuplicateCommandException>(
                  () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
@@ -47,7 +47,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void CommandExistance()
         {
             var args = "--thiscommanddoesnotexist true";
-            Assert.ThrowsException<UndefinedParameterException>(
+            Assert.ThrowsException<UndefinedCommandException>(
                  () => CommandLine.Instance.Parse<Commands2>( args ) );
         }
     }

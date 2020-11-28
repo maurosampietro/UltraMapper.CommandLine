@@ -10,7 +10,7 @@ namespace UltraMapper.CommandLine.Mappers
 {
     public class DefinitionHelper
     {
-        private static Dictionary<Type, List<ParameterDefinition>> _cache
+        private static readonly Dictionary<Type, List<ParameterDefinition>> _cache
             = new Dictionary<Type, List<ParameterDefinition>>();
 
         public static IEnumerable<ParameterDefinition> GetCommandDefinitions<T>()
@@ -46,13 +46,15 @@ namespace UltraMapper.CommandLine.Mappers
                     optionAttribute = new OptionAttribute();
 
                 if( !Regex.IsMatch( name, @"^\w+$" ) )
-                    throw new Exception( "Command name must be a non-empty alphanumerical name containing no special characters" );
+                    throw new InvalidNameException( name );
 
                 ParameterDefinition[] subparameters = null;
 
                 Type type = null;
+                var memberType = MemberTypes.UNDEFINED;
                 if( command.Item is MethodInfo methodInfo )
                 {
+                    memberType = MemberTypes.METHOD;
                     if( !methodInfo.TryGetMemberType( out type ) )
                     {
 
@@ -62,6 +64,7 @@ namespace UltraMapper.CommandLine.Mappers
                 }
                 else
                 {
+                    memberType = MemberTypes.PROPERTY;
                     type = command.Item.GetMemberType();
                     subparameters = GetDefInternal( command ).ToArray();
                 }
@@ -71,7 +74,8 @@ namespace UltraMapper.CommandLine.Mappers
                     Options = optionAttribute,
                     Name = name,
                     SubParams = subparameters,
-                    Type = type
+                    Type = type,
+                    MemberType = memberType
                 };
             }
         }
@@ -88,7 +92,7 @@ namespace UltraMapper.CommandLine.Mappers
                     methodParam.Name : optionAttribute.Name;
 
                 if( !Regex.IsMatch( name, @"^\w+$" ) )
-                    throw new Exception( "Command name must be a non empty alphanumerical name containing no special characters" );
+                    throw new InvalidNameException( name );
 
                 if( optionAttribute == null )
                     optionAttribute = new OptionAttribute();
@@ -102,7 +106,8 @@ namespace UltraMapper.CommandLine.Mappers
                     Name = name,
                     Options = optionAttribute,
                     Type = methodParam.ParameterType,
-                    SubParams = subparameters
+                    SubParams = subparameters,
+                    MemberType = MemberTypes.METHOD_PARAM                    
                 };
             }
         }

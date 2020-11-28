@@ -37,7 +37,7 @@ namespace UltraMapper.CommandLine
                     //if( autoparser.HelpProvider.ShowHelpOnError )
                     //    autoparser.Parse<T>( $"--{autoparser.HelpProvider.HelpCommandDefinition.Name} {argumentEx.CommandDefinition.Name}" );
                 }
-                catch( CommandLineException ex )
+                catch( UltraMapperCommandLineException ex )
                 {
                     Console.WriteLine( ex.Message );
                     Console.WriteLine();
@@ -85,7 +85,7 @@ namespace UltraMapper.CommandLine
                     //if( autoparser.HelpProvider.ShowHelpOnError )
                     //    autoparser.Parse<T>( $"--{autoparser.HelpProvider.HelpCommandDefinition.Name} {argumentEx.CommandDefinition.Name}" );
                 }
-                catch( CommandLineException ex )
+                catch( UltraMapperCommandLineException ex )
                 {
                     Console.WriteLine( ex.Message );
                     Console.WriteLine();

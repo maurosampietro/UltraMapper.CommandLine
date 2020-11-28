@@ -179,6 +179,6 @@ namespace UltraMapper.CommandLine.UnitTest.UltraMapper.Extensions
             var parsed = CommandLine.Instance.Parse<Commands>( args );
 
             Assert.IsTrue( parsed.SomeCommand.SubLevel2.SubLevel3.G == "g" );
-        }
+        }        
     }
 }

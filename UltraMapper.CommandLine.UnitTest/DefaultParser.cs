@@ -14,14 +14,14 @@ namespace UltraMapper.CommandLine.UnitTest
         public void WrongCommandSyntax()
         {
             var args = "open true";
-            ShouldThrow<CommandLineSyntaxErrorException>( args );
+            ShouldThrow<SyntaxErrorException>( args );
         }
 
         [TestMethod]
         public void WrongCommandSyntax2()
         {
             var args = "open true --move a b";
-            ShouldThrow<CommandLineSyntaxErrorException>( args );
+            ShouldThrow<SyntaxErrorException>( args );
         }
 
         [TestMethod]

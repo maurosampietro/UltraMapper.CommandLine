@@ -30,6 +30,31 @@ namespace UltraMapper.CommandLine.UnitTest
             public ExchangeCommand Exchange { get; set; }
         }
 
+        public class Commands2
+        {
+            public class MoveCommand2
+            {
+                [Option( IsRequired = true, Order = 0 )]
+                public string From { get; set; }
+
+                [Option( IsRequired = true, Order = 1 )]
+                public string To { get; set; }
+            }
+
+            public class MoveCommand
+            {
+                [Option( IsRequired = true, Order = 0 )]
+                public string From { get; set; }
+
+                [Option( IsRequired = true, Order = 1 )]
+                public string To { get; set; }
+
+                public MoveCommand2 Inner2 { get; set; }
+            }
+
+            public MoveCommand Move { get; set; }
+        }
+
         public class DuplicateCommandNames
         {
             public string Move { get; set; }
@@ -44,7 +69,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void MultipleCommandWithSameOption()
         {
             var args = "--move a b";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<DuplicateCommandException>(
                 () => CommandLine.Instance.Parse<DuplicateCommandNames>( args ) );
         }
 
@@ -60,7 +85,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void WrongNumberOfArgs()
         {
             var args = "--open false true false";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                 () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
@@ -76,7 +101,7 @@ namespace UltraMapper.CommandLine.UnitTest
         [TestMethod]
         public void MultipleIdenticalNamedParams()
         {
-            var args = "--move from=fromhere to=tohere from=fromhere2 to=tohere2";
+            var args = "--move from=fromhere from=fromhere2";
             Assert.ThrowsException<DuplicateArgumentException>(
                 () => CommandLine.Instance.Parse<Commands>( args ) );
         }
@@ -84,7 +109,7 @@ namespace UltraMapper.CommandLine.UnitTest
         [TestMethod]
         public void MultipleIdenticalNamedParamsDifferentCases()
         {
-            var args = "--move from=fromhere TO=tohere FROM=fromhere2 to=tohere2";
+            var args = "--move from=fromhere FROM=fromhere2";
             Assert.ThrowsException<DuplicateArgumentException>(
                 () => CommandLine.Instance.Parse<Commands>( args ) );
         }
@@ -92,9 +117,9 @@ namespace UltraMapper.CommandLine.UnitTest
         [TestMethod]
         public void MultipleIdenticalNamedParamsNested()
         {
-            var args = "--move from=fromhere to=tohere (from=something (a=a a=b))";
+            var args = "--move from=fromhere to=tohere inner2=(from=a from=b)";
             Assert.ThrowsException<DuplicateArgumentException>(
-                () => CommandLine.Instance.Parse<Commands>( args ) );
+                () => CommandLine.Instance.Parse<Commands2>( args ) );
         }
 
         [TestMethod]
@@ -129,11 +154,11 @@ namespace UltraMapper.CommandLine.UnitTest
         {
             var args = "--move fromhere";
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                 () => CommandLine.Instance.Parse<Commands>( args ) );
 
             args = "--move to=toherehere";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                 () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
@@ -173,7 +198,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void NonExistingCommand()
         {
             var args = "--someNonExistingCommand SomeWrongParam=this SomeOtherWrongParam=that";
-            Assert.ThrowsException<UndefinedParameterException>(
+            Assert.ThrowsException<UndefinedCommandException>(
                  () => CommandLine.Instance.Parse<Commands>( args ) );
         }
     }

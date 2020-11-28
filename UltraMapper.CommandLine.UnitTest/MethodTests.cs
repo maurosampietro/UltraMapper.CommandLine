@@ -32,7 +32,11 @@ namespace UltraMapper.CommandLine.UnitTest
         public void TooManyParams()
         {
             var args = $"--{nameof( Commands.ParameterlessMethod )} thisparamnotneeded";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
+                () => CommandLine.Instance.Parse<Commands>( args ) );
+
+            args = $"--{nameof( Commands.ParameterlessMethod )} thisparamnotneeded northisone";
+            Assert.ThrowsException<ArgumentNumberException>(
                 () => CommandLine.Instance.Parse<Commands>( args ) );
         }
     }
@@ -112,7 +116,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void MissingParams()
         {
             var args = $"--{nameof( Commands1.Open )}";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                 () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
@@ -120,7 +124,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void TooManyParams()
         {
             var args = $"--{nameof( Commands1.Open )} thispath notneededparam";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                 () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
@@ -304,15 +308,15 @@ namespace UltraMapper.CommandLine.UnitTest
         public void MissingParams()
         {
             var args = "--move";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                 () => CommandLine.Instance.Parse<Commands1>( args ) );
 
             args = "--move to=tohere";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                    () => CommandLine.Instance.Parse<Commands1>( args ) );
 
             args = "--move from=fromhere";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                    () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
@@ -320,15 +324,15 @@ namespace UltraMapper.CommandLine.UnitTest
         public void MissingParams2()
         {
             var args = "--move from to";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                 () => CommandLine.Instance.Parse<Commands5>( args ) );
 
             args = "--move anotherparam=dunno to=tohere";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                    () => CommandLine.Instance.Parse<Commands5>( args ) );
 
             args = "--move from=fromhere to=to";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                    () => CommandLine.Instance.Parse<Commands5>( args ) );
         }
 
@@ -336,7 +340,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void TooManyParams1()
         {
             var args = "--move fromhere tohere notneeded";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                 () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
@@ -344,7 +348,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void TooManyParams2()
         {
             var args = "--move to=tohere from=fromhere p3=notneeded";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                 () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
@@ -352,7 +356,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void TooManyParams3()
         {
             var args = "--move fromhere tohere p3=notneeded";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                 () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
@@ -360,7 +364,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void TooManyParams4()
         {
             var args = "--move fromhere to=tohere p3=notneeded";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<ArgumentNumberException>(
                 () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 
