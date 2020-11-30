@@ -103,7 +103,7 @@ The above example shows a few basic features to start with:
         - Use _--_ <b>double dashes</b> to call a method or set a property defined in your _'commands class'_
         - Use _()_ <b>round brackets</b> to provide values to a <b>complex type</b>    
         - Use _[]_ <b>square brackets</b> to provide values to a <b>collection</b>    
-        - Anonymous and named params
+        - Parametera can be assigned anonymously or by explicitly specifying their names (named params)
    
        This is not all you need to know about the syntax    
        [Read more about the syntax here](https://github.com/maurosampietro/UltraMapper.CommandLine/wiki/Default-syntax)     
