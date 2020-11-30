@@ -28,6 +28,7 @@ namespace UltraMapper.CommandLine
         public ParameterDefinition()
         {
             this.Options = new OptionAttribute();
+            this.SubParams = Array.Empty<ParameterDefinition>();
         }
 
         public override string ToString()

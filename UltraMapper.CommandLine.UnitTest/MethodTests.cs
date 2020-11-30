@@ -300,7 +300,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void MixedNamedNonNamedParamsWrongOrder()
         {
             var args = "--move to=tohere fromhere";
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsException<MisplacedNamedParamException>(
                 () => CommandLine.Instance.Parse<Commands1>( args ) );
         }
 

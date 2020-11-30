@@ -49,7 +49,7 @@ namespace UltraMapper.CommandLine.Extensions
             var subParam = Expression.Parameter( typeof( IParsedParam ), "paramLoopVar" );
             var subParamsAccess = Expression.Property( context.SourceInstance, nameof( ComplexParam.SubParams ) );
 
-            var propertiesAssigns = MemberExpressionBuilder.GetMemberAssignments( context,
+            var propertiesAssigns = new MemberExpressionBuilder( null ).GetMemberAssignments( context,
                 targetMembers, subParam, MapperConfiguration );
 
             var expression = !propertiesAssigns.Any() ? (Expression)Expression.Empty() : Expression.Block

@@ -10,44 +10,43 @@ namespace UltraMapper.CommandLine.Mappers
 {
     public class DefinitionHelper
     {
-        private static readonly Dictionary<Type, List<ParameterDefinition>> _cache
-            = new Dictionary<Type, List<ParameterDefinition>>();
+        private static readonly Dictionary<MemberInfo, ParameterDefinition[]> _cache =
+            new Dictionary<MemberInfo, ParameterDefinition[]>();
 
         public static IEnumerable<ParameterDefinition> GetCommandDefinitions<T>()
         {
             return GetCommandDefinitions( typeof( T ) );
         }
 
-        public static IEnumerable<ParameterDefinition> GetCommandDefinitions( Type type )
+        public static ParameterDefinition[] GetCommandDefinitions( Type type )
         {
-            if( !_cache.TryGetValue( type, out List<ParameterDefinition> definition ) )
+            if( !_cache.TryGetValue( type, out ParameterDefinition[] definition ) )
             {
                 var tree = TypeStructure.GetStructure( type );
-                definition = GetDefInternal( tree.Root ).ToList();
-                _cache.Add( type, definition );
+                definition = GetDefInternal( tree.Root );
             }
 
             return definition;
         }
 
-        private static readonly Dictionary<MemberInfo, IEnumerable<ParameterDefinition>> _memberDefinitions =
-            new Dictionary<MemberInfo, IEnumerable<ParameterDefinition>>();
-
-        private static IEnumerable<ParameterDefinition> GetDefInternal( TreeNode<MemberInfo> root )
+        private static ParameterDefinition[] GetDefInternal( TreeNode<MemberInfo> root )
         {
-            //if( root?.Item != null && _memberDefinitions.TryGetValue( root.Item, out IEnumerable<ParameterDefinition> subparamdefs ) )
-            //    foreach( var item in subparamdefs )
-            //        yield return item;
-
-            //the roots are the commands, the leaves are the parameters
-            foreach( var command in root.Children )
+            var nodeType = root.Item.GetMemberType();
+            if( _cache.TryGetValue( nodeType, out ParameterDefinition[] values ) )
             {
-                var optionAttribute = command.Item.GetCustomAttribute<OptionAttribute>();
+                return values;
+            }
+
+            var subs = new ParameterDefinition[ root.Children.Count ];
+            _cache.Add( nodeType, subs );
+
+            for( int i = 0; i < root.Children.Count; i++ )
+            {
+                var command = root.Children[ i ];
+
+                var optionAttribute = command.Item.GetCustomAttribute<OptionAttribute>() ?? new OptionAttribute();
                 if( optionAttribute?.IsIgnored == true )
                     continue;
-
-                if( optionAttribute == null )
-                    optionAttribute = new OptionAttribute();
 
                 string name = String.IsNullOrWhiteSpace( optionAttribute?.Name ) ?
                     command.Item.Name : optionAttribute.Name;
@@ -55,7 +54,7 @@ namespace UltraMapper.CommandLine.Mappers
                 if( !Regex.IsMatch( name, @"^\w+$" ) )
                     throw new InvalidNameException( name );
 
-                ParameterDefinition[] subparameters = null;
+                var subparameters = Array.Empty<ParameterDefinition>();
 
                 Type type = null;
                 var memberType = MemberTypes.UNDEFINED;
@@ -73,7 +72,11 @@ namespace UltraMapper.CommandLine.Mappers
                 {
                     memberType = MemberTypes.PROPERTY;
                     type = command.Item.GetMemberType();
-                    subparameters = GetDefInternal( command ).ToArray();
+
+                    if( !type.IsBuiltIn( true ) )
+                    {
+                        subparameters = GetDefInternal( command );
+                    }
                 }
 
                 var paramDefinition = new ParameterDefinition()
@@ -84,9 +87,11 @@ namespace UltraMapper.CommandLine.Mappers
                     Type = type,
                     MemberType = memberType
                 };
-                
-                yield return paramDefinition;
+
+                subs[ i ] = paramDefinition;
             }
+
+            return subs;
         }
 
         private static IEnumerable<ParameterDefinition> GetMethodParams( TreeNode<MemberInfo> node, MethodInfo methodInfo )
@@ -96,10 +101,7 @@ namespace UltraMapper.CommandLine.Mappers
             {
                 var methodParam = methodParams[ i ];
 
-                var optionAttribute = methodParam.GetCustomAttribute<OptionAttribute>();
-                if( optionAttribute == null )
-                    optionAttribute = new OptionAttribute();
-
+                var optionAttribute = methodParam.GetCustomAttribute<OptionAttribute>() ?? new OptionAttribute();
                 optionAttribute.IsRequired = !methodParam.IsOptional;
 
                 string name = String.IsNullOrWhiteSpace( optionAttribute.Name ) ?
@@ -108,7 +110,7 @@ namespace UltraMapper.CommandLine.Mappers
                 if( !Regex.IsMatch( name, @"^\w+$" ) )
                     throw new InvalidNameException( name );
 
-                var subparameters = GetDefInternal( node.Children[ i ] ).ToArray();
+                var subparameters = GetDefInternal( node.Children[ i ] );
 
                 yield return new ParameterDefinition()
                 {
@@ -119,6 +121,11 @@ namespace UltraMapper.CommandLine.Mappers
                     MemberType = MemberTypes.METHOD_PARAM
                 };
             }
+        }
+
+        internal static void Update( Type type, ParameterDefinition[] parameterDefinitions )
+        {
+            _cache[ type ] = parameterDefinitions;
         }
     }
 }

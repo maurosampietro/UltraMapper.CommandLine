@@ -13,12 +13,12 @@ namespace UltraMapper.CommandLine.Tree
             new MethodProvider()
         };
 
-        public static Tree<MemberInfo> GetStructure( Type obj )
+        public static Tree<MemberInfo> GetStructure( Type type )
         {
-            var tree = new Tree<MemberInfo>();
+            var tree = new Tree<MemberInfo>( type );
 
             foreach( var memberProvider in _memberProviders )
-                memberProvider.PopulateTree( tree.Root, obj );
+                memberProvider.PopulateTree( tree.Root, type );
 
             return tree;
         }
@@ -77,14 +77,20 @@ namespace UltraMapper.CommandLine.Tree
 
         public void PopulateTree( TreeNode<MemberInfo> node, Type type )
         {
-            //if( _typeNodes.ContainsKey( type ) )
-            //    return;
+            if( _typeNodes.TryGetValue( type, out TreeNode<MemberInfo> processedNode ) )
+            {
+                node.Children = processedNode.Children;
+                return;
+            }
 
-            //_typeNodes.Add( type, node );
+            _typeNodes.Add( type, node );
 
             var properties = type.GetProperties( _bindingAttrs );
             foreach( var property in properties )
             {
+                if( property.GetSetMethod() == null )
+                    continue;
+
                 var optionAttribute = property.GetCustomAttribute<OptionAttribute>();
                 if( optionAttribute?.IsIgnored == true ) continue;
 

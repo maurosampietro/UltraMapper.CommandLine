@@ -38,9 +38,13 @@ namespace UltraMapper.CommandLine
 
         public void Initialize( Type type )
         {
-            var defs = (List<ParameterDefinition>)DefinitionHelper.GetCommandDefinitions( type );
+            var defs = DefinitionHelper.GetCommandDefinitions( type ).ToList();
             if( !defs.Any( cmd => cmd.Name.ToLower() == this.HelpCommandDefinition.Name.ToLower() ) )
+            {
                 defs.Add( HelpCommandDefinition );
+
+                DefinitionHelper.Update( type, defs.ToArray() );
+            }
         }
 
         public void GetHelp( Type type, IParsedParam parsedParam )

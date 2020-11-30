@@ -114,6 +114,9 @@ namespace UltraMapper.CommandLine
 
         private class ParsedCommandSpecificChecks
         {
+            private ComplexParamSpecificChecks _complexTypeChecks =
+                new ComplexParamSpecificChecks();
+
             public void Checks( ParsedCommand param, Type target, ParameterDefinition[] paramsDef )
             {
                 CheckThrowCommandExists( param, target, paramsDef );
@@ -185,35 +188,15 @@ namespace UltraMapper.CommandLine
 
             protected void CheckThrowNamedParamsOrder( ParsedCommand command )
             {
-                int lastNamedParamIndex = -1;
-                int lastNonNamedParamIndex = -1;
-
                 if( command.Param is ComplexParam cp )
-                {
-                    int i = 0;
-                    foreach( var subparam in cp.SubParams )
-                    {
-                        if( String.IsNullOrWhiteSpace( subparam.Name ) )
-                            lastNonNamedParamIndex = i;
-                        else
-                            lastNamedParamIndex = i;
-
-                        i++;
-                    }
-
-                    if( (lastNamedParamIndex > -1 && lastNonNamedParamIndex > -1) &&
-                            lastNonNamedParamIndex > lastNamedParamIndex )
-                    {
-                        throw new ArgumentException( "Named parameters must appear after all non-named parameters" );
-                    }
-                }
+                    _complexParamChecks.CheckThrowNamedParamsOrder( cp );
             }
 
             protected void CheckThrowParamNumber( ParsedCommand param, ParameterDefinition[] paramsDef )
             {
                 var paramDef = paramsDef.FirstOrDefault( p => p.Name.ToLower() == param.Name.ToLower() );
 
-                int requiredParams = paramDef.SubParams.Count( cmdi => cmdi.Options.IsRequired );
+                int requiredParams = paramDef.SubParams.Count( cmdi => cmdi.Options?.IsRequired ?? false );
                 int paramsCount = paramDef.SubParams.Length;
 
                 //implicit set for booleans
@@ -324,7 +307,7 @@ namespace UltraMapper.CommandLine
                 }
             }
 
-            protected void CheckThrowNamedParamsOrder( ComplexParam param )
+            public void CheckThrowNamedParamsOrder( ComplexParam param )
             {
                 int lastNamedParamIndex = -1;
                 int lastNonNamedParamIndex = -1;
@@ -343,7 +326,7 @@ namespace UltraMapper.CommandLine
                 if( (lastNamedParamIndex > -1 && lastNonNamedParamIndex > -1) &&
                         lastNonNamedParamIndex > lastNamedParamIndex )
                 {
-                    throw new ArgumentException( "Named parameters must appear after all non-named parameters" );
+                    throw new MisplacedNamedParamException( param );
                 }
             }
 

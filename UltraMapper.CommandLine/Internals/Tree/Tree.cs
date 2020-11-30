@@ -7,9 +7,9 @@ namespace UltraMapper.CommandLine.Tree
     {
         public TreeNode<T> Root { get; private set; }
 
-        public Tree()
+        public Tree( T root )
         {
-            this.Root = new TreeNode<T>();
+            this.Root = new TreeNode<T>( root, null );
         }
 
         public IEnumerable<TreeNode<T>> GetLeaves()
