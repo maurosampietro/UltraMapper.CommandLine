@@ -7,7 +7,7 @@ using UltraMapper.MappingExpressionBuilders;
 
 namespace UltraMapper.CommandLine.Extensions
 {
-    public class ParsedCommandsExpressionBuilder : ReferenceMapper
+    public class ParsedCommandsExpressionBuilder : CollectionMapper
     {
         public ParsedCommandsExpressionBuilder( Configuration configuration )
             : base( configuration ) { }
@@ -22,15 +22,12 @@ namespace UltraMapper.CommandLine.Extensions
         public override LambdaExpression GetMappingExpression( Type source, Type target, IMappingOptions options )
         {
             var context = (CollectionMapperContext)this.GetMapperContext( source, target, options );
-            var inner = MapperConfiguration[ typeof( ParsedCommand ), target ].MappingExpression;
+            var mappingExpression = MapperConfiguration[ typeof( ParsedCommand ), target ].MappingExpression;
 
-            var body = Expression.Block
-            (
-                ExpressionLoops.ForEach( context.SourceInstance, context.SourceCollectionLoopingVar,
-                    Expression.Invoke( inner, context.ReferenceTracker, 
-                        context.SourceCollectionLoopingVar, context.TargetInstance ), 
-                        context.Break, context.Continue )
-            );
+            var body = ExpressionLoops.ForEach( context.SourceInstance, context.SourceCollectionLoopingVar,
+                Expression.Invoke( mappingExpression, context.ReferenceTracker,
+                    context.SourceCollectionLoopingVar, context.TargetInstance ),
+                    context.Break, context.Continue );            
 
             var delegateType = typeof( Action<,,> ).MakeGenericType(
                  context.ReferenceTracker.Type, context.SourceInstance.Type,
@@ -38,11 +35,6 @@ namespace UltraMapper.CommandLine.Extensions
 
             return Expression.Lambda( delegateType, body,
                 context.ReferenceTracker, context.SourceInstance, context.TargetInstance );
-        }
-
-        protected override ReferenceMapperContext GetMapperContext( Type source, Type target, IMappingOptions options )
-        {
-            return new CollectionMapperContext( source, target, options );
         }
     }
 }

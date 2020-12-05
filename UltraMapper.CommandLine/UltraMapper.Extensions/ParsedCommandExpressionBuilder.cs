@@ -10,13 +10,13 @@ namespace UltraMapper.CommandLine.Extensions
     public class ParsedCommandExpressionBuilder : ReferenceMapper
     {
         private readonly IHelpProvider _helpProvider;
-        private Expression<Action<Type, IParsedParam>> helperCall;
+        private Expression<Action<Type, IParsedParam>> _helperCall;
 
         public ParsedCommandExpressionBuilder( Configuration configuration, IHelpProvider helpProvider )
             : base( configuration )
         {
             _helpProvider = helpProvider;
-            helperCall = ( type, param ) => _helpProvider.GetHelp( type, param );
+            _helperCall = ( type, param ) => _helpProvider.GetHelp( type, param );
         }
 
         public override bool CanHandle( Type source, Type target )
@@ -27,7 +27,7 @@ namespace UltraMapper.CommandLine.Extensions
 
         public override LambdaExpression GetMappingExpression( Type source, Type target, IMappingOptions options )
         {
-            var context = this.GetMapperContext( source, target, options );          
+            var context = this.GetMapperContext( source, target, options );
 
             var targetMembers = target.GetMembers( BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly )
                 .Where( m => (m is MethodInfo mi && mi.IsPublic && !mi.IsStatic && !mi.IsSpecialName) ||
@@ -39,17 +39,14 @@ namespace UltraMapper.CommandLine.Extensions
                 } )
                 .Where( m => !m.Options.IsIgnored )
                 .OrderByDescending( info => info.Options.IsRequired )
-                .ThenBy( info => info.Options.Order ) //once sorted, we will actually use the index
+                .ThenBy( info => info.Options.Order )
                 .Select( m => m.Member )
                 .ToArray();
 
             var subParam = Expression.Parameter( typeof( IParsedParam ), "param" );
 
-            var memberAssign = new MemberExpressionBuilder(null).GetMemberAssignments( context,
+            var memberAssign = new MemberExpressionBuilder( _mapper.MappingConfiguration ).GetMemberAssignments( context,
                 targetMembers, subParam, MapperConfiguration );
-
-            var nameToLowerCase = Expression.Call( Expression.Property( subParam,
-                   nameof( IParsedParam.Name ) ), nameof( String.ToLower ), null, null );
 
             var help = Expression.IfThen
             (
@@ -57,7 +54,7 @@ namespace UltraMapper.CommandLine.Extensions
                     Expression.Call( Expression.Property( context.SourceInstance,
                     nameof( ParsedCommand.Name ) ), nameof( String.ToLower ), null, null ) ),
 
-                Expression.Invoke( helperCall, Expression.Constant( context.TargetInstance.Type ),
+                Expression.Invoke( _helperCall, Expression.Constant( context.TargetInstance.Type ),
                     Expression.Property( context.SourceInstance, nameof( ParsedCommand.Param ) ) )
             );
 

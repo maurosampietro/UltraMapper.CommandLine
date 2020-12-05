@@ -9,7 +9,11 @@ namespace UltraMapper.CommandLine
 {
     /// <summary>
     /// The parser does not know about the structure of the target type T. 
-    /// If a SimpleParam maps to a non primitive type then we need to encapsulate the SimpleParam in a ComplexParam.
+    ///
+    /// An adapter is needed to prepare the args for the mapping process by manipulating
+    /// them so that they conform to the structure ot the target type T.
+    /// 
+    /// If a SimpleParam maps to a non-primitive type then we need to encapsulate the SimpleParam in a ComplexParam.
     /// </summary>
     public class ParsedParametersAdapter
     {

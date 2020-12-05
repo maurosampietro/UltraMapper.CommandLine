@@ -42,21 +42,21 @@ namespace UltraMapper.CommandLine.Extensions
                 } )
                 .Where( m => !m.Options.IsIgnored )
                 .OrderByDescending( info => info.Options.IsRequired )
-                .ThenBy( info => info.Options.Order ) //once sorted, we will actually use the index
+                .ThenBy( info => info.Options.Order )
                 .Select( m => m.Member )
                 .ToArray();
 
             var subParam = Expression.Parameter( typeof( IParsedParam ), "paramLoopVar" );
             var subParamsAccess = Expression.Property( context.SourceInstance, nameof( ComplexParam.SubParams ) );
 
-            var propertiesAssigns = new MemberExpressionBuilder( null ).GetMemberAssignments( context,
-                targetMembers, subParam, MapperConfiguration );
+            var propertiesAssigns = new MemberExpressionBuilder( _mapper.MappingConfiguration )
+                .GetMemberAssignments( context, targetMembers, subParam, MapperConfiguration );
 
             var expression = !propertiesAssigns.Any() ? (Expression)Expression.Empty() : Expression.Block
             (
                 new[] { subParam },
-                
-                ExpressionLoops.ForEach( subParamsAccess, subParam, 
+
+                ExpressionLoops.ForEach( subParamsAccess, subParam,
                     Expression.Block( propertiesAssigns ) )
             );
 

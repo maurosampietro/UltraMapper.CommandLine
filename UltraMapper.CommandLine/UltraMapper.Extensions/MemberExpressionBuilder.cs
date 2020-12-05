@@ -12,9 +12,8 @@ namespace UltraMapper.CommandLine.Extensions
 {
     public class MemberExpressionBuilder : ReferenceMapper
     {
-        public MemberExpressionBuilder( Configuration configuration ) : base( configuration )
-        {
-        }
+        public MemberExpressionBuilder( Configuration configuration )
+            : base( configuration ) { }
 
         public IEnumerable<Expression> GetMemberAssignments( ReferenceMapperContext context,
             MemberInfo[] targetMembers, ParameterExpression subParam, Configuration MapperConfiguration )
@@ -24,88 +23,64 @@ namespace UltraMapper.CommandLine.Extensions
                 var memberInfo = targetMembers[ i ];
                 var assignment = GetMemberAssignment( context, subParam, memberInfo, MapperConfiguration );
 
-                var nameToLowerCase = Expression.Call( Expression.Property( subParam,
-                    nameof( IParsedParam.Name ) ), nameof( String.ToLower ), null, null );
-
                 var optionAttribute = memberInfo.GetCustomAttribute<OptionAttribute>();
-                string memberName = String.IsNullOrWhiteSpace( optionAttribute?.Name ) ?
-                    memberInfo.Name : optionAttribute.Name;
+                string memberNameLowerCase = String.IsNullOrWhiteSpace( optionAttribute?.Name ) ?
+                    memberInfo.Name.ToLower() : optionAttribute.Name.ToLower();
 
                 if( context.SourceInstance.Type == typeof( ParsedCommand ) )
-                {
+                { 
+                    Expression implicitBoolAssignment = null;
+
                     if( memberInfo is MethodInfo mi )
                     {
                         //method calls only available in ParsedCommand where calling by name is mandatory
-
-                        var methodParams = mi.GetParameters();
+                        var methodParams = mi.GetParameters();                      
                         if( methodParams.Length == 1 && methodParams[ 0 ].ParameterType == typeof( bool ) )
                         {
-                            var subParamsAccess = Expression.Property( context.SourceInstance, nameof( ParsedCommand.Param ) );
-                            yield return Expression.IfThen
-                            (
-                                Expression.Equal( Expression.Constant( memberName.ToLower() ),
-                                    Expression.Call( Expression.Property( context.SourceInstance,
-                                    nameof( ParsedCommand.Name ) ), nameof( String.ToLower ), null, null ) ),
-
-                                Expression.IfThenElse
-                                (
-                                    Expression.Equal( subParamsAccess, Expression.Constant( null, typeof( IParsedParam ) ) ),
-                                    Expression.Call( context.TargetInstance, mi, Expression.Constant( true ) ),
-                                    assignment
-                                )
-                            );
-                        }
-                        else
-                        {
-                            yield return Expression.IfThen
-                            (
-                                Expression.Equal( Expression.Constant( memberName.ToLower() ),
-                                    Expression.Call( Expression.Property( context.SourceInstance,
-                                    nameof( ParsedCommand.Name ) ), nameof( String.ToLower ), null, null ) ),
-
-                                assignment
-                            );
+                            implicitBoolAssignment = Expression.Call( context.TargetInstance, mi, Expression.Constant( true ) );
                         }
                     }
                     else if( memberInfo is PropertyInfo pi )
                     {
                         if( pi.PropertyType == typeof( bool ) )
                         {
-                            var subParamsAccess = Expression.Property( context.SourceInstance, nameof( ParsedCommand.Param ) );
-                            yield return Expression.IfThen
-                            (
-                                Expression.Equal( Expression.Constant( memberName.ToLower() ),
-                                    Expression.Call( Expression.Property( context.SourceInstance,
-                                    nameof( ParsedCommand.Name ) ), nameof( String.ToLower ), null, null ) ),
-
-                                Expression.IfThenElse
-                                (
-                                    Expression.Equal( subParamsAccess, Expression.Constant( null, typeof( IParsedParam ) ) ),
-                                    Expression.Assign( Expression.Property( context.TargetInstance, memberInfo.Name ), Expression.Constant( true ) ),
-                                    assignment
-                                )
-                            );
-                        }
-                        else
-                        {
-                            yield return Expression.IfThen
-                            (
-                                Expression.Equal( Expression.Constant( memberName.ToLower() ),
-                                    Expression.Call( Expression.Property( context.SourceInstance,
-                                    nameof( ParsedCommand.Name ) ), nameof( String.ToLower ), null, null ) ),
-
-                                assignment
-                            );
+                            implicitBoolAssignment = Expression.Assign( Expression.Property(
+                                context.TargetInstance, memberInfo.Name ), Expression.Constant( true ) );
                         }
                     }
+
+                    if( implicitBoolAssignment != null )
+                    {
+                        var subParamsAccess = Expression.Property( context.SourceInstance, nameof( ParsedCommand.Param ) );
+                        assignment = Expression.IfThenElse
+                        (
+                            Expression.Equal( subParamsAccess, Expression.Constant( null, typeof( IParsedParam ) ) ),
+                            implicitBoolAssignment,
+                            assignment
+                        );
+                    }
+
+                    var commandNameExp = Expression.Property( context.SourceInstance, nameof( ParsedCommand.Name ) );
+                    var commandNameToLowerExp = Expression.Call( commandNameExp, nameof( String.ToLower ), null, null );
+
+                    yield return Expression.IfThen
+                    (   
+                        //we only check command name
+                        Expression.Equal( Expression.Constant( memberNameLowerCase ), commandNameToLowerExp ),
+                        assignment
+                    );
                 }
                 else
                 {
+                    var nameToLowerCase = Expression.Call( Expression.Property( subParam,
+                        nameof( IParsedParam.Name ) ), nameof( String.ToLower ), null, null );
+
                     yield return Expression.IfThen
                     (
                         Expression.OrElse
-                        (
-                            Expression.Equal( Expression.Constant( memberName.ToLower() ), nameToLowerCase ),
+                        (    
+                            //we check param name and index
+                            Expression.Equal( Expression.Constant( memberNameLowerCase ), nameToLowerCase ),
 
                             Expression.AndAlso
                             (
@@ -139,133 +114,91 @@ namespace UltraMapper.CommandLine.Extensions
         {
             if( memberInfo is PropertyInfo propertyInfo )
             {
-                var setter = memberInfo.GetSetterLambdaExpression();
-
                 if( propertyInfo.PropertyType.IsBuiltIn( true ) )
                 {
                     var conversion = MapperConfiguration[ typeof( SimpleParam ),
                         propertyInfo.PropertyType ].MappingExpression;
 
-                    ////var exceptionParam = Expression.Parameter( typeof( Exception ), "exception" );
-                    ////var ctor = typeof( ArgumentException )
-                    ////    .GetConstructor( new Type[] { typeof( string ), typeof( Exception ) } );
+                    //var exceptionParam = Expression.Parameter( typeof( Exception ), "exception" );
+                    //var ctor = typeof( ArgumentException )
+                    //    .GetConstructor( new Type[] { typeof( string ), typeof( Exception ) } );
 
-                    ////string error = $"Value not assignable to param '{memberInfo.Name.ToLower()}'";// in command '{paramDef.Name}'";
+                    //string error = $"Value not assignable to param '{memberInfo.Name.ToLower()}'";// in command '{paramDef.Name}'";
 
-                    ////var standardBuiltInTypeExp = Expression.TryCatch
-                    ////(
-                    ////    Expression.Invoke( setter, context.TargetInstance,
-                    ////        Expression.Invoke( conversion, Expression.Convert( subParam, typeof( SimpleParam ) ) ) ),
+                    //var standardBuiltInTypeExp = Expression.TryCatch
+                    //(
+                    //    Expression.Invoke( setter, context.TargetInstance,
+                    //        Expression.Invoke( conversion, Expression.Convert( subParam, typeof( SimpleParam ) ) ) ),
 
-                    ////    Expression.Catch( exceptionParam, Expression.Throw
-                    ////    (
-                    ////        Expression.New( ctor, Expression.Constant( error ), exceptionParam ),
-                    ////        typeof( void )
-                    ////    ) )
-                    ////);
+                    //    Expression.Catch( exceptionParam, Expression.Throw
+                    //    (
+                    //        Expression.New( ctor, Expression.Constant( error ), exceptionParam ),
+                    //        typeof( void )
+                    //    ) )
+                    //);
 
                     //return Expression.Invoke( setter, context.TargetInstance,
                     //    Expression.Invoke( conversion, Expression.Convert( subParam, typeof( SimpleParam ) ) ) );
 
+                    var setter = memberInfo.GetSetterLambdaExpression();
+
                     return base.GetSimpleMemberExpressionInternal( conversion,
                         context.TargetInstance, Expression.Convert( subParam, typeof( SimpleParam ) ), setter );
                 }
-                else if( propertyInfo.PropertyType.IsEnumerable() )
+                else
                 {
-                    var mapping = MapperConfiguration[ typeof( ArrayParam ),
-                        propertyInfo.PropertyType ];
+                    Expression sourceToReplace = subParam;
+                    var sourcemappingtype = typeof( ParsedCommand ).GetProperty( nameof( ParsedCommand.Param ) );
+                    if( propertyInfo.PropertyType.IsArray )
+                    {
+                        sourcemappingtype = typeof( ArrayParam ).GetProperty( nameof( ArrayParam.Items ) );
 
-                    var mappingExpression = mapping.MappingExpression;
+                        var itemsProperty = Expression.Property( Expression.Convert( subParam,
+                            typeof( ArrayParam ) ), nameof( ArrayParam.Items ) );
+                        sourceToReplace = itemsProperty;
+                    }
+
+                    var targetsetprop = context.TargetInstance.Type.GetProperty( memberInfo.Name );
+                    var mappingSource = new MappingSource( sourcemappingtype );
+                    var mappingTarget = new MappingTarget( targetsetprop );
+
+                    var typeMapping = new TypeMapping( MapperConfiguration, new TypePair( propertyInfo.PropertyType, targetsetprop.PropertyType ) );
+                    var membermapping = new MemberMapping( typeMapping, mappingSource, mappingTarget );
+                    var membermappingcontext = new MemberMappingContext( membermapping );
 
                     var targetProperty = Expression.Property( context.TargetInstance, memberInfo.Name );
-                    //var mm = new MemberMapping( mapping, , new MappingTarget( setter ) );
+                    var t = new tempTrack();
 
-                    //var memberMappingContext = new MemberMappingContext( mm );
-                    //var collectionAssignment = new CollectionMapper( MapperConfiguration ).GetMemberAssignment( memberMappingContext );
                     var targetType = targetProperty.Type;
                     if( targetProperty.Type.IsInterface || targetProperty.Type.IsAbstract )
                         targetType = typeof( List<> ).MakeGenericType( targetType.GetGenericArguments() );
 
-                    if( targetProperty.Type.IsArray )
-                    {
-                        var getCount = typeof( System.Linq.Enumerable ).GetMethods(
-                            BindingFlags.Static | BindingFlags.Public )
-                        .First( m =>
-                         {
-                             if( m.Name != nameof( System.Linq.Enumerable.Count ) )
-                                 return false;
+                    var mapping = MapperConfiguration[ targetType, targetsetprop.PropertyType ];
 
-                             var parameters = m.GetParameters();
-                             if( parameters.Length != 1 ) return false;
-
-                             return parameters[ 0 ].ParameterType.GetGenericTypeDefinition() == typeof( IEnumerable<> );
-                         } )
-                        .MakeGenericMethod( typeof( IParsedParam ) );
-
-                        Expression GetNewInstanceWithReservedCapacity()
-                        {
-                            var constructorWithCapacity = targetProperty.Type.GetConstructor( new Type[] { typeof( int ) } );
-                            if( constructorWithCapacity == null ) return null;
-
-                            var itemsProperty = Expression.Property( Expression.Convert( subParam,
-                                typeof( ArrayParam ) ), nameof( ArrayParam.Items ) );
-
-                            var getCountMethod = Expression.Call( null, getCount, itemsProperty );
-                            return Expression.New( constructorWithCapacity, getCountMethod );
-                        }
-
-                        return Expression.Block
-                        (
-                            Expression.IfThen( Expression.Equal( targetProperty, Expression.Constant( null, targetProperty.Type ) ),
-                                Expression.Assign( targetProperty, GetNewInstanceWithReservedCapacity() ) ),
-
-                            Expression.Invoke( mappingExpression, context.ReferenceTracker,
-                                Expression.Convert( subParam, typeof( ArrayParam ) ), targetProperty )
-                        );
-                    }
-                    else
-                    {
-                        return Expression.Block
-                        (
-                            Expression.IfThen( Expression.Equal( targetProperty, Expression.Constant( null, targetProperty.Type ) ),
-                                Expression.Assign( targetProperty, Expression.New( targetType ) ) ),
-
-                            Expression.Invoke( mappingExpression, context.ReferenceTracker,
-                                Expression.Convert( subParam, typeof( ArrayParam ) ), targetProperty )
-                        );
-                    }
-                }
-                else
-                {
-                    var targetProperty = Expression.Property( context.TargetInstance, memberInfo.Name );
-
-                    var t = new tempTrack();
-                    var memberNewInstance = base.GetMemberNewInstanceInternal( subParam, subParam.Type, targetProperty.Type, null );
-
-                    var memberAssignment = Expression.IfThen( Expression.Equal( targetProperty, Expression.Constant( null, targetProperty.Type ) ),
-                            Expression.Assign( targetProperty, memberNewInstance ) );
+                    var memberAssignment = ((ReferenceMapper)mapping.Mapper).GetMemberAssignment( membermappingcontext )
+                        .ReplaceParameter( sourceToReplace, "sourceValue" )
+                        .ReplaceParameter( targetProperty, "targetValue" )
+                        .ReplaceParameter( context.TargetInstance, "instance" );
 
                     var mainExp = t.mainexpression(
                         context.ReferenceTracker,
                         subParam, targetProperty,
-                        memberAssignment, context.Mapper,
-                        new Mapper( MapperConfiguration ),
+                        memberAssignment, context.Mapper, _mapper,
                         Expression.Constant( null, typeof( IMapping ) ) );
+
                     return mainExp;
 
                     //version better integrated in ultramapper:
-
-                    //var targetsetprop = context.TargetInstance.Type.GetProperty( memberInfo.Name );
-                    //var mappingSource = new MappingSource( propertyInfo.GetGetterLambdaExpression() );
-                    //var mappingTarget = new MappingTarget( targetsetprop.GetSetterLambdaExpression() );
-                    //var typeMapping = new TypeMapping( MapperConfiguration, new TypePair( propertyInfo.PropertyType, targetsetprop.PropertyType ) );
-                    //var membermapping = new MemberMapping( typeMapping, mappingSource, mappingTarget );
-
-                    //var memberAssignment2 = Expression.IfThen( Expression.Equal( targetProperty, Expression.Constant( null, targetProperty.Type ) ),
-                    //    Expression.Assign( targetProperty, Expression.New( targetProperty.Type ) ) );
-                    //var integratedexp = t.GetComplexMemberExpression( membermapping, memberAssignment2 );
-
-                    //return integratedexp;
+                    //return Expression.Block
+                    //(
+                    //    new[] { context.Mapper },
+                    //    Expression.Assign( context.Mapper, Expression.Constant( _mapper ) ),
+                    //    t.GetComplexMemberExpression( membermapping, memberAssignment )
+                    //)
+                    //.ReplaceParameter( context.SourceInstance, "instance" )
+                    //.ReplaceParameter( context.TargetInstance, "instance" )
+                    //.ReplaceParameter( context.ReferenceTracker, "referenceTracker" )
+                    //.ReplaceParameter( context.Mapper, "mapper" );
                 }
             }
             else if( memberInfo is MethodInfo methodInfo )

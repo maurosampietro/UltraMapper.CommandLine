@@ -6,7 +6,7 @@ using UltraMapper.MappingExpressionBuilders;
 
 namespace UltraMapper.CommandLine.Extensions
 {
-    public class ArrayParamExpressionBuilder : ReferenceMapper
+    public class ArrayParamExpressionBuilder : ArrayMapper
     {
         public ArrayParamExpressionBuilder( Configuration configuration )
             : base( configuration ) { }
@@ -17,14 +17,9 @@ namespace UltraMapper.CommandLine.Extensions
                 target != typeof( ArrayParam );
         }
 
-        protected override ReferenceMapperContext GetMapperContext( Type source, Type target, IMappingOptions options )
-        {
-            return new ArrayParamCollectionMapperContext( source, target, options );
-        }
-
         public override LambdaExpression GetMappingExpression( Type source, Type target, IMappingOptions options )
         {
-            var context = (ArrayParamCollectionMapperContext)this.GetMapperContext( source, target, options );
+            var context = (CollectionMapperContext)this.GetMapperContext( source, target, options );
             var items = Expression.Property( context.SourceInstance, nameof( ArrayParam.Items ) );
 
             Type targetType = target;
@@ -33,13 +28,10 @@ namespace UltraMapper.CommandLine.Extensions
             else if( target.IsGenericType )
                 targetType = target.GetGenericTypeDefinition().MakeGenericType( context.TargetCollectionElementType );
 
-            var inner = MapperConfiguration[ typeof( IEnumerable<IParsedParam> ), targetType ].MappingExpression;
+            var mappingExpression = MapperConfiguration[ typeof( IEnumerable<IParsedParam> ), targetType ].MappingExpression;
 
-            var body = Expression.Block
-            (
-               Expression.Invoke( inner, context.ReferenceTracker, items,
-                    Expression.Convert( context.TargetInstance, targetType ) )
-            );
+            var body = Expression.Invoke( mappingExpression, context.ReferenceTracker, items,
+                    Expression.Convert( context.TargetInstance, targetType ) );
 
             var delegateType = typeof( Action<,,> ).MakeGenericType(
                  context.ReferenceTracker.Type, context.SourceInstance.Type,
