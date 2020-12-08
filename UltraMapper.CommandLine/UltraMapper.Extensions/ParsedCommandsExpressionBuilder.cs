@@ -26,8 +26,7 @@ namespace UltraMapper.CommandLine.Extensions
 
             var body = ExpressionLoops.ForEach( context.SourceInstance, context.SourceCollectionLoopingVar,
                 Expression.Invoke( mappingExpression, context.ReferenceTracker,
-                    context.SourceCollectionLoopingVar, context.TargetInstance ),
-                    context.Break, context.Continue );            
+                    context.SourceCollectionLoopingVar, context.TargetInstance ) );
 
             var delegateType = typeof( Action<,,> ).MakeGenericType(
                  context.ReferenceTracker.Type, context.SourceInstance.Type,

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using UltraMapper.CommandLine.Parsers;
+using UltraMapper.Internals;
 using UltraMapper.MappingExpressionBuilders;
 
 namespace UltraMapper.CommandLine.Extensions
@@ -45,8 +46,8 @@ namespace UltraMapper.CommandLine.Extensions
 
             var subParam = Expression.Parameter( typeof( IParsedParam ), "param" );
 
-            var memberAssign = new MemberExpressionBuilder( _mapper.MappingConfiguration ).GetMemberAssignments( context,
-                targetMembers, subParam, MapperConfiguration );
+            var memberAssign = new MemberExpressionBuilder( _mapper.MappingConfiguration )
+                .GetMemberAssignments( context, targetMembers, subParam, MapperConfiguration ).ToList();      
 
             var help = Expression.IfThen
             (

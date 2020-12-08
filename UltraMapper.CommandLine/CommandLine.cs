@@ -12,7 +12,7 @@ namespace UltraMapper.CommandLine
         public IHelpProvider HelpProvider { get; private set; }
         public ParsedParametersAdapter ParamsAdapter { get; private set; }
 
-        public static CommandLine Instance = new CommandLine( new CommandParser() );
+        public static CommandLine Instance = new CommandLine( new DefaultParser() );
 
         public CommandLine( ICommandParser parser )
             : this( parser, new DefaultHelpProvider() ) { }

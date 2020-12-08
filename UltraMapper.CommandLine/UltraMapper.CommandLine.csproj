@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\OnlineRepos\UltraMapper\UltraMapper\UltraMapper.csproj" />
+    <PackageReference Include="UltraMapper" Version="0.2.51" />
   </ItemGroup>
 
 </Project>

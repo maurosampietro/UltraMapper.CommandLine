@@ -9,7 +9,7 @@ namespace UltraMapper.CommandLine.Parsers
     /// <summary>
     /// Analyzes a string and identifies commands and parameters
     /// </summary>
-    public class CommandParser : ICommandParser
+    public sealed class DefaultParser : ICommandParser
     {
         public const string COMMAND_IDENTIFIER = "--";
         public const string PARAMETER_NAME_VALUE_SEPARATOR = "="; //avoid semicolon cause it can be used in unquoted paths like C:\

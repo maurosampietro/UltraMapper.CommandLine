@@ -25,8 +25,6 @@ namespace UltraMapper.CommandLine.Extensions
             Type targetType = target;
             if( target.IsInterface || target.IsAbstract )
                 targetType = typeof( List<> ).MakeGenericType( context.TargetCollectionElementType );
-            else if( target.IsGenericType )
-                targetType = target.GetGenericTypeDefinition().MakeGenericType( context.TargetCollectionElementType );
 
             var mappingExpression = MapperConfiguration[ typeof( IEnumerable<IParsedParam> ), targetType ].MappingExpression;
 

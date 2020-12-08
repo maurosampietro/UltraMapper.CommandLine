@@ -8,7 +8,7 @@ namespace UltraMapper.CommandLine.UnitTest
     [TestClass]
     public class DefaultParser
     {
-        private CommandParser _textParser = new CommandParser();
+        private Parsers.DefaultParser _textParser = new Parsers.DefaultParser();
 
         [TestMethod]
         public void WrongCommandSyntax()
