@@ -143,7 +143,7 @@ namespace UltraMapper.CommandLine
         /// </summary>
         private static void CheckThrowNameCollisions( ParsedCommand param, Type target, ParameterDefinition[] paramsDef )
         {
-            var nameCollisions = paramsDef.GroupBy( param => param.Name.ToLower() )
+            var nameCollisions = paramsDef.GroupBy( p => p.Name.ToLower() )
                 .Where( group => group.Count() > 1 );
 
             foreach( var collision in nameCollisions )
