@@ -3,7 +3,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using UltraMapper.CommandLine.Parsers;
-using UltraMapper.Internals;
 using UltraMapper.MappingExpressionBuilders;
 
 namespace UltraMapper.CommandLine.Extensions
@@ -11,7 +10,7 @@ namespace UltraMapper.CommandLine.Extensions
     public class ParsedCommandExpressionBuilder : ReferenceMapper
     {
         private readonly IHelpProvider _helpProvider;
-        private Expression<Action<Type, IParsedParam>> _helperCall;
+        private readonly Expression<Action<Type, IParsedParam>> _helperCall;
 
         public ParsedCommandExpressionBuilder( Configuration configuration, IHelpProvider helpProvider )
             : base( configuration )
