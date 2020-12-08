@@ -186,10 +186,9 @@ namespace UltraMapper.CommandLine.Extensions
                         .ReplaceParameter( targetProperty, "targetValue" )
                         .ReplaceParameter( context.TargetInstance, "instance" );
 
-                    //membermappingcontext.SourceMemberValueGetter
                     var mainExp = t.mainexpression(
                         context.ReferenceTracker,
-                        subParam, subParam, targetProperty,
+                        subParam, membermappingcontext.SourceMemberValueGetter, targetProperty,
                         memberAssignment, context.Mapper, _mapper,
                         Expression.Constant( null, typeof( IMapping ) ) );
 
