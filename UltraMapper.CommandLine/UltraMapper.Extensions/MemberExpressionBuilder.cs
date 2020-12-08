@@ -188,26 +188,26 @@ namespace UltraMapper.CommandLine.Extensions
 
                     var mainExp = t.mainexpression(
                         context.ReferenceTracker,
-                        subParam, membermappingcontext.SourceMemberValueGetter, targetProperty,
+                        subParam, subParam/*membermappingcontext.SourceMemberValueGetter*/, targetProperty,
                         memberAssignment, context.Mapper, _mapper,
                         Expression.Constant( null, typeof( IMapping ) ) );
 
                     return mainExp;
 
-                    //version better integrated in ultramapper:
-                    var main2 = Expression.Block
-                    (
-                        new[] { context.Mapper },
-                        Expression.Assign( context.Mapper, Expression.Constant( _mapper ) ),
-                        base.GetComplexMemberExpression( membermapping )
-                            .ReplaceParameter( context.SourceInstance, "instance" )
-                            .ReplaceParameter( context.ReferenceTracker, "referenceTracker" )
-                            .ReplaceParameter( context.Mapper, "mapper" )
-                            .ReplaceParameter( context.TargetInstance, "instance" )
-                            .ReplaceParameter( sourceToReplace, "sourceValue" )//!!!!! il problema è la fonte da cui leggere il parametro
-                    );
+                    ////version better integrated in ultramapper:
+                    //var main2 = Expression.Block
+                    //(
+                    //    new[] { context.Mapper },
+                    //    Expression.Assign( context.Mapper, Expression.Constant( _mapper ) ),
+                    //    base.GetComplexMemberExpression( membermapping )
+                    //        .ReplaceParameter( context.SourceInstance, "instance" )
+                    //        .ReplaceParameter( context.ReferenceTracker, "referenceTracker" )
+                    //        .ReplaceParameter( context.Mapper, "mapper" )
+                    //        .ReplaceParameter( context.TargetInstance, "instance" )
+                    //        .ReplaceParameter( sourceToReplace, "sourceValue" )//!!!!! il problema è la fonte da cui leggere il parametro
+                    //);
 
-                    return main2;
+                    //return main2;
                 }
             }
             else if( memberInfo is MethodInfo methodInfo )
