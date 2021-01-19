@@ -20,7 +20,7 @@ namespace UltraMapper.CommandLine
         private static readonly ParsedCommandSpecificChecks _commandChecks = new ParsedCommandSpecificChecks();
         private static readonly ComplexParamSpecificChecks _complexParamChecks = new ComplexParamSpecificChecks();
 
-        public IEnumerable<ParsedCommand> AdaptParsedCommandsToTargetType<T>( IEnumerable<ParsedCommand> commands )
+        public IEnumerable<ParsedCommand> Adapt<T>( IEnumerable<ParsedCommand> commands )
         {
             var definition = DefinitionHelper.GetCommandDefinitions( typeof( T ) ).ToArray();
 

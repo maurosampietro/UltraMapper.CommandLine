@@ -12,6 +12,24 @@ namespace UltraMapper.CommandLine.UnitTest
         }
 
         [TestMethod]
+        [Ignore]
+        public void ExplicitSetToTrueViaConstant1()
+        {
+            string args = "--open 1";
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
+            Assert.IsTrue( parsed.Open );
+        }
+
+        [TestMethod]
+        [Ignore]
+        public void ExplicitSetToFalseViaConstant0()
+        {
+            string args = "--open 0";
+            var parsed = CommandLine.Instance.Parse<Commands>( args );
+            Assert.IsTrue( !parsed.Open );
+        }
+
+        [TestMethod]
         public void ExplicitSetToTrue()
         {
             string args = "--open true";

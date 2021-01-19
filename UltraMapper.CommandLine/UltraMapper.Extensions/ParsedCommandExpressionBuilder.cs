@@ -32,10 +32,11 @@ namespace UltraMapper.CommandLine.Extensions
             var targetMembers = target.GetMembers( BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly )
                 .Where( m => (m is MethodInfo mi && mi.IsPublic && !mi.IsStatic && !mi.IsSpecialName) ||
                     (m is PropertyInfo pi && pi.GetSetMethod() != null) )
-                .Select( m => new
+                .Select( ( m, index ) => new
                 {
                     Member = m,
-                    Options = m.GetCustomAttribute<OptionAttribute>() ?? new OptionAttribute()
+                    Options = m.GetCustomAttribute<OptionAttribute>() ??
+                        new OptionAttribute() {/*Order = index*/ }
                 } )
                 .Where( m => !m.Options.IsIgnored )
                 .OrderByDescending( info => info.Options.IsRequired )
@@ -45,8 +46,8 @@ namespace UltraMapper.CommandLine.Extensions
 
             var subParam = Expression.Parameter( typeof( IParsedParam ), "param" );
 
-            var memberAssign = new MemberExpressionBuilder( _mapper.MappingConfiguration )
-                .GetMemberAssignments( context, targetMembers, subParam, MapperConfiguration ).ToList();      
+            var memberAssign = new ParsedCommandMemberExpressionBuilder( _mapper.MappingConfiguration )
+                .GetMemberAssignments( context, targetMembers, subParam, MapperConfiguration ).ToList();
 
             var help = Expression.IfThen
             (

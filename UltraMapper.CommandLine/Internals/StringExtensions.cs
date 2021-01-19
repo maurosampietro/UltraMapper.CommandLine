@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace UltraMapper.CommandLine.Mappers.Internals
 {
     internal static class StringExtensions
     {
-        internal static string[] Split( this string str, string separator )
-        {
-            return str.Split( new string[] { separator },
-                StringSplitOptions.RemoveEmptyEntries );
-        }
-
         internal static IEnumerable<string> SplitKeepDelimiter( this string str, string separator )
         {
             var indexes = new List<int>();
@@ -49,7 +42,7 @@ namespace UltraMapper.CommandLine.Mappers.Internals
                 yield return pos;
                 startIndex = pos + 1;
                 pos = str.IndexOf( subStr, startIndex );
-            };
+            }
         }
     }
 }

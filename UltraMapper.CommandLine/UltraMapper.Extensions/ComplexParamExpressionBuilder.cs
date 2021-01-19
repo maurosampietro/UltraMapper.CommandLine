@@ -35,10 +35,11 @@ namespace UltraMapper.CommandLine.Extensions
             var targetMembers = target.GetProperties() //methods only supported at top level (in ParsedCommand)
                 .Where( m => m.GetSetMethod() != null ) //must be assignable
                 .Where( m => m.GetIndexParameters().Length == 0 )//indexer not supported
-                .Select( m => new
+                .Select( ( m, index ) => new
                 {
                     Member = m,
-                    Options = m.GetCustomAttribute<OptionAttribute>() ?? new OptionAttribute()
+                    Options = m.GetCustomAttribute<OptionAttribute>() ?? 
+                        new OptionAttribute() {/*Order = index*/ }
                 } )
                 .Where( m => !m.Options.IsIgnored )
                 .OrderByDescending( info => info.Options.IsRequired )
@@ -49,7 +50,7 @@ namespace UltraMapper.CommandLine.Extensions
             var subParam = Expression.Parameter( typeof( IParsedParam ), "paramLoopVar" );
             var subParamsAccess = Expression.Property( context.SourceInstance, nameof( ComplexParam.SubParams ) );
 
-            var propertiesAssigns = new MemberExpressionBuilder( _mapper.MappingConfiguration )
+            var propertiesAssigns = new ComplexParamMemberExpressionBuilder( _mapper.MappingConfiguration )
                 .GetMemberAssignments( context, targetMembers, subParam, MapperConfiguration );
 
             var expression = !propertiesAssigns.Any() ? (Expression)Expression.Empty() : Expression.Block

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UltraMapper.CommandLine.Extensions;
 using UltraMapper.CommandLine.Mappers;
 using UltraMapper.CommandLine.Parsers;
@@ -47,12 +48,12 @@ namespace UltraMapper.CommandLine
         public T Parse<T>( string str, T instance ) where T : class
         {
             if( String.IsNullOrWhiteSpace( str ) )
-                return default;
+                return instance;
 
             this.HelpProvider.Initialize( typeof( T ) );
 
-            var commands = this.Parser.Parse( str );
-            commands = this.ParamsAdapter.AdaptParsedCommandsToTargetType<T>( commands );
+            var commands = this.Parser.Parse( str ).ToList();
+            commands = this.ParamsAdapter.Adapt<T>( commands ).ToList();
 
             return this.Mapper.Map( commands, instance );
         }

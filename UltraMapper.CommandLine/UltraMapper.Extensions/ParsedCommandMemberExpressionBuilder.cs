@@ -7,12 +7,13 @@ using UltraMapper.CommandLine.Parsers;
 using UltraMapper.Internals;
 using UltraMapper.MappingExpressionBuilders;
 using UltraMapper.MappingExpressionBuilders.MapperContexts;
+using UltraMapper.ReferenceTracking;
 
 namespace UltraMapper.CommandLine.Extensions
 {
-    public class MemberExpressionBuilder : ReferenceMapper
+    public class ParsedCommandMemberExpressionBuilder : ReferenceMapper
     {
-        public MemberExpressionBuilder( Configuration configuration )
+        public ParsedCommandMemberExpressionBuilder( Configuration configuration )
             : base( configuration ) { }
 
         public IEnumerable<Expression> GetMemberAssignments( ReferenceMapperContext context,
@@ -27,85 +28,46 @@ namespace UltraMapper.CommandLine.Extensions
                 string memberNameLowerCase = String.IsNullOrWhiteSpace( optionAttribute?.Name ) ?
                     memberInfo.Name.ToLower() : optionAttribute.Name.ToLower();
 
-                if( context.SourceInstance.Type == typeof( ParsedCommand ) )
+                Expression implicitBoolAssignment = null;
+
+                if( memberInfo is MethodInfo mi )
                 {
-                    Expression implicitBoolAssignment = null;
-
-                    if( memberInfo is MethodInfo mi )
+                    //method calls only available in ParsedCommand where calling by name is mandatory
+                    var methodParams = mi.GetParameters();
+                    if( methodParams.Length == 1 && methodParams[ 0 ].ParameterType == typeof( bool ) )
                     {
-                        //method calls only available in ParsedCommand where calling by name is mandatory
-                        var methodParams = mi.GetParameters();
-                        if( methodParams.Length == 1 && methodParams[ 0 ].ParameterType == typeof( bool ) )
-                        {
-                            implicitBoolAssignment = Expression.Call( context.TargetInstance, mi, Expression.Constant( true ) );
-                        }
+                        implicitBoolAssignment = Expression.Call( context.TargetInstance, mi, Expression.Constant( true ) );
                     }
-                    else if( memberInfo is PropertyInfo pi )
+                }
+                else if( memberInfo is PropertyInfo pi )
+                {
+                    if( pi.PropertyType == typeof( bool ) )
                     {
-                        if( pi.PropertyType == typeof( bool ) )
-                        {
-                            implicitBoolAssignment = Expression.Assign( Expression.Property(
-                                context.TargetInstance, memberInfo.Name ), Expression.Constant( true ) );
-                        }
+                        implicitBoolAssignment = Expression.Assign( Expression.Property(
+                            context.TargetInstance, memberInfo.Name ), Expression.Constant( true ) );
                     }
+                }
 
-                    if( implicitBoolAssignment != null )
-                    {
-                        var subParamsAccess = Expression.Property( context.SourceInstance, nameof( ParsedCommand.Param ) );
-                        assignment = Expression.IfThenElse
-                        (
-                            Expression.Equal( subParamsAccess, Expression.Constant( null, typeof( IParsedParam ) ) ),
-                            implicitBoolAssignment,
-                            assignment
-                        );
-                    }
-
-                    var commandNameExp = Expression.Property( context.SourceInstance, nameof( ParsedCommand.Name ) );
-                    var commandNameToLowerExp = Expression.Call( commandNameExp, nameof( String.ToLower ), null, null );
-
-                    yield return Expression.IfThen
+                if( implicitBoolAssignment != null )
+                {
+                    var subParamsAccess = Expression.Property( context.SourceInstance, nameof( ParsedCommand.Param ) );
+                    assignment = Expression.IfThenElse
                     (
-                        //we only check command name
-                        Expression.Equal( Expression.Constant( memberNameLowerCase ), commandNameToLowerExp ),
+                        Expression.Equal( subParamsAccess, Expression.Constant( null, typeof( IParsedParam ) ) ),
+                        implicitBoolAssignment,
                         assignment
                     );
                 }
-                else
-                {
-                    var paramNameExp = Expression.Property( subParam, nameof( IParsedParam.Name ) );
-                    var nameToLowerExp = Expression.Call( paramNameExp, nameof( String.ToLower ), null, null );
 
-                    yield return Expression.IfThen
-                    (
-                        Expression.OrElse
-                        (
-                            //we check param name and index
-                            Expression.Equal( Expression.Constant( memberNameLowerCase ), nameToLowerExp ),
+                var commandNameExp = Expression.Property( context.SourceInstance, nameof( ParsedCommand.Name ) );
+                var commandNameToLowerExp = Expression.Call( commandNameExp, nameof( String.ToLower ), null, null );
 
-                            Expression.AndAlso
-                            (
-                                Expression.Equal( nameToLowerExp, Expression.Constant( String.Empty ) ),
-                                Expression.Equal( Expression.Constant( i ),
-                                    Expression.Property( subParam, nameof( IParsedParam.Index ) ) )
-                            )
-                        ),
-
-                        assignment
-                    );
-
-                    //if( memberInfo is PropertyInfo pi && pi.PropertyType == typeof( bool ) && implicitbool )
-                    //{
-                    //    var subParamsAccess = Expression.Property( context.SourceInstance, nameof( ParsedCommand.Param ) );
-                    //    var setter = memberInfo.GetSetterLambdaExpression();
-
-                    //    yield return Expression.IfThenElse
-                    //    (
-                    //        Expression.Equal( subParamsAccess, Expression.Constant( null, typeof( IParsedParam ) ) ),
-                    //        Expression.Invoke( setter, context.TargetInstance, Expression.Constant( true ) ),
-                    //        standardChecks
-                    //    );
-                    //}                    
-                }
+                yield return Expression.IfThen
+                (
+                    //we only check command name
+                    Expression.Equal( Expression.Constant( memberNameLowerCase ), commandNameToLowerExp ),
+                    assignment
+                );
             }
         }
 
@@ -148,18 +110,19 @@ namespace UltraMapper.CommandLine.Extensions
                 else
                 {
                     Expression sourceToReplace = subParam;
-                    PropertyInfo sourcemappingtype = null;
+                    Expression sourcemappingtype = null;
                     if( context.SourceInstance.Type == typeof( ParsedCommand ) )
-                        sourcemappingtype = typeof( ParsedCommand ).GetProperty( nameof( ParsedCommand.Param ) );
+                        sourcemappingtype = (Expression<Func<ParsedCommand, IParsedParam>>)(( ParsedCommand p ) => p.Param);
                     else
-                        sourcemappingtype = typeof( ComplexParam ).GetProperty( nameof( ComplexParam.SubParams ) );
+                        sourcemappingtype = (Expression<Func<ComplexParam, IParsedParam[]>>)(( ComplexParam p ) => p.SubParams);
 
                     if( propertyInfo.PropertyType.IsArray )
                     {
-                        sourcemappingtype = typeof( ArrayParam ).GetProperty( nameof( ArrayParam.Items ) );
+                        sourcemappingtype = (Expression<Func<ArrayParam, IReadOnlyList<IParsedParam>>>)(( ArrayParam p ) => p.Items);
 
                         var itemsProperty = Expression.Property( Expression.Convert( subParam,
                             typeof( ArrayParam ) ), nameof( ArrayParam.Items ) );
+
                         sourceToReplace = itemsProperty;
                     }
 
@@ -173,7 +136,6 @@ namespace UltraMapper.CommandLine.Extensions
                     var membermappingcontext = new MemberMappingContext( membermapping );
 
                     var targetProperty = Expression.Property( context.TargetInstance, memberInfo.Name );
-                    var t = new tempTrack();
 
                     var targetType = targetProperty.Type;
                     if( targetProperty.Type.IsInterface || targetProperty.Type.IsAbstract )
@@ -186,28 +148,13 @@ namespace UltraMapper.CommandLine.Extensions
                         .ReplaceParameter( targetProperty, "targetValue" )
                         .ReplaceParameter( context.TargetInstance, "instance" );
 
-                    var mainExp = t.mainexpression(
+                    var mainExp = ReferenceTrackingExpression.GetMappingExpression(
                         context.ReferenceTracker,
-                        subParam, subParam/*membermappingcontext.SourceMemberValueGetter*/, targetProperty,
+                        subParam, targetProperty,
                         memberAssignment, context.Mapper, _mapper,
                         Expression.Constant( null, typeof( IMapping ) ) );
 
                     return mainExp;
-
-                    ////version better integrated in ultramapper:
-                    //var main2 = Expression.Block
-                    //(
-                    //    new[] { context.Mapper },
-                    //    Expression.Assign( context.Mapper, Expression.Constant( _mapper ) ),
-                    //    base.GetComplexMemberExpression( membermapping )
-                    //        .ReplaceParameter( context.SourceInstance, "instance" )
-                    //        .ReplaceParameter( context.ReferenceTracker, "referenceTracker" )
-                    //        .ReplaceParameter( context.Mapper, "mapper" )
-                    //        .ReplaceParameter( context.TargetInstance, "instance" )
-                    //        .ReplaceParameter( sourceToReplace, "sourceValue" )//!!!!! il problema è la fonte da cui leggere il parametro
-                    //);
-
-                    //return main2;
                 }
             }
             else if( memberInfo is MethodInfo methodInfo )
@@ -381,182 +328,6 @@ namespace UltraMapper.CommandLine.Extensions
                 paramOrder = methodparam.Position;
 
             return parsedparams.FirstOrDefault( p => p.Index == paramOrder );
-        }
-    }
-
-    public class tempTrack
-    {
-        public static Func<ReferenceTracker, object, Type, object> referenceLookup =
-            ( referenceTracker, sourceInstance, targetType ) =>
-        {
-            referenceTracker.TryGetValue( sourceInstance,
-                targetType, out object targetInstance );
-
-            return targetInstance;
-        };
-
-        public static Action<ReferenceTracker, object, Type, object> addReferenceToTracker =
-            ( referenceTracker, sourceInstance, targetType, targetInstance ) =>
-        {
-            referenceTracker.Add( sourceInstance,
-                targetType, targetInstance );
-        };
-
-        public Expression mainexpression(
-            ParameterExpression referenceTracker,
-            ParameterExpression sourceMember, Expression sourceMemberValueGetter,
-            Expression targetMember,
-            Expression memberAssignment,
-            ParameterExpression mapperParam,
-            Mapper mapper,
-            Expression mapping )
-        {
-            var refLookupExp = Expression.Call
-            (
-                Expression.Constant( referenceLookup.Target ),
-                referenceLookup.Method,
-                referenceTracker,
-                sourceMember,
-                Expression.Constant( targetMember.Type )
-            );
-
-            var addRefToTrackerExp = Expression.Call
-            (
-                Expression.Constant( addReferenceToTracker.Target ),
-                addReferenceToTracker.Method,
-                referenceTracker,
-                sourceMember,
-                Expression.Constant( targetMember.Type ),
-                targetMember
-            );
-
-            var mapMethod = ReferenceMapperContext.RecursiveMapMethodInfo
-                .MakeGenericMethod( sourceMember.Type, targetMember.Type );
-
-            var trackedReference = Expression.Parameter( targetMember.Type, "trackedReference" );
-
-            var sourceNullConstant = Expression.Constant( null, sourceMember.Type );
-            var targetNullConstant = Expression.Constant( null, targetMember.Type );
-
-            return Expression.Block
-            (
-                new[] { mapperParam, trackedReference },
-                Expression.Assign( mapperParam, Expression.Constant( mapper ) ),
-                Expression.Assign( sourceMember, sourceMemberValueGetter ),
-
-                Expression.IfThenElse
-                (
-                     Expression.Equal( sourceMember, sourceNullConstant ),
-                     Expression.Assign( targetMember, targetNullConstant ),
-                     Expression.Block
-                     (
-                        Expression.Assign( trackedReference,
-                            Expression.Convert( refLookupExp, targetMember.Type ) ),
-
-                        Expression.IfThenElse
-                        (
-                            Expression.NotEqual( trackedReference, targetNullConstant ),
-                            Expression.Assign( targetMember, trackedReference ),
-                            Expression.Block
-                            (
-                                memberAssignment,
-                                addRefToTrackerExp,
-                                Expression.Call( mapperParam, mapMethod, sourceMember,
-                                    targetMember, referenceTracker, mapping )
-                            )
-                        )
-                    )
-                )
-            );
-        }
-
-        public Expression GetComplexMemberExpression( MemberMapping mapping, Expression memberAssignment )
-        {
-            /* SOURCE (NULL) -> TARGET = NULL
-             * 
-             * SOURCE (NOT NULL / VALUE ALREADY TRACKED) -> TARGET (NULL) = ASSIGN TRACKED OBJECT
-             * SOURCE (NOT NULL / VALUE ALREADY TRACKED) -> TARGET (NOT NULL) = ASSIGN TRACKED OBJECT (the priority is to map identically the source to the target)
-             * 
-             * SOURCE (NOT NULL / VALUE UNTRACKED) -> TARGET (NULL) = ASSIGN NEW OBJECT 
-             * SOURCE (NOT NULL / VALUE UNTRACKED) -> TARGET (NOT NULL) = KEEP USING INSTANCE OR CREATE NEW INSTANCE
-             */
-
-            var memberContext = new MemberMappingContext( mapping );
-
-            if( mapping.CustomConverter != null )
-            {
-                var targetSetterInstanceParamName = mapping.TargetMember.ValueSetter.Parameters[ 0 ].Name;
-                var targetSetterValueParamName = mapping.TargetMember.ValueSetter.Parameters[ 1 ].Name;
-
-                var valueReaderExp = Expression.Invoke( mapping.CustomConverter, memberContext.SourceMemberValueGetter );
-
-                return mapping.TargetMember.ValueSetter.Body
-                    .ReplaceParameter( memberContext.TargetInstance, targetSetterInstanceParamName )
-                    .ReplaceParameter( valueReaderExp, targetSetterValueParamName )
-                    .ReplaceParameter( valueReaderExp, mapping.CustomConverter.Parameters[ 0 ].Name );
-            }
-
-            var mapMethod = ReferenceMapperContext.RecursiveMapMethodInfo.MakeGenericMethod(
-                memberContext.SourceMember.Type, memberContext.TargetMember.Type );
-
-            Expression itemLookupCall = Expression.Call
-            (
-                Expression.Constant( referenceLookup.Target ),
-                referenceLookup.Method,
-                memberContext.ReferenceTracker,
-                memberContext.SourceMember,
-                Expression.Constant( memberContext.TargetMember.Type )
-            );
-
-            Expression itemCacheCall = Expression.Call
-            (
-                Expression.Constant( addReferenceToTracker.Target ),
-                addReferenceToTracker.Method,
-                memberContext.ReferenceTracker,
-                memberContext.SourceMember,
-                Expression.Constant( memberContext.TargetMember.Type ),
-                memberContext.TargetMember
-            );
-
-            return Expression.Block
-            (
-                new[] { memberContext.TrackedReference, memberContext.SourceMember, memberContext.TargetMember },
-
-                Expression.Assign( memberContext.SourceMember, memberContext.SourceMemberValueGetter ),
-
-                Expression.IfThenElse
-                (
-                     Expression.Equal( memberContext.SourceMember, memberContext.SourceMemberNullValue ),
-
-                     Expression.Assign( memberContext.TargetMember, memberContext.TargetMemberNullValue ),
-
-                     Expression.Block
-                     (
-                        //object lookup. An intermediate variable (TrackedReference) is needed in order to deal with ReferenceMappingStrategies
-                        Expression.Assign( memberContext.TrackedReference,
-                            Expression.Convert( itemLookupCall, memberContext.TargetMember.Type ) ),
-
-                        Expression.IfThenElse
-                        (
-                            Expression.NotEqual( memberContext.TrackedReference, memberContext.TargetMemberNullValue ),
-                            Expression.Assign( memberContext.TargetMember, memberContext.TrackedReference ),
-                            Expression.Block
-                            (
-                                memberAssignment,
-
-                                //cache reference
-                                itemCacheCall,
-
-                                Expression.Call( memberContext.Mapper, mapMethod,
-                                    memberContext.SourceMember, memberContext.TargetMember,
-                                    memberContext.ReferenceTracker, Expression.Constant( mapping ) )
-                            )
-                        )
-                    )
-                ),
-
-                memberContext.TargetMemberValueSetter
-            );
-        }
+        }     
     }
 }

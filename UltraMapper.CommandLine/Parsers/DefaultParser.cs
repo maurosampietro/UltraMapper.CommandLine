@@ -63,7 +63,7 @@ namespace UltraMapper.CommandLine.Parsers
 
         )* (?(open) (?!) )               # fail if open > 0
         $",
-            RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled, TimeSpan.FromSeconds(3) );
+            RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled, TimeSpan.FromSeconds( 3 ) );
 
         public static readonly Regex BalancedParenthesesRegex = new Regex( @"                
         (         
@@ -99,7 +99,7 @@ namespace UltraMapper.CommandLine.Parsers
 
             | #OR
 
-            (?<params>([\w\.]\s*=\s*){0,1}[^\s\(\)\[\]\""]+)\s*
+            (?<params>([\w\.]+\s*=\s*){0,1}[^\s\(\)\[\]\""]+)\s*
 
             |
 
@@ -129,7 +129,7 @@ namespace UltraMapper.CommandLine.Parsers
         public IEnumerable<ParsedCommand> Parse( string commandLine )
         {
             if( String.IsNullOrWhiteSpace( commandLine ) )
-                throw new ArgumentNullException( "Null or empty command", nameof( commandLine ) );
+                throw new ArgumentNullException( nameof( commandLine ), "Null or empty command" );
 
             var commands = commandLine.SplitKeepDelimiter( COMMAND_IDENTIFIER ).ToArray();
             if( commands.Length == 0 )

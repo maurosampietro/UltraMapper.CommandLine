@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net472;net5.0</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Authors>Mauro Sampietro</Authors>
     <Copyright>2020</Copyright>
@@ -10,6 +10,9 @@
     <LangVersion>latest</LangVersion>
     <RootNamespace>UltraMapper.CommandLine</RootNamespace>
     <AssemblyName>UltraMapper.CommandLine</AssemblyName>
+    <RepositoryUrl>https://github.com/maurosampietro/UltraMapper.CommandLine</RepositoryUrl>
+    <PackageProjectUrl>https://maurosampietro.github.io/UltraMapper.CommandLine/</PackageProjectUrl>
+    <PackageTags>commandline commandlineparser method parser mapper method call map json</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="UltraMapper" Version="0.2.51" />
+    <PackageReference Include="UltraMapper" Version="0.2.53" />
   </ItemGroup>
 
 </Project>

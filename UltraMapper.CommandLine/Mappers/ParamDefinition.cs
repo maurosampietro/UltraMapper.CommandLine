@@ -33,8 +33,7 @@ namespace UltraMapper.CommandLine
 
         public override string ToString()
         {
-            return Options.IsRequired == true ? $"[Required] {Name}"
-                : $"[Optional] {Name}";
+            return Options.IsRequired ? $"[Required] {Name}" : $"[Optional] {Name}";
         }
     }
 }
