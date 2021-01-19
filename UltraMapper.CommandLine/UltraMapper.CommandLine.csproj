@@ -13,6 +13,7 @@
     <RepositoryUrl>https://github.com/maurosampietro/UltraMapper.CommandLine</RepositoryUrl>
     <PackageProjectUrl>https://maurosampietro.github.io/UltraMapper.CommandLine/</PackageProjectUrl>
     <PackageTags>commandline commandlineparser method parser mapper method call map json</PackageTags>
+    <Description>A commandline parser supporting direct method calls taking as input an unlimited number of primitive and complex-type parameters</Description>
   </PropertyGroup>
 
   <ItemGroup>
