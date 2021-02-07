@@ -12,11 +12,14 @@ namespace UltraMapper.CommandLine.Extensions
 {
     public class ComplexParamMemberExpressionBuilder : ReferenceMapper
     {
+        public bool CanMapByIndex { get; set; }
+
         public ComplexParamMemberExpressionBuilder( Configuration configuration )
             : base( configuration ) { }
 
         public IEnumerable<Expression> GetMemberAssignments( ReferenceMapperContext context,
-            MemberInfo[] targetMembers, ParameterExpression subParam, Configuration MapperConfiguration )
+            MemberInfo[] targetMembers, ParameterExpression subParam,
+            Configuration MapperConfiguration, ParameterExpression paramNameLowerCase )
         {
             for( int i = 0; i < targetMembers.Length; i++ )
             {
@@ -27,26 +30,35 @@ namespace UltraMapper.CommandLine.Extensions
                 string memberNameLowerCase = String.IsNullOrWhiteSpace( optionAttribute?.Name ) ?
                     memberInfo.Name.ToLower() : optionAttribute.Name.ToLower();
 
-                var paramNameExp = Expression.Property( subParam, nameof( IParsedParam.Name ) );
-                var nameToLowerExp = Expression.Call( paramNameExp, nameof( String.ToLower ), null, null );
+                if( this.CanMapByIndex )
+                {
+                    yield return Expression.IfThen
+                    (
+                        Expression.OrElse
+                        (
+                            //we check param name and index
+                            Expression.Equal( Expression.Constant( memberNameLowerCase ), paramNameLowerCase ),
 
-                yield return Expression.IfThen
-                (
-                    Expression.OrElse
+                            Expression.AndAlso
+                            (
+                                Expression.Equal( paramNameLowerCase, Expression.Constant( String.Empty ) ),
+                                Expression.Equal( Expression.Constant( i ),
+                                    Expression.Property( subParam, nameof( IParsedParam.Index ) ) )
+                            )
+                        ),
+
+                        assignment
+                    );
+                }
+                else //can map only by name
+                {
+                    yield return Expression.IfThen
                     (
                         //we check param name and index
-                        Expression.Equal( Expression.Constant( memberNameLowerCase ), nameToLowerExp ),
-
-                        Expression.AndAlso
-                        (
-                            Expression.Equal( nameToLowerExp, Expression.Constant( String.Empty ) ),
-                            Expression.Equal( Expression.Constant( i ),
-                                Expression.Property( subParam, nameof( IParsedParam.Index ) ) )
-                        )
-                    ),
-
-                    assignment
-                );
+                        Expression.Equal( Expression.Constant( memberNameLowerCase ), paramNameLowerCase ),
+                        assignment
+                    );
+                }
 
                 //if( memberInfo is PropertyInfo pi && pi.PropertyType == typeof( bool ) && implicitbool )
                 //{
@@ -118,14 +130,22 @@ namespace UltraMapper.CommandLine.Extensions
             {
                 Expression sourceToReplace = subParam;
                 PropertyInfo sourcemappingtype = null;
+                Expression sourceValueExp = null;
                 if( context.SourceInstance.Type == typeof( ParsedCommand ) )
+                {
                     sourcemappingtype = typeof( ParsedCommand ).GetProperty( nameof( ParsedCommand.Param ) );
+                    sourceValueExp = Expression.Property( Expression.Convert( subParam, typeof( ParsedCommand ) ), nameof( ParsedCommand.Param ) );
+                }
                 else
+                {
                     sourcemappingtype = typeof( ComplexParam ).GetProperty( nameof( ComplexParam.SubParams ) );
+                    sourceValueExp = Expression.Property( Expression.Convert( subParam, typeof( ComplexParam ) ), nameof( ComplexParam.SubParams ) );
+                }
 
-                if( propertyInfo.PropertyType.IsArray )
+                if( propertyInfo.PropertyType.IsEnumerable() )
                 {
                     sourcemappingtype = typeof( ArrayParam ).GetProperty( nameof( ArrayParam.Items ) );
+                    sourceValueExp = Expression.Property( Expression.Convert( subParam, typeof( ArrayParam ) ), nameof( ArrayParam.Items ) );
 
                     var itemsProperty = Expression.Property( Expression.Convert( subParam,
                         typeof( ArrayParam ) ), nameof( ArrayParam.Items ) );
@@ -150,17 +170,37 @@ namespace UltraMapper.CommandLine.Extensions
                 var mapping = MapperConfiguration[ targetType, targetsetprop.PropertyType ];
 
                 var memberAssignment = ((ReferenceMapper)mapping.Mapper).GetMemberAssignment( membermappingcontext )
-                    .ReplaceParameter( sourceToReplace, "sourceValue" )
+                    //.ReplaceParameter( sourceToReplace, "sourceValue" )
+                    .ReplaceParameter( membermappingcontext.SourceMember, "sourceValue" )
                     .ReplaceParameter( targetProperty, "targetValue" )
                     .ReplaceParameter( context.TargetInstance, "instance" );
-         
-                var mainExp = ReferenceTrackingExpression.GetMappingExpression(
-                    context.ReferenceTracker,
-                    subParam, targetProperty,
-                    memberAssignment, context.Mapper, _mapper,
-                    Expression.Constant( null, typeof( IMapping ) ) );
 
-                return mainExp;
+                if( MapperConfiguration.IsReferenceTrackingEnabled )
+                {
+                    return ReferenceTrackingExpression.GetMappingExpression(
+                        context.ReferenceTracker,
+                        subParam, targetProperty,
+                        memberAssignment, context.Mapper, _mapper,
+                        Expression.Constant( null, typeof( IMapping ) ) );
+                }
+                else
+                {
+                    var mapMethod = ReferenceMapperContext.RecursiveMapMethodInfo
+                        .MakeGenericMethod( subParam.Type, targetProperty.Type );
+
+                    return Expression.Block
+                    (
+                        new[] { membermappingcontext.SourceMember, context.Mapper },
+
+                        Expression.Assign( context.Mapper, Expression.Constant( _mapper ) ),
+                        Expression.Assign( membermappingcontext.SourceMember, sourceValueExp ),
+
+                        memberAssignment,
+
+                        Expression.Call( context.Mapper, mapMethod, subParam,
+                            targetProperty, context.ReferenceTracker, Expression.Constant( null, typeof( IMapping ) ) )
+                    );
+                }
 
                 ////version better integrated in ultramapper:
                 //var main2 = Expression.Block

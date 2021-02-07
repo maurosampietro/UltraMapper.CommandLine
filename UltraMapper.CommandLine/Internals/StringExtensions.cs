@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace UltraMapper.CommandLine.Mappers.Internals
 {
@@ -32,15 +33,18 @@ namespace UltraMapper.CommandLine.Mappers.Internals
                 yield return str.Substring( startIndex );
         }
 
-        internal static IEnumerable<int> IndexesOf( this string str, string subStr )
+        public static IEnumerable<int> IndexesOf( this string str, string subStr )
         {
+            if( String.IsNullOrEmpty( subStr ) )
+                throw new ArgumentNullException( nameof( subStr ), "The string to find should not be null or empty" );
+
             int startIndex = 0;
             int pos = str.IndexOf( subStr, startIndex );
 
             while( pos != -1 )
             {
                 yield return pos;
-                startIndex = pos + 1;
+                startIndex = pos + subStr.Length;
                 pos = str.IndexOf( subStr, startIndex );
             }
         }

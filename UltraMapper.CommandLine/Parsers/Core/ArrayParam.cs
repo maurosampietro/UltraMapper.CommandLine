@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace UltraMapper.CommandLine.Parsers
 {
@@ -6,6 +7,13 @@ namespace UltraMapper.CommandLine.Parsers
     {
         public string Name { get; set; }
         public int Index { get; set; }
+
+        public ArrayParam() { }
+
+        public ArrayParam( IEnumerable<IParsedParam> items )
+        {
+            _items = items.ToList();
+        }
 
         private readonly List<IParsedParam> _items = new List<IParsedParam>();
         public IReadOnlyList<IParsedParam> Items => _items;

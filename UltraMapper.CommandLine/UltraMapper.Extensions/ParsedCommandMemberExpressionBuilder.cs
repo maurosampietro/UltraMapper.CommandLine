@@ -148,13 +148,33 @@ namespace UltraMapper.CommandLine.Extensions
                         .ReplaceParameter( targetProperty, "targetValue" )
                         .ReplaceParameter( context.TargetInstance, "instance" );
 
-                    var mainExp = ReferenceTrackingExpression.GetMappingExpression(
+                    if( MapperConfiguration.IsReferenceTrackingEnabled )
+                    {
+                        var mainExp = ReferenceTrackingExpression.GetMappingExpression(
                         context.ReferenceTracker,
                         subParam, targetProperty,
                         memberAssignment, context.Mapper, _mapper,
                         Expression.Constant( null, typeof( IMapping ) ) );
 
-                    return mainExp;
+                        return mainExp;
+                    }
+                    else
+                    {
+                        var mapMethod = ReferenceMapperContext.RecursiveMapMethodInfo
+                            .MakeGenericMethod( subParam.Type, targetProperty.Type );
+
+                        return Expression.Block
+                        (
+                            new[] { context.Mapper },
+
+                            Expression.Assign( context.Mapper, Expression.Constant( _mapper ) ),
+
+                            memberAssignment,
+
+                            Expression.Call( context.Mapper, mapMethod, subParam,
+                                targetProperty, context.ReferenceTracker, Expression.Constant( null, typeof( IMapping ) ) )
+                        );
+                    }
                 }
             }
             else if( memberInfo is MethodInfo methodInfo )
@@ -328,6 +348,6 @@ namespace UltraMapper.CommandLine.Extensions
                 paramOrder = methodparam.Position;
 
             return parsedparams.FirstOrDefault( p => p.Index == paramOrder );
-        }     
+        }
     }
 }

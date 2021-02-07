@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -10,6 +11,8 @@ namespace UltraMapper.CommandLine.Extensions
 {
     public class ComplexParamExpressionBuilder : ReferenceMapper
     {
+        public bool CanMapByIndex { get; set; }
+
         public ComplexParamExpressionBuilder( Configuration configuration )
             : base( configuration ) { }
 
@@ -38,7 +41,7 @@ namespace UltraMapper.CommandLine.Extensions
                 .Select( ( m, index ) => new
                 {
                     Member = m,
-                    Options = m.GetCustomAttribute<OptionAttribute>() ?? 
+                    Options = m.GetCustomAttribute<OptionAttribute>() ??
                         new OptionAttribute() {/*Order = index*/ }
                 } )
                 .Where( m => !m.Options.IsIgnored )
@@ -50,15 +53,33 @@ namespace UltraMapper.CommandLine.Extensions
             var subParam = Expression.Parameter( typeof( IParsedParam ), "paramLoopVar" );
             var subParamsAccess = Expression.Property( context.SourceInstance, nameof( ComplexParam.SubParams ) );
 
-            var propertiesAssigns = new ComplexParamMemberExpressionBuilder( _mapper.MappingConfiguration )
-                .GetMemberAssignments( context, targetMembers, subParam, MapperConfiguration );
+            var paramNameLowerCase = Expression.Parameter( typeof( string ), "paramName" );
+            var paramNameExp = Expression.Property( subParam, nameof( IParsedParam.Name ) );
+            var paramNameToLower = Expression.Call( paramNameExp, nameof( String.ToLower ), null, null );
+
+            var propertiesAssigns = new ComplexParamMemberExpressionBuilder( _mapper.MappingConfiguration ) { CanMapByIndex = CanMapByIndex }
+                .GetMemberAssignments( context, targetMembers, subParam, MapperConfiguration, paramNameLowerCase ).ToArray();
+
+            Expression paramNameDispatch = null;
+            if( CanMapByIndex )
+            {
+                var paramNameIfElseChain = GetIfElseChain( propertiesAssigns );
+                paramNameDispatch = paramNameIfElseChain;
+            }else
+            {
+                var paramNameSwitch = GetSwitch( propertiesAssigns, paramNameLowerCase );
+                paramNameDispatch = paramNameSwitch;
+            }
 
             var expression = !propertiesAssigns.Any() ? (Expression)Expression.Empty() : Expression.Block
             (
-                new[] { subParam },
+                new[] { subParam, paramNameLowerCase },
 
-                ExpressionLoops.ForEach( subParamsAccess, subParam,
-                    Expression.Block( propertiesAssigns ) )
+                ExpressionLoops.ForEach( subParamsAccess, subParam, Expression.Block
+                (
+                    Expression.Assign( paramNameLowerCase, paramNameToLower ),
+                    paramNameDispatch
+                ) )
             );
 
             var delegateType = typeof( Action<,,> ).MakeGenericType(
@@ -67,6 +88,29 @@ namespace UltraMapper.CommandLine.Extensions
 
             return Expression.Lambda( delegateType, expression,
                 context.ReferenceTracker, context.SourceInstance, context.TargetInstance );
+        }
+
+        private Expression GetSwitch( Expression[] propertiesAssigns, ParameterExpression paramNameLowerCase )
+        {
+            IEnumerable<SwitchCase> getSwitchCases()
+            {
+                foreach( ConditionalExpression item in propertiesAssigns )
+                    yield return Expression.SwitchCase( item.IfTrue, ((BinaryExpression)item.Test).Left );
+            }
+
+            var switches = getSwitchCases().ToArray();
+            return Expression.Switch( paramNameLowerCase, switches );
+        }
+
+        private ConditionalExpression GetIfElseChain( Expression[] propertiesAssigns, int i = 0 )
+        {
+            var item = (ConditionalExpression)propertiesAssigns[ i ];
+
+            if( i == propertiesAssigns.Length - 1 )
+                return item;
+
+            return Expression.IfThenElse( item.Test, item.IfTrue,
+                GetIfElseChain( propertiesAssigns, i + 1 ) );
         }
     }
 }

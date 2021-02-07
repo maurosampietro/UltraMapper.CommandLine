@@ -2,7 +2,7 @@
 
 namespace UltraMapper.CommandLine.Tree
 {
-    public sealed class TreeNode<T>
+    internal sealed class TreeNode<T>
     {
         public T Item { get; private set; }
         public TreeNode<T> Parent { get; set; }

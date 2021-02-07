@@ -11,6 +11,9 @@ namespace UltraMapper.CommandLine.Extensions
 
         public void Initialize( IHelpProvider helpProvider )
         {
+            _mapper.MappingConfiguration.IsReferenceTrackingEnabled = false;
+            _mapper.MappingConfiguration.ReferenceBehavior = ReferenceBehaviors.CREATE_NEW_INSTANCE;
+
             int index = _mapper.MappingConfiguration.Mappers.FindIndex( m => m is ReferenceMapper );
 
             _mapper.MappingConfiguration.Mappers.InsertRange( index, new IMappingExpressionBuilder[]
@@ -19,10 +22,10 @@ namespace UltraMapper.CommandLine.Extensions
                 new ParsedCommandsExpressionBuilder( _mapper.MappingConfiguration ),
                 new ParsedCommandExpressionBuilder( _mapper.MappingConfiguration, helpProvider ),
                 new ArrayParamExpressionBuilder( _mapper.MappingConfiguration ),
-                new ComplexParamExpressionBuilder( _mapper.MappingConfiguration ),
+                new ComplexParamExpressionBuilder( _mapper.MappingConfiguration ){ CanMapByIndex = true },
                 new SimpleParamExpressionBuilder( _mapper.MappingConfiguration )
             } );
-            
+
             //try
             //{
 
@@ -32,7 +35,7 @@ namespace UltraMapper.CommandLine.Extensions
             //catch( Exception ex)
             //{
 
-                
+
             //}
 
             //TODO
