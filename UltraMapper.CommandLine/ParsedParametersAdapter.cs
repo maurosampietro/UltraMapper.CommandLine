@@ -266,7 +266,7 @@ namespace UltraMapper.CommandLine
             {
                 if( !String.IsNullOrWhiteSpace( command.Param.Name ) )
                 {
-                    var isCorrectParam = availableParamNames.Contains( command.Param.Name );
+                    var isCorrectParam = availableParamNames.Contains( command.Param.Name.ToLower() );
                     if( !isCorrectParam )
                         throw new UndefinedParameterException( target, command.Param.Name );
                 }
