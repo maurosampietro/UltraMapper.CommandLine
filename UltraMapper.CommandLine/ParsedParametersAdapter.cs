@@ -33,6 +33,7 @@ namespace UltraMapper.CommandLine
                 //adapt
                 var def = definition.First( d => d.Name.ToLower() == command.Name.ToLower() );
                 command.Param = Internal( command.Param, def );
+                command.Param = InternalOptionalMethodParams( command.Param, def );
 
                 if( command.Param != null )
                 {
@@ -43,6 +44,81 @@ namespace UltraMapper.CommandLine
 
                 yield return command;
             }
+        }
+
+        private IParsedParam InternalOptionalMethodParams( IParsedParam param, ParameterDefinition def )
+        {
+            if( def.MemberType != MemberTypes.METHOD ) return param;
+
+            if( def.SubParams.Count( p => !p.Options.IsRequired ) > 1 )
+            {
+                if( !(param is ComplexParam) )
+                {
+                    var subs = new List<IParsedParam>();
+                    if( param != null )
+                        subs.Add( param );
+
+                    for( int paramIndex = 0; paramIndex < def.SubParams.Length; paramIndex++ )
+                    {
+                        var sub = def.SubParams[ paramIndex ];
+
+                        if( param?.Name == sub.Name )
+                            continue;
+
+                        //if( param?.Index == sub.Options.Order )
+                        //    continue;
+
+                        if( !sub.Options.IsRequired )
+                        {
+                            if( sub.Type.IsBuiltIn( false ) )
+                                subs.Add( new SimpleParam() { Name = sub.Name, Index = sub.Options.Order, Value = sub.DefaultValue?.ToString() } );
+                            else if( sub.Type.IsEnumerable() )
+                                subs.Add( new ArrayParam() { Name = sub.Name, Index = sub.Options.Order } );
+                            else
+                                subs.Add( new ComplexParam() { Name = sub.Name, Index = sub.Options.Order } );
+                        }
+                    }
+
+                    return new ComplexParam()
+                    {
+                        SubParams = subs.ToArray()
+                    };
+                }
+                else if( ((ComplexParam)param).SubParams.Length < def.SubParams.Length )
+                {
+                    var paramsSubs = new List<IParsedParam>();
+                    paramsSubs.AddRange( ((ComplexParam)param).SubParams );
+
+                    for( int paramIndex = 0; paramIndex < def.SubParams.Length; paramIndex++ )
+                    {
+                        var defSub = def.SubParams[ paramIndex ];
+
+                        if( paramsSubs.Any( s => s.Name == defSub.Name ) )
+                            continue;
+
+                        //if( paramIndex < paramsSubs.Count &&
+                        //    paramsSubs[ paramIndex ].Index == defSub.Options.Order )
+                        //    continue;
+
+                        if( !defSub.Options.IsRequired )
+                        {
+                            if( defSub.Type.IsBuiltIn( false ) )
+                                paramsSubs.Add( new SimpleParam() { Name = defSub.Name, Index = defSub.Options.Order, Value = defSub.DefaultValue?.ToString() } );
+                            else if( defSub.Type.IsEnumerable() )
+                                paramsSubs.Add( new ArrayParam() { Name = defSub.Name, Index = defSub.Options.Order } );
+                            else
+                                paramsSubs.Add( new ComplexParam() { Name = defSub.Name, Index = defSub.Options.Order } );
+                        }
+                    }
+
+                    return new ComplexParam()
+                    {
+                        SubParams = paramsSubs.ToArray()
+                    };
+                }
+            }
+
+            return param;
         }
 
         private IParsedParam Internal( IParsedParam param, ParameterDefinition def )
@@ -79,7 +155,12 @@ namespace UltraMapper.CommandLine
                         for( int i = 0; i < localcp.SubParams.Length; i++ )
                         {
                             var item = localcp.SubParams[ i ];
-                            var newitem = Internal( item, def.SubParams[ i ] );
+
+                            var defSub = def.SubParams.FirstOrDefault( i => i.Name.ToLower() == item.Name.ToLower() );
+                            if( defSub == null )
+                                defSub = def.SubParams.FirstOrDefault( i => i.Options.Order == item.Index );
+
+                            var newitem = Internal( item, defSub );
                             yield return newitem;
                         }
                     };
@@ -214,7 +295,10 @@ namespace UltraMapper.CommandLine
             {
                 if( paramDef.MemberType == MemberTypes.METHOD )
                 {
-                    if( requiredParams != 1 )
+                    if( requiredParams > 1 )
+                        throw new ArgumentNumberException( param );
+
+                    if( paramsCount == 0 )
                         throw new ArgumentNumberException( param );
                 }
                 else

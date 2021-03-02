@@ -24,6 +24,7 @@ namespace UltraMapper.CommandLine
         public ParameterDefinition[] SubParams { get; set; }
         public OptionAttribute Options { get; set; }
         public MemberTypes MemberType { get; set; } = MemberTypes.UNDEFINED;
+        public object? DefaultValue { get; set; }
 
         public ParameterDefinition()
         {

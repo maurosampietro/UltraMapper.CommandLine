@@ -175,7 +175,7 @@ namespace UltraMapper.CommandLine.Extensions
                             memberAssignment,
 
                             Expression.Call( context.Mapper, mapMethod, subParam,
-                                targetProperty, context.ReferenceTracker, 
+                                targetProperty, context.ReferenceTracker,
                                 Expression.Constant( mapping2, typeof( IMapping ) ) )
                         );
                     }
@@ -327,6 +327,7 @@ namespace UltraMapper.CommandLine.Extensions
                     }
                 }
 
+                //optional parameters are mandatory with Expression.Call: pass the default value
                 return Expression.Block
                 (
                     Expression.Call( context.TargetInstance, methodInfo, parametersExps.ToArray() )

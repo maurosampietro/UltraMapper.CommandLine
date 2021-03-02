@@ -53,53 +53,5 @@ namespace UltraMapper.CommandLine.UnitTest
             var args = "--move (a=aaa b=bbb) a=aa b=bb";
             var parsed = CommandLine.Instance.Parse<Commands2>( args );
         }
-
-        [TestMethod]
-        public void Bug1dot0()
-        {
-            var args = "--EXEC1 a=[aaa] b=[bbb] x=1";
-            var parsed = CommandLine.Instance.Parse<ElabCommands>( args );
-        }
-
-        [TestMethod]
-        public void Bug1dot1()
-        {
-            var args = "--EXEC2 a=[] b=[bbb] x=1";
-            var parsed = CommandLine.Instance.Parse<ElabCommands>( args );
-        }
-
-        [TestMethod]
-        public void Bug1dot2()
-        {
-            var args = "--EXEC3 [] [bbb] 1";
-            var parsed = CommandLine.Instance.Parse<ElabCommands>( args );
-        }
-    }
-
-    public class ElabCommands
-    {
-        [Option( Name = "EXEC1" )]
-        public void Elab1( string[] a = null, string[] b = null, int x = -1 )
-        {
-            Assert.IsTrue( a[ 0 ] == "aaa" );
-            Assert.IsTrue( b[ 0 ] == "bbb" );
-            Assert.IsTrue( x == 1 );
-        }
-
-        [Option( Name = "EXEC2" )]
-        public void Elab2( string[] a = null, string[] b = null, int x = -1 )
-        {
-            Assert.IsTrue( a.Length == 0 );
-            Assert.IsTrue( b[ 0 ] == "bbb" );
-            Assert.IsTrue( x == 1 );
-        }
-
-        [Option( Name = "EXEC3" )]
-        public void Elab3( string[] a = null, string[] b = null, int x = -1 )
-        {
-            Assert.IsTrue( a.Length == 0 );
-            Assert.IsTrue( b[ 0 ] == "bbb" );
-            Assert.IsTrue( x == 1 );
-        }
     }
 }

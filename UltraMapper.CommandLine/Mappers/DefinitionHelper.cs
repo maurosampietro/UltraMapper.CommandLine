@@ -54,6 +54,7 @@ namespace UltraMapper.CommandLine.Mappers
                 if( !Regex.IsMatch( name, @"^\w+$" ) )
                     throw new InvalidNameException( name );
 
+                optionAttribute.Order = i;
 #if NET47
                 var subparameters = Array.Empty<ParameterDefinition>();
 #else
@@ -106,6 +107,7 @@ namespace UltraMapper.CommandLine.Mappers
 
                 var optionAttribute = methodParam.GetCustomAttribute<OptionAttribute>() ?? new OptionAttribute();
                 optionAttribute.IsRequired = !methodParam.IsOptional;
+                optionAttribute.Order = i;
 
                 string name = String.IsNullOrWhiteSpace( optionAttribute.Name ) ?
                     methodParam.Name : optionAttribute.Name;
@@ -121,7 +123,8 @@ namespace UltraMapper.CommandLine.Mappers
                     Options = optionAttribute,
                     Type = methodParam.ParameterType,
                     SubParams = subparameters,
-                    MemberType = MemberTypes.METHOD_PARAM
+                    MemberType = MemberTypes.METHOD_PARAM,
+                    DefaultValue = methodParam.DefaultValue
                 };
             }
         }
