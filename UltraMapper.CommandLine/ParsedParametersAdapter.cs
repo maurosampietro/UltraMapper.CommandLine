@@ -156,9 +156,9 @@ namespace UltraMapper.CommandLine
                         {
                             var item = localcp.SubParams[ i ];
 
-                            var defSub = def.SubParams.FirstOrDefault( i => i.Name.ToLower() == item.Name.ToLower() );
+                            var defSub = def.SubParams.FirstOrDefault( k => k.Name.ToLower() == item.Name.ToLower() );
                             if( defSub == null )
-                                defSub = def.SubParams.FirstOrDefault( i => i.Options.Order == item.Index );
+                                defSub = def.SubParams.FirstOrDefault( k => k.Options.Order == item.Index );
 
                             var newitem = Internal( item, defSub );
                             yield return newitem;
