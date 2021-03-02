@@ -4,6 +4,7 @@ using System.Linq;
 using UltraMapper.CommandLine.Mappers;
 using UltraMapper.CommandLine.Parsers;
 using UltraMapper.Internals;
+using UltraMapper.Parsing;
 
 namespace UltraMapper.CommandLine
 {

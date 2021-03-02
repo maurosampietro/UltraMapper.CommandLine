@@ -2,12 +2,8 @@
 
 namespace UltraMapper.CommandLine
 {
-    public sealed class OptionAttribute : Attribute
+    public sealed class OptionAttribute : UltraMapper.Parsing.OptionAttribute
     {
-        public string Name { get; set; } = String.Empty;
-        public int Order { get; set; } = -1;
         public string HelpText { get; set; } = "<Additional info is missing>";
-        public bool IsRequired { get; set; } = true;
-        public bool IsIgnored { get; set; } = false;
     }
 }

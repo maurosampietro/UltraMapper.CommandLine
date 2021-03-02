@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UltraMapper.CommandLine.Mappers.Internals;
+using UltraMapper.Parsing;
 
 namespace UltraMapper.CommandLine.Parsers
 {
     /// <summary>
     /// Analyzes a string and identifies commands and parameters
     /// </summary>
-    public sealed class DefaultParser : ICommandParser
+    public sealed class DefaultParser : ICommandLineParser
     {
         public const string COMMAND_IDENTIFIER = "--";
         public const string PARAMETER_NAME_VALUE_SEPARATOR = "="; //avoid semicolon cause it can be used in unquoted paths like C:\
@@ -211,7 +212,7 @@ namespace UltraMapper.CommandLine.Parsers
                     paramValue = paramValue.Substring( 1, paramValue.Length - 2 );
 
                     var subMatches = BalancedParenthesesRegex.Matches( paramValue );
-                    if( subMatches.Count > 1 )
+                   // if( subMatches.Count > 1 )
                     {
                         var subParams = subMatches.Cast<Match>()
                             .Select( c => c.Groups[ "params" ].Value );
@@ -274,5 +275,3 @@ namespace UltraMapper.CommandLine.Parsers
         }
     }
 }
-
-

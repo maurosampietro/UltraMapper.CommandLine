@@ -54,8 +54,11 @@ namespace UltraMapper.CommandLine.Mappers
                 if( !Regex.IsMatch( name, @"^\w+$" ) )
                     throw new InvalidNameException( name );
 
+#if NET47
                 var subparameters = Array.Empty<ParameterDefinition>();
-
+#else
+                var subparameters = new ParameterDefinition[ 0 ];
+#endif
                 Type type = null;
                 var memberType = MemberTypes.UNDEFINED;
                 if( command.Item is MethodInfo methodInfo )

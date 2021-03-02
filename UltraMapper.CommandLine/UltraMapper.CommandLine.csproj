@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net45;net46;net47</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Authors>Mauro Sampietro</Authors>
     <Copyright>2020</Copyright>
@@ -17,11 +17,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Parsers\Core\ArrayParam.cs" />
+    <Compile Remove="Parsers\Core\ComplexParam.cs" />
+    <Compile Remove="Parsers\Core\IParsedParam.cs" />
+    <Compile Remove="Parsers\Core\SimpleParam.cs" />
+    <Compile Remove="UltraMapper.Extensions\ArrayParamExpressionBuilder.cs" />
     <Compile Remove="UltraMapper.Extensions\CollectionToNonCollectionExpressionBuilder.cs" />
+    <Compile Remove="UltraMapper.Extensions\ComplexParamExpressionBuilder.cs" />
+    <Compile Remove="UltraMapper.Extensions\ComplexParamMemberExpressionBuilder.cs" />
+    <Compile Remove="UltraMapper.Extensions\SimpleParamExpressionBuilder.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="UltraMapper" Version="0.2.54" />
+    <PackageReference Include="UltraMapper" Version="0.2.55" />
+    <PackageReference Include="UltraMapper.Parsing" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

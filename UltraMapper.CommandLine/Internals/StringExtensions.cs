@@ -31,22 +31,6 @@ namespace UltraMapper.CommandLine.Mappers.Internals
 
             if( startIndex < str.Length )
                 yield return str.Substring( startIndex );
-        }
-
-        public static IEnumerable<int> IndexesOf( this string str, string subStr )
-        {
-            if( String.IsNullOrEmpty( subStr ) )
-                throw new ArgumentNullException( nameof( subStr ), "The string to find should not be null or empty" );
-
-            int startIndex = 0;
-            int pos = str.IndexOf( subStr, startIndex );
-
-            while( pos != -1 )
-            {
-                yield return pos;
-                startIndex = pos + subStr.Length;
-                pos = str.IndexOf( subStr, startIndex );
-            }
-        }
+        }   
     }
 }

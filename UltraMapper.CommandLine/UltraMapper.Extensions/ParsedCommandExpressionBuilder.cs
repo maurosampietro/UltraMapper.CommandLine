@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using UltraMapper.CommandLine.Parsers;
 using UltraMapper.MappingExpressionBuilders;
+using UltraMapper.Parsing;
 
 namespace UltraMapper.CommandLine.Extensions
 {

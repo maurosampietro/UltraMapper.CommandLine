@@ -1,4 +1,6 @@
-﻿namespace UltraMapper.CommandLine.Parsers
+﻿using UltraMapper.Parsing;
+
+namespace UltraMapper.CommandLine.Parsers
 {
     public class ParsedCommand
     {

@@ -7,6 +7,7 @@ using UltraMapper.CommandLine.Parsers;
 using UltraMapper.Internals;
 using UltraMapper.MappingExpressionBuilders;
 using UltraMapper.MappingExpressionBuilders.MapperContexts;
+using UltraMapper.Parsing;
 using UltraMapper.ReferenceTracking;
 
 namespace UltraMapper.CommandLine.Extensions
@@ -160,6 +161,8 @@ namespace UltraMapper.CommandLine.Extensions
                     }
                     else
                     {
+                        var mapping2 = MapperConfiguration[ subParam.Type, targetProperty.Type ];
+
                         var mapMethod = ReferenceMapperContext.RecursiveMapMethodInfo
                             .MakeGenericMethod( subParam.Type, targetProperty.Type );
 
@@ -172,7 +175,8 @@ namespace UltraMapper.CommandLine.Extensions
                             memberAssignment,
 
                             Expression.Call( context.Mapper, mapMethod, subParam,
-                                targetProperty, context.ReferenceTracker, Expression.Constant( null, typeof( IMapping ) ) )
+                                targetProperty, context.ReferenceTracker, 
+                                Expression.Constant( mapping2, typeof( IMapping ) ) )
                         );
                     }
                 }

@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using UltraMapper.CommandLine.Parsers;
+using UltraMapper.Parsing;
 
 namespace UltraMapper.CommandLine.UnitTest
 {

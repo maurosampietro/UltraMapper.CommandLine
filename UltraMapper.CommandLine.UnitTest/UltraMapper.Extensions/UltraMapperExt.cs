@@ -2,6 +2,8 @@
 using UltraMapper.CommandLine.Extensions;
 using UltraMapper.CommandLine.Parsers;
 using UltraMapper.MappingExpressionBuilders;
+using UltraMapper.Parsing;
+using UltraMapper.Parsing.Extensions;
 
 namespace UltraMapper.CommandLine.UnitTest.UltraMapper.Extensions
 {
