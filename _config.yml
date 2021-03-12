@@ -2,3 +2,6 @@ theme: jekyll-theme-cayman
 title: "UltraMapper.CommandLine"
 description: "A commandline parser supporting direct method calls taking as input an unlimited number of primitive and complex-type parameters"
 show_downloads: "true"
+
+plugins:
+  - jekyll-seo-tag
