@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45;net46;net47</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net45;net46;net47;net5.0</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Authors>Mauro Sampietro</Authors>
     <Copyright>2020</Copyright>
@@ -15,6 +15,7 @@
     <PackageTags>commandline commandlineparser method parser mapper method call map json</PackageTags>
     <Description>A commandline parser supporting direct method calls taking as input an unlimited number of primitive and complex-type parameters</Description>
     <UserSecretsId>f04337b3-a5f3-4f7d-bb7b-7d4c5824a530</UserSecretsId>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,8 +35,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\UltraMapper.Parsing\UltraMapper.Parsing\UltraMapper.Parsing.csproj" />
-    <ProjectReference Include="..\..\UltraMapper\UltraMapper\UltraMapper.csproj" />
+    <PackageReference Include="UltraMapper" Version="0.2.59" />
+    <PackageReference Include="UltraMapper.Parsing" Version="2.0.0" />
   </ItemGroup>
 
 </Project>
