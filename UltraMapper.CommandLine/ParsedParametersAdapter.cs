@@ -50,75 +50,109 @@ namespace UltraMapper.CommandLine
         {
             if( def.MemberType != MemberTypes.METHOD ) return param;
 
-            if( def.SubParams.Count( p => !p.Options.IsRequired ) > 1 )
+            ResolveNameOfUnnamedParams( param, def );
+
+            var optionalParams = def.SubParams.Where( p => !p.Options.IsRequired ).ToList();
+
+            if( optionalParams.Count == 0 )
+                return param;
+
+            var requiredParams = def.SubParams.Except( optionalParams );
+
+            if( !(param is ComplexParam) )
             {
-                if( !(param is ComplexParam) )
+                var subs = new List<IParsedParam>();
+
+
+                if( param != null )
+                    subs.Add( param );
+
+                for( int paramIndex = 0; paramIndex < def.SubParams.Length; paramIndex++ )
                 {
-                    var subs = new List<IParsedParam>();
-                    if( param != null )
-                        subs.Add( param );
+                    var sub = def.SubParams[ paramIndex ];
 
-                    for( int paramIndex = 0; paramIndex < def.SubParams.Length; paramIndex++ )
+                    if( param?.Name == sub.Name )
+                        continue;
+
+                    //if( param?.Index == sub.Options.Order )
+                    //    continue;
+
+                    if( !sub.Options.IsRequired )
                     {
-                        var sub = def.SubParams[ paramIndex ];
-
-                        if( param?.Name == sub.Name )
-                            continue;
-
-                        //if( param?.Index == sub.Options.Order )
-                        //    continue;
-
-                        if( !sub.Options.IsRequired )
-                        {
-                            if( sub.Type.IsBuiltIn( false ) )
-                                subs.Add( new SimpleParam() { Name = sub.Name, Index = sub.Options.Order, Value = sub.DefaultValue?.ToString() } );
-                            else if( sub.Type.IsEnumerable() )
-                                subs.Add( new ArrayParam() { Name = sub.Name, Index = sub.Options.Order } );
-                            else
-                                subs.Add( new ComplexParam() { Name = sub.Name, Index = sub.Options.Order } );
-                        }
+                        if( sub.Type.IsBuiltIn( false ) )
+                            subs.Add( new SimpleParam() { Name = sub.Name, Index = sub.Options.Order, Value = sub.DefaultValue?.ToString() } );
+                        else if( sub.Type.IsEnumerable() )
+                            subs.Add( new ArrayParam() { Name = sub.Name, Index = sub.Options.Order } );
+                        else
+                            subs.Add( new ComplexParam() { Name = sub.Name, Index = sub.Options.Order } );
                     }
-
-                    return new ComplexParam()
-                    {
-                        SubParams = subs.ToArray()
-                    };
                 }
-                else if( ((ComplexParam)param).SubParams.Length < def.SubParams.Length )
+
+                return new ComplexParam()
                 {
-                    var paramsSubs = new List<IParsedParam>();
-                    paramsSubs.AddRange( ((ComplexParam)param).SubParams );
+                    SubParams = subs.ToArray()
+                };
+            }
+            else if( ((ComplexParam)param).SubParams.Length < def.SubParams.Length )
+            {
+                var paramsSubs = new List<IParsedParam>();
+                paramsSubs.AddRange( ((ComplexParam)param).SubParams );
 
-                    for( int paramIndex = 0; paramIndex < def.SubParams.Length; paramIndex++ )
+                for( int paramIndex = 0; paramIndex < def.SubParams.Length; paramIndex++ )
+                {
+                    var defSub = def.SubParams[ paramIndex ];
+
+                    if( paramsSubs.Any( s => s.Name == defSub.Name ) )
+                        continue;
+
+                    //if( paramIndex < paramsSubs.Count &&
+                    //    paramsSubs[ paramIndex ].Index == defSub.Options.Order )
+                    //    continue;
+
+                    if( !defSub.Options.IsRequired )
                     {
-                        var defSub = def.SubParams[ paramIndex ];
-
-                        if( paramsSubs.Any( s => s.Name == defSub.Name ) )
-                            continue;
-
-                        //if( paramIndex < paramsSubs.Count &&
-                        //    paramsSubs[ paramIndex ].Index == defSub.Options.Order )
-                        //    continue;
-
-                        if( !defSub.Options.IsRequired )
-                        {
-                            if( defSub.Type.IsBuiltIn( false ) )
-                                paramsSubs.Add( new SimpleParam() { Name = defSub.Name, Index = defSub.Options.Order, Value = defSub.DefaultValue?.ToString() } );
-                            else if( defSub.Type.IsEnumerable() )
-                                paramsSubs.Add( new ArrayParam() { Name = defSub.Name, Index = defSub.Options.Order } );
-                            else
-                                paramsSubs.Add( new ComplexParam() { Name = defSub.Name, Index = defSub.Options.Order } );
-                        }
+                        if( defSub.Type.IsBuiltIn( false ) )
+                            paramsSubs.Add( new SimpleParam() { Name = defSub.Name, Index = defSub.Options.Order, Value = defSub.DefaultValue?.ToString() } );
+                        else if( defSub.Type.IsEnumerable() )
+                            paramsSubs.Add( new ArrayParam() { Name = defSub.Name, Index = defSub.Options.Order } );
+                        else
+                            paramsSubs.Add( new ComplexParam() { Name = defSub.Name, Index = defSub.Options.Order } );
                     }
-
-                    return new ComplexParam()
-                    {
-                        SubParams = paramsSubs.ToArray()
-                    };
                 }
+
+                return new ComplexParam()
+                {
+                    SubParams = paramsSubs.ToArray()
+                };
             }
 
             return param;
+        }
+
+        private static void ResolveNameOfUnnamedParams( IParsedParam param, ParameterDefinition def )
+        {
+            //add name to unnamed params
+            if( param is ComplexParam cp )
+            {
+                for( int i = 0; i < cp.SubParams.Length && i < def.SubParams.Length; i++ )
+                {
+                    var subParam = cp.SubParams[ i ];
+                    var subDef = def.SubParams.OrderBy( f => f.Options.Order ).ToArray()[ i ];
+                    if( subDef.Type.IsBuiltIn( true ) || subDef.Type.IsEnumerable() )
+                    {
+                        if( String.IsNullOrWhiteSpace( subParam.Name ) )
+                            subParam.Name = subDef.Name;
+                    }
+                    else
+                        ResolveNameOfUnnamedParams( subParam, subDef );
+                }
+            }
+            else if( param is ArrayParam ap )
+            {
+                var subDef = def.SubParams.OrderBy( f => f.Options.Order ).ToArray()[ 0 ];
+                if( String.IsNullOrWhiteSpace( param.Name ) )
+                    param.Name = subDef.Name;
+            }
         }
 
         private IParsedParam Internal( IParsedParam param, ParameterDefinition def )

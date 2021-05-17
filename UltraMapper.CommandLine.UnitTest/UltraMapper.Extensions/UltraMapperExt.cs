@@ -1,6 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltraMapper.CommandLine.Extensions;
-using UltraMapper.CommandLine.Parsers;
 using UltraMapper.MappingExpressionBuilders;
 using UltraMapper.Parsing;
 using UltraMapper.Parsing.Extensions;
@@ -90,11 +88,10 @@ namespace UltraMapper.CommandLine.UnitTest.UltraMapper.Extensions
         {
             var mapper = new Mapper();
 
-            int index = mapper.MappingConfiguration.Mappers.FindIndex( m => m is ReferenceMapper );
-            mapper.MappingConfiguration.Mappers.InsertRange( index, new IMappingExpressionBuilder[]
+            mapper.Config.Mappers.AddBefore<ReferenceMapper>( new IMappingExpressionBuilder[]
             {
-                new SimpleParamExpressionBuilder( mapper.MappingConfiguration ),
-                new ComplexParamExpressionBuilder( mapper.MappingConfiguration )
+                new SimpleParamExpressionBuilder( mapper.Config ),
+                new ComplexParamExpressionBuilder( mapper.Config )
             } );
 
             var complexParam = new ComplexParam()

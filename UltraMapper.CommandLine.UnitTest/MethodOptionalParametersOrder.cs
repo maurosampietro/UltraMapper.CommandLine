@@ -4,7 +4,6 @@ using System;
 namespace UltraMapper.CommandLine.UnitTest
 {
     [TestClass]
-    [Ignore]
     public class MethodOptionalParametersOrder
     {
         private class Commands
@@ -135,7 +134,7 @@ namespace UltraMapper.CommandLine.UnitTest
             [Option( Name = "EXEC6" )]
             public void Elab6( string[] a = null, string[] b = null, int c = -1 )
             {
-                Assert.IsTrue( b[ 0 ] == "11" );
+                Assert.IsTrue( a[ 0 ] == "11" );
             }
         }
 
@@ -214,8 +213,11 @@ namespace UltraMapper.CommandLine.UnitTest
         [TestMethod]
         public void OptionC()
         {
-            var args = $"--{nameof( Commands.OptionC )} 11";
-            var parsed = CommandLine.Instance.Parse<Commands>( args );
+            Assert.ThrowsException<InvalidCastException>( () =>
+            {
+                var args = $"--{nameof( Commands.OptionC )} 11";
+                var parsed = CommandLine.Instance.Parse<Commands>( args );
+            } );
         }
 
         [TestMethod]
@@ -228,36 +230,51 @@ namespace UltraMapper.CommandLine.UnitTest
         [TestMethod]
         public void OptionAC()
         {
-            var args = $"--{nameof( Commands.OptionAC )} [aaa] 11";
-            var parsed = CommandLine.Instance.Parse<Commands>( args );
+            Assert.ThrowsException<InvalidCastException>( () =>
+            {
+                var args = $"--{nameof( Commands.OptionAC )} [aaa] 11";
+                var parsed = CommandLine.Instance.Parse<Commands>( args );
+            } );
         }
 
         [TestMethod]
         public void OptionBC()
         {
-            var args = $"--{nameof( Commands.OptionBC )} [bbb] 11";
-            var parsed = CommandLine.Instance.Parse<Commands>( args );
+            Assert.ThrowsException<InvalidCastException>( () =>
+            {
+                var args = $"--{nameof( Commands.OptionBC )} [bbb] 11";
+                var parsed = CommandLine.Instance.Parse<Commands>( args );
+            } );
         }
 
         [TestMethod]
         public void OptionBA()
         {
-            var args = $"--{nameof( Commands.OptionBA )} [bbb] [aaa]";
-            var parsed = CommandLine.Instance.Parse<Commands>( args );
+            Assert.ThrowsException<AssertFailedException>( () =>
+            {
+                var args = $"--{nameof( Commands.OptionBA )} [bbb] [aaa]";
+                var parsed = CommandLine.Instance.Parse<Commands>( args );
+            } );
         }
 
         [TestMethod]
         public void OptionCA()
         {
-            var args = $"--{nameof( Commands.OptionCA )} 11 [aaa]";
-            var parsed = CommandLine.Instance.Parse<Commands>( args );
+            Assert.ThrowsException<InvalidCastException>( () =>
+            {
+                var args = $"--{nameof( Commands.OptionCA )} 11 [aaa]";
+                var parsed = CommandLine.Instance.Parse<Commands>( args );
+            } );
         }
 
         [TestMethod]
         public void OptionCB()
         {
-            var args = $"--{nameof( Commands.OptionCB )} 11 [bbb]";
-            var parsed = CommandLine.Instance.Parse<Commands>( args );
+            Assert.ThrowsException<InvalidCastException>( () =>
+            {
+                var args = $"--{nameof( Commands.OptionCB )} 11 [bbb]";
+                var parsed = CommandLine.Instance.Parse<Commands>( args );
+            } );
         }
 
         [TestMethod]

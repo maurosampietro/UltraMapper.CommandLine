@@ -14,6 +14,7 @@
     <PackageProjectUrl>https://maurosampietro.github.io/UltraMapper.CommandLine/</PackageProjectUrl>
     <PackageTags>commandline commandlineparser method parser mapper method call map json</PackageTags>
     <Description>A commandline parser supporting direct method calls taking as input an unlimited number of primitive and complex-type parameters</Description>
+    <UserSecretsId>f04337b3-a5f3-4f7d-bb7b-7d4c5824a530</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,8 +30,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="UltraMapper" Version="0.2.55" />
-    <PackageReference Include="UltraMapper.Parsing" Version="1.0.0" />
+    <None Remove="UltraMapper.Extensions\ParsedCommandExpressionBuilder.cs~RF1a930dc9.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\UltraMapper.Parsing\UltraMapper.Parsing\UltraMapper.Parsing.csproj" />
+    <ProjectReference Include="..\..\UltraMapper\UltraMapper\UltraMapper.csproj" />
   </ItemGroup>
 
 </Project>

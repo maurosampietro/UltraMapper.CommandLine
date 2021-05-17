@@ -14,6 +14,11 @@ namespace UltraMapper.CommandLine.Extensions
 {
     public class ParsedCommandMemberExpressionBuilder : ReferenceMapper
     {
+        private static void _debug( object o ) => Console.WriteLine( o );
+
+        public static readonly Expression<Action<object>> debugExp =
+            ( o ) => _debug( o );
+
         public ParsedCommandMemberExpressionBuilder( Configuration configuration )
             : base( configuration ) { }
 
@@ -103,7 +108,7 @@ namespace UltraMapper.CommandLine.Extensions
                     //return Expression.Invoke( setter, context.TargetInstance,
                     //    Expression.Invoke( conversion, Expression.Convert( subParam, typeof( SimpleParam ) ) ) );
 
-                    var setter = memberInfo.GetSetterLambdaExpression();
+                    var setter = memberInfo.GetSetterExp();
 
                     return base.GetSimpleMemberExpressionInternal( conversion,
                         context.TargetInstance, Expression.Convert( subParam, typeof( SimpleParam ) ), setter );
@@ -131,8 +136,7 @@ namespace UltraMapper.CommandLine.Extensions
                     var mappingSource = new MappingSource( sourcemappingtype );
                     var mappingTarget = new MappingTarget( targetsetprop );
 
-                    var typePair = new TypePair( propertyInfo.PropertyType, targetsetprop.PropertyType );
-                    var typeMapping = new TypeMapping( MapperConfiguration, typePair );
+                    var typeMapping = new TypeMapping( MapperConfiguration, propertyInfo.PropertyType, targetsetprop.PropertyType );
                     var membermapping = new MemberMapping( typeMapping, mappingSource, mappingTarget );
                     var membermappingcontext = new MemberMappingContext( membermapping );
 
@@ -258,13 +262,14 @@ namespace UltraMapper.CommandLine.Extensions
                             .MakeGenericMethod( typeof( IParsedParam ) );
 
                             Expression GetNewInstanceWithReservedCapacity()
-                            {
+                            {                            
                                 var constructorWithCapacity = param.ParameterType.GetConstructor( new Type[] { typeof( int ) } );
                                 if( constructorWithCapacity == null ) return null;
 
                                 var itemsProperty = Expression.Property( Expression.Convert( selectedParam,
                                     typeof( ArrayParam ) ), nameof( ArrayParam.Items ) );
 
+                            
                                 var getCountMethod = Expression.Call( null, getCount, itemsProperty );
                                 return Expression.New( constructorWithCapacity, getCountMethod );
                             }
@@ -272,12 +277,14 @@ namespace UltraMapper.CommandLine.Extensions
                             var paramExp = Expression.Block
                             (
                                 new[] { tempTarget, selectedParam },
-
+                                    
                                 Expression.Assign( selectedParam, Expression.Convert
                                 (
                                     Expression.Invoke( selectParamExp, convertExp, Expression.Constant( param ) ),
                                     paramType
                                 ) ),
+
+                                Expression.Invoke( debugExp, selectedParam ),
 
                                 Expression.Assign( tempTarget, GetNewInstanceWithReservedCapacity() ),
 

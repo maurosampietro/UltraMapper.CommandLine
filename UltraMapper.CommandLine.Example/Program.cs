@@ -16,6 +16,12 @@ namespace UltraMapper.CommandLine.Example
 
         public class CustomerCommands
         {
+            public void Import( string tipoFlusso, string file )
+            {
+                Console.WriteLine(tipoFlusso);
+            }
+
+
             [Option( Name = "add", HelpText = "Adds new customer to db" )]
             public void AddToDatabase( CustomerInfo customer )
             {

@@ -105,9 +105,8 @@ namespace UltraMapper.CommandLine.Mappers
             {
                 var methodParam = methodParams[ i ];
 
-                var optionAttribute = methodParam.GetCustomAttribute<OptionAttribute>() ?? new OptionAttribute();
+                var optionAttribute = methodParam.GetCustomAttribute<OptionAttribute>() ?? new OptionAttribute() { Order = i };
                 optionAttribute.IsRequired = !methodParam.IsOptional;
-                optionAttribute.Order = i;
 
                 string name = String.IsNullOrWhiteSpace( optionAttribute.Name ) ?
                     methodParam.Name : optionAttribute.Name;

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace UltraMapper.CommandLine
+﻿namespace UltraMapper.CommandLine
 {
     public sealed class OptionAttribute : UltraMapper.Parsing.OptionAttribute
     {

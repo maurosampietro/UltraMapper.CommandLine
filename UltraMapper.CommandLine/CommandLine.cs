@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using UltraMapper.CommandLine.Extensions;
 using UltraMapper.CommandLine.Parsers;
+using UltraMapper.Conventions;
 using UltraMapper.MappingExpressionBuilders;
 using UltraMapper.Parsing.Extensions;
 
@@ -9,13 +11,19 @@ namespace UltraMapper.CommandLine
 {
     public class CommandLine
     {
-        public ICommandLineParser Parser { get; private set; }
-        public IHelpProvider HelpProvider { get; private set; }
-        public ParsedParametersAdapter ParamsAdapter { get; private set; }
+        public static CommandLine Instance = new( new DefaultParser() );
 
-        public static CommandLine Instance = new CommandLine( new DefaultParser() );
+        public readonly ICommandLineParser Parser;
+        public readonly IHelpProvider HelpProvider;
+        public readonly Mapper Mapper;
+        private readonly ParsedParametersAdapter ParamsAdapter;
 
-        public readonly Mapper Mapper = new Mapper();
+        private CultureInfo _cultureInfo = null;
+        public CultureInfo CultureInfo
+        {
+            get => _cultureInfo ?? CultureInfo.CurrentCulture;
+            set => _cultureInfo = value;
+        }
 
         public CommandLine( ICommandLineParser parser )
             : this( parser, new DefaultHelpProvider() ) { }
@@ -28,23 +36,33 @@ namespace UltraMapper.CommandLine
             this.Parser = parser;
             this.HelpProvider = helpProvider;
 
-            this.InitializeMapper( helpProvider );
-        }
-
-        public void InitializeMapper( IHelpProvider helpProvider )
-        {
-            this.Mapper.MappingConfiguration.IsReferenceTrackingEnabled = false;
-            this.Mapper.MappingConfiguration.ReferenceBehavior = ReferenceBehaviors.CREATE_NEW_INSTANCE;
-
-            int index = this.Mapper.MappingConfiguration.Mappers.FindIndex( m => m is ReferenceMapper );
-
-            this.Mapper.MappingConfiguration.Mappers.InsertRange( index, new IMappingExpressionBuilder[]
+            this.Mapper = new Mapper( cfg =>
             {
-                new ParsedCommandsExpressionBuilder( this.Mapper.MappingConfiguration ),
-                new ParsedCommandExpressionBuilder( this.Mapper.MappingConfiguration, helpProvider ),
-                new ArrayParamExpressionBuilder( this.Mapper.MappingConfiguration ),
-                new ComplexParamExpressionBuilder( this.Mapper.MappingConfiguration ){ CanMapByIndex = true },
-                new SimpleParamExpressionBuilder( this.Mapper.MappingConfiguration )
+                cfg.IsReferenceTrackingEnabled = false;
+                cfg.ReferenceBehavior = ReferenceBehaviors.CREATE_NEW_INSTANCE;
+
+                cfg.Conventions.GetOrAdd<DefaultConvention>( rule =>
+                {
+                    rule.SourceMemberProvider.IgnoreFields = true;
+                    rule.SourceMemberProvider.IgnoreMethods = true;
+                    rule.SourceMemberProvider.IgnoreNonPublicMembers = true;
+
+                    rule.TargetMemberProvider.IgnoreFields = true;
+                    rule.TargetMemberProvider.IgnoreMethods = true;
+                    rule.TargetMemberProvider.IgnoreNonPublicMembers = true;
+                } );
+
+                cfg.Mappers.AddBefore<ReferenceMapper>( new IMappingExpressionBuilder[]
+                {
+                    new ParsedCommandsExpressionBuilder( cfg ),
+                    new ParsedCommandMapper( cfg, helpProvider ),
+                    new ArrayParamExpressionBuilder( cfg),
+                    new ComplexParamExpressionBuilder( cfg ){ CanMapByIndex = true },
+                    new SimpleParamExpressionBuilder( cfg )
+                } );
+
+                cfg.MapTypes<string, double>( str => ConvertStringToDouble( str ) );
+                cfg.MapTypes<string, bool>( str => ConvertStringToBoolean( str ) );
             } );
 
             //TODO: converters and multiple converters
@@ -56,22 +74,6 @@ namespace UltraMapper.CommandLine
             //}
             //catch( Exception ex)
             //{
-            //}
-
-            //TODO
-            //_mapper.MappingConfiguration.MapTypes<string, bool>( str => IntToBoolConverter( str ) );
-
-            //bool IntToBoolConverter( string str )
-            //{
-            //    str = str.Trim();
-
-            //    if( String.Compare( str.Trim(), Boolean.FalseString, true ) == 0 ) return false;
-            //    if( String.Compare( str.Trim(), Boolean.TrueString, true ) == 0 ) return true;
-
-            //    if( str == "0" ) return false;
-            //    if( str == "1" ) return true;
-
-            //    throw new FormatException();
             //}
         }
 
@@ -102,6 +104,22 @@ namespace UltraMapper.CommandLine
 
             this.Mapper.Map( commands, instance );
             return instance;
+        }
+
+        private double ConvertStringToDouble( string str )
+        {
+            if( String.IsNullOrWhiteSpace( str ) )
+                return 0.0;
+
+            return Double.Parse( str, NumberStyles.Any, CultureInfo );
+        }
+
+        private bool ConvertStringToBoolean( string str )
+        {
+            if( str == "1" ) return true;
+            if( str == "0" ) return false;
+
+            return Boolean.Parse( str );
         }
     }
 }
