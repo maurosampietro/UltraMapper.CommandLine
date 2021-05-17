@@ -12,7 +12,6 @@ namespace UltraMapper.CommandLine.UnitTest
         }
 
         [TestMethod]
-        [Ignore]
         public void ExplicitSetToTrueViaConstant1()
         {
             string args = "--open 1";
@@ -21,7 +20,6 @@ namespace UltraMapper.CommandLine.UnitTest
         }
 
         [TestMethod]
-        [Ignore]
         public void ExplicitSetToFalseViaConstant0()
         {
             string args = "--open 0";
