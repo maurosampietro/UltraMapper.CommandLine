@@ -120,7 +120,7 @@ namespace UltraMapper.CommandLine.Parsers
         public static readonly Regex NameValueSpitter = new Regex( @"^((?<paramName>[\w\.]+)\s*=\s*){0,1}(?<paramValue>.*)",
             RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled, TimeSpan.FromSeconds( 3 ) );
 
-        public IEnumerable<ParsedCommand> Parse( string[] commands )
+        public IEnumerable<ParsedCommand> Parse( string[] args )
         {
             //Allegedly an array of commands has already been processed and split (and quotes removed)
             //by the command line. In theory every item equals a param, so it should be safe to quote
@@ -145,7 +145,7 @@ namespace UltraMapper.CommandLine.Parsers
                 }
             }
 
-            var quotedCommands = requote( commands );
+            var quotedCommands = requote( args );
             return this.Parse( String.Join( " ", quotedCommands ) );
         }
 
