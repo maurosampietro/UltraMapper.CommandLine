@@ -31,9 +31,15 @@ namespace UltraMapper.CommandLine
                     }
                     else
                     {
-                        autoparser.Parse( args, instance );
-                        onParsed?.Invoke( instance );
-                        args = null;
+                        try
+                        {
+                            autoparser.Parse( args, instance );
+                            onParsed?.Invoke( instance );
+                        }
+                        finally
+                        {
+                            args = null;
+                        }                        
                     }
                 }
                 catch( UndefinedCommandException argumentEx )
