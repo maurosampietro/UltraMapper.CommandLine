@@ -122,9 +122,31 @@ namespace UltraMapper.CommandLine.Parsers
 
         public IEnumerable<ParsedCommand> Parse( string[] commands )
         {
-            //just rejoin and resplit in case a single string in the array contains more than one command
+            //Allegedly an array of commands has already been processed and split (and quotes removed)
+            //by the command line. In theory every item equals a param, so it should be safe to quote
+            //every single array item containing a whitespace and just rejoin and resplit the array.
+            //
+            //Moreover it should be ok in case a single string in the array contains more than one command
             //or commands span more than one string.
-            return this.Parse( String.Join( " ", commands ) );
+
+            IEnumerable<string> requote( string[] cmds )
+            {
+                foreach( var item in cmds )
+                {
+                    if( item.Any( c => Char.IsWhiteSpace( c ) ) )
+                    {
+                        if( !item.StartsWith( "\"" ) )
+                            yield return $"\"{item}\"";
+                    }
+                    else
+                    {
+                        yield return item;
+                    }
+                }
+            }
+
+            var quotedCommands = requote( commands );
+            return this.Parse( String.Join( " ", quotedCommands ) );
         }
 
         public IEnumerable<ParsedCommand> Parse( string commandLine )
@@ -212,7 +234,7 @@ namespace UltraMapper.CommandLine.Parsers
                     paramValue = paramValue.Substring( 1, paramValue.Length - 2 );
 
                     var subMatches = BalancedParenthesesRegex.Matches( paramValue );
-                   // if( subMatches.Count > 1 )
+                    // if( subMatches.Count > 1 )
                     {
                         var subParams = subMatches.Cast<Match>()
                             .Select( c => c.Groups[ "params" ].Value );

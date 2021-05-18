@@ -82,16 +82,6 @@ namespace UltraMapper.CommandLine
             return this.Parse( str, new T() );
         }
 
-        public T Parse<T>( string[] args ) where T : class, new()
-        {
-            return this.Parse( String.Join( " ", args ), new T() );
-        }
-
-        public T Parse<T>( string[] args, T instance ) where T : class
-        {
-            return this.Parse( String.Join( " ", args ), instance );
-        }
-
         public T Parse<T>( string str, T instance ) where T : class
         {
             if( String.IsNullOrWhiteSpace( str ) )
@@ -100,6 +90,39 @@ namespace UltraMapper.CommandLine
             this.HelpProvider.Initialize( typeof( T ) );
 
             var commands = this.Parser.Parse( str ).ToList();
+            commands = this.ParamsAdapter.Adapt<T>( commands ).ToList();
+
+            this.Mapper.Map( commands, instance );
+            return instance;
+        }
+
+        /// <summary>
+        /// Specific for arguments passed from cmd.
+        /// (Quotes are preprocessed by the operating system)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public T Parse<T>( string[] args ) where T : class, new()
+        {
+            return this.Parse( args, new T() );
+        }
+
+        /// <summary>
+        /// Specific for arguments passed from cmd
+        /// (Quotes are preprocessed by the operating system)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public T Parse<T>( string[] args, T instance ) where T : class
+        {
+            if( args == null || args.Length == 0 )
+                return instance;
+
+            this.HelpProvider.Initialize( typeof( T ) );
+
+            var commands = this.Parser.Parse( args ).ToList();
             commands = this.ParamsAdapter.Adapt<T>( commands ).ToList();
 
             this.Mapper.Map( commands, instance );

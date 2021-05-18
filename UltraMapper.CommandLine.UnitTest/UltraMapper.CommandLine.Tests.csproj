@@ -7,7 +7,7 @@
 		<Authors>Mauro Sampietro</Authors>
 		<Copyright>2021</Copyright>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	<langversion>latest</langversion>
+		<langversion>latest</langversion>
 	</PropertyGroup>
 
 	<ItemGroup>

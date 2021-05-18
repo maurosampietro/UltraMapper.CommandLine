@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using UltraMapper.MappingExpressionBuilders;
 using UltraMapper.Parsing;
 using UltraMapper.Parsing.Extensions;
@@ -41,14 +42,14 @@ namespace UltraMapper.CommandLine.UnitTest.UltraMapper.Extensions
         [TestMethod]
         public void BasicMapByParamName()
         {
-            //funziona solo assegnando a tutti i valori un nome (per adesso)
-            var args = new string[]
+            var commands = new string[]
             {
                 $"--{nameof( Commands.PropertyA )} {nameof( Commands.PropertyA )}",
                 $"--{nameof( Commands.PropertyB )} {nameof( Commands.PropertyB ).GetHashCode()}",
                 $"--{nameof( Commands.SomeCommand )} (a=a b=11 sublevel2=(d=d e=e sublevel3=(g=g h=h)))"
             };
 
+            var args = String.Join( " ", commands );
             var target = CommandLine.Instance.Parse<Commands>( args );
 
             Assert.IsTrue( target.PropertyA == nameof( Commands.PropertyA ) );
@@ -64,13 +65,14 @@ namespace UltraMapper.CommandLine.UnitTest.UltraMapper.Extensions
         [TestMethod]
         public void BasicMapByParamIndex()
         {
-            var args = new string[]
+            var commands = new string[]
             {
                 $"--{nameof( Commands.PropertyA )} a",
                 $"--{nameof( Commands.PropertyB )} 11",
                 $"--{nameof( Commands.SomeCommand )} (a1 b1 (d e (g h)))"
             };
 
+            var args = String.Join( " ", commands );
             var target = CommandLine.Instance.Parse<Commands>( args );
 
             Assert.IsTrue( target.PropertyA == "a" );
@@ -178,6 +180,6 @@ namespace UltraMapper.CommandLine.UnitTest.UltraMapper.Extensions
             var parsed = CommandLine.Instance.Parse<Commands>( args );
 
             Assert.IsTrue( parsed.SomeCommand.SubLevel2.SubLevel3.G == "g" );
-        }        
+        }
     }
 }

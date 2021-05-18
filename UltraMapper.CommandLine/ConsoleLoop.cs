@@ -4,13 +4,13 @@ namespace UltraMapper.CommandLine
 {
     public class ConsoleLoop
     {
-        public static void Start<T>( string[] args, 
+        public static void Start<T>( string[] args,
             Action<T> onParsed = null ) where T : class, new()
         {
             Start( args, new T(), onParsed );
         }
 
-        public static void Start<T>( string[] args, T instance, 
+        public static void Start<T>( string[] args, T instance,
             Action<T> onParsed = null ) where T : class
         {
             var autoparser = CommandLine.Instance;
@@ -22,13 +22,19 @@ namespace UltraMapper.CommandLine
                 {
                     Console.Write( "> " );
 
-                    string commandLine = (args == null || args.Length == 0) ?
-                        Console.ReadLine() : String.Join( " ", args );
+                    if( args == null || args.Length == 0 )
+                    {
+                        string commandLine = Console.ReadLine();
 
-                    autoparser.Parse( commandLine, instance );
-                    onParsed?.Invoke( instance );
-
-                    args = null;
+                        autoparser.Parse( commandLine, instance );
+                        onParsed?.Invoke( instance );
+                    }
+                    else
+                    {
+                        autoparser.Parse( args, instance );
+                        onParsed?.Invoke( instance );
+                        args = null;
+                    }
                 }
                 catch( UndefinedCommandException argumentEx )
                 {

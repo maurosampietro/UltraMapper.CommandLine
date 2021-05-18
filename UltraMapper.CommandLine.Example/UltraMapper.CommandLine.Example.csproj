@@ -183,10 +183,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="UltraMapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UltraMapper.0.2.55\lib\net47\UltraMapper.dll</HintPath>
+      <HintPath>..\packages\UltraMapper.0.2.59\lib\net47\UltraMapper.dll</HintPath>
     </Reference>
-    <Reference Include="UltraMapper.Parsing, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UltraMapper.Parsing.1.0.0\lib\net47\UltraMapper.Parsing.dll</HintPath>
+    <Reference Include="UltraMapper.Parsing, Version=0.2.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UltraMapper.Parsing.2.0.0\lib\net47\UltraMapper.Parsing.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
