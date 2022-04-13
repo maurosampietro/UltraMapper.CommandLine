@@ -245,6 +245,7 @@ namespace UltraMapper.CommandLine
             CheckThrowParamNumber( param, paramsDef );
             CheckThrowNamedParamsExist( param, target, paramsDef );
             CheckThrowNamedParamsOrder( param );
+            //CheckThrowParamsTypeOrder (if cp provided and sp is expected number is still ok but should throw)
         }
 
         public void CheckThrowCommandExists( ParsedCommand command, Type target, ParameterDefinition[] commandDefs )
@@ -284,27 +285,35 @@ namespace UltraMapper.CommandLine
             var availableParamNames = longNames
                 .Where( i => !String.IsNullOrWhiteSpace( i ) );
 
-            if( command.Param is ComplexParam cp )
+            if( !String.IsNullOrEmpty( command.Param?.Name ) )
             {
-                var providedParams = cp.SubParams.Where( l => !String.IsNullOrWhiteSpace( l.Name ) )
-                    .Select( p => p.Name.ToLower() );
+                var isCorrectParam = availableParamNames.Contains( command.Param.Name );
+                if( !isCorrectParam )
+                    throw new UndefinedParameterException( target, command.Param.Name );
+            }
 
-                foreach( var providedParam in providedParams )
-                {
-                    var isCorrectParam = availableParamNames.Contains( providedParam );
-                    if( !isCorrectParam )
-                        throw new UndefinedParameterException( target, providedParam );
-                }
-            }
-            else if( command.Param != null )
-            {
-                if( !String.IsNullOrWhiteSpace( command.Param.Name ) )
-                {
-                    var isCorrectParam = availableParamNames.Contains( command.Param.Name.ToLower() );
-                    if( !isCorrectParam )
-                        throw new UndefinedParameterException( target, command.Param.Name );
-                }
-            }
+            //if( command.Param is ComplexParam cp )
+            //{
+            //    var providedParams = cp.SubParams.Where( l => !String.IsNullOrWhiteSpace( l.Name ) )
+            //        .Select( p => p.Name.ToLower() );
+
+            //    foreach( var providedParam in providedParams )
+            //    {
+            //        var isCorrectParam = availableParamNames.Contains( providedParam );
+            //        if( !isCorrectParam )
+            //            throw new UndefinedParameterException( target, providedParam );
+            //    }
+            //}
+            //else
+            //if( command.Param != null )
+            //{
+            //    if( !String.IsNullOrWhiteSpace( command.Param.Name ) )
+            //    {
+            //        var isCorrectParam = availableParamNames.Contains( command.Param.Name.ToLower() );
+            //        if( !isCorrectParam )
+            //            throw new UndefinedParameterException( target, command.Param.Name );
+            //    }
+            //}
         }
 
         protected void CheckThrowNamedParamsOrder( ParsedCommand command )
@@ -377,6 +386,7 @@ namespace UltraMapper.CommandLine
             CheckThrowParamNumber( param, paramsDef );
             CheckThrowNamedParamsExist( param, target, paramsDef );
             CheckThrowNamedParamsOrder( param );
+            //CheckThrowParamsTypeOrder (if cp provided and sp is expected number is still ok but should throw)
         }
 
         private void CheckThrowArgumentNameCollisions( ComplexParam param )

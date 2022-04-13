@@ -167,7 +167,7 @@ namespace UltraMapper.CommandLine.Parsers
                 {
                     theparam = new ComplexParam()
                     {
-                        Name = cmdName,
+                        //Name = cmdName,
                         Index = paramIndex,
                         SubParams = parameters.ToArray()
                     };
