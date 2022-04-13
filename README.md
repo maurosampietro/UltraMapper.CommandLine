@@ -40,7 +40,7 @@ class Program
 {
     static void Main( string[] args )
     {
-        //--add ("John Smith" 26 (number=AC2903X balance=3500.00 creditcards=[(CRD01 1000.00) (CRD02 2000.00)]))
+        //--add ("John Smith" 26 account=(number=AC2903X balance=3500.00 creditcards=[(CRD01 1000.00) (CRD02 2000.00)]))
         CommandLine.Instance.Parse<CustomerCommands>( args );
     }
 
