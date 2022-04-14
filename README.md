@@ -41,10 +41,10 @@ class Program
     static void Main( string[] args )
     {
         //--add ("John Smith" 26 account=(number=AC2903X balance=3500.00 creditcards=[(CRD01 1000.00) (CRD02 2000.00)]))
-        CommandLine.Instance.Parse<CustomerCommands>( args );
+        CommandLine.Instance.Parse<CommandLineSupportedCommands>( args );
     }
 
-    public class CustomerCommands
+    public class CommandLineSupportedCommands
     {
         [Option( Name = "add", HelpText = "Adds new customer to db" )]
         public void AddToDatabase( CustomerInfo customer )
