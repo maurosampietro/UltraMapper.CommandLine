@@ -1,20 +1,20 @@
-﻿using System;
+using System;
+using UltraMapper.CommandLine;
 
 namespace UltraMapper.CommandLine
 {
     public class ConsoleLoop
     {
-        public static void Start<T>( string[] args,
-            Action<T> onParsed = null ) where T : class, new()
+        public static void Start<T>( CommandLine cmdLine, string[] args,
+            Action<T> onParsed = null, Action<Exception> onError = null ) where T : class, new()
         {
-            Start( args, new T(), onParsed );
+            Start( cmdLine, args, new T(), onParsed, onError );
         }
 
-        public static void Start<T>( string[] args, T instance,
-            Action<T> onParsed = null ) where T : class
+        public static void Start<T>( CommandLine cmdLine, string[] args, T instance,
+            Action<T> onParsed = null, Action<Exception> onError = null ) where T : class
         {
-            var autoparser = CommandLine.Instance;
-            var helpCommandName = autoparser.HelpProvider.HelpCommandDefinition.Name;
+            var helpCommandName = cmdLine.HelpProvider.HelpCommandDefinition.Name;
 
             while( true )
             {
@@ -26,32 +26,35 @@ namespace UltraMapper.CommandLine
                     {
                         string commandLine = Console.ReadLine();
 
-                        autoparser.Parse( commandLine, instance );
+                        cmdLine.Parse( commandLine, instance );
                         onParsed?.Invoke( instance );
                     }
                     else
                     {
                         try
                         {
-                            autoparser.Parse( args, instance );
+                            cmdLine.Parse( args, instance );
                             onParsed?.Invoke( instance );
                         }
                         finally
                         {
                             args = null;
-                        }                        
+                        }
                     }
                 }
                 catch( UndefinedCommandException argumentEx )
                 {
+                    onError?.Invoke( argumentEx );
+
                     Console.WriteLine( argumentEx.Message );
                     Console.WriteLine();
 
-                    if( autoparser.HelpProvider.ShowHelpOnError )
-                        autoparser.Parse( $"--{helpCommandName}", instance );
+                    if( cmdLine.HelpProvider.ShowHelpOnError )
+                        cmdLine.Parse( $"--{helpCommandName}", instance );
                 }
                 catch( Exception ex )
                 {
+                    onError?.Invoke( ex );
                     Console.WriteLine( ex.Message );
                 }
             }
