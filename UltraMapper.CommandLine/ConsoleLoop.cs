@@ -1,5 +1,4 @@
 using System;
-using UltraMapper.CommandLine;
 
 namespace UltraMapper.CommandLine
 {
