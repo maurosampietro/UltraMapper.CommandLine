@@ -4,6 +4,18 @@ namespace UltraMapper.CommandLine
 {
     public class ConsoleLoop
     {
+        public static void Start<T>( string[] args,
+           Action<T> onParsed = null, Action<Exception> onError = null ) where T : class, new()
+        {
+            Start( CommandLine.Instance, args, new T(), onParsed, onError );
+        }
+
+        public static void Start<T>( string[] args, T instance,
+            Action<T> onParsed = null, Action<Exception> onError = null ) where T : class
+        {
+            Start( CommandLine.Instance, args, instance, onParsed, onError );
+        }
+
         public static void Start<T>( CommandLine cmdLine, string[] args,
             Action<T> onParsed = null, Action<Exception> onError = null ) where T : class, new()
         {
