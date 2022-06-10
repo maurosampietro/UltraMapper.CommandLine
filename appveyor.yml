@@ -25,7 +25,7 @@ build:
 deploy:
 - provider: NuGet
   api_key:
-    secure: chQba+lUQkjwQzBOrt1xtkMa6kEFkbNSKjUsmWLDNFYThZ33D/20di6afiZrCPhd
+    secure: V9IBfEGtS3LppLMRphtIACQYBJDGNevXDKbw2OSGYbTO5eYEOHuCT/vea9obbsgV
   skip_symbols: false
 - provider: GitHub
   tag: UltraMapper.CommandLine v$(appveyor_build_version)
