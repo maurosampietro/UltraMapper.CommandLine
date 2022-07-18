@@ -40,7 +40,8 @@ class Program
 {
     static void Main( string[] args )
     {
-        //--add ("John Smith" 26 account=(number=AC2903X balance=3500.00 creditcards=[(CRD01 1000.00) (CRD02 2000.00)]))
+        //if called from cmd.exe quotes must be escaped with '\'
+        //--add (\"John Smith\" 26 account=(number=AC2903X balance=3500 creditcards=[(CRD01 1000) (CRD02 2000)]))
         CommandLine.Instance.Parse<CommandLineSupportedCommands>( args );
     }
 
@@ -69,12 +70,12 @@ class Program
             public class CreditCardInfo
             {
                 public string CardNumber { get; set; }
-                public double MonthlyLimit { get; set; }
+                public int MonthlyLimit { get; set; }
             }
 
             [Option( Name = "number" )]
             public string AccountNumber { get; set; }
-            public double Balance { get; set; }
+            public int Balance { get; set; }
 
             public List<CreditCardInfo> CreditCards { get; set; }
         }
