@@ -93,7 +93,7 @@ namespace UltraMapper.CommandLine
                     SubParams = subs.ToArray()
                 };
             }
-            else if( ((ComplexParam)param).SubParams.Length < def.SubParams.Length )
+            else if( ((ComplexParam)param).SubParams.Count < def.SubParams.Length )
             {
                 var paramsSubs = new List<IParsedParam>();
                 paramsSubs.AddRange( ((ComplexParam)param).SubParams );
@@ -134,7 +134,7 @@ namespace UltraMapper.CommandLine
             //add name to unnamed params
             if( param is ComplexParam cp )
             {
-                for( int i = 0; i < cp.SubParams.Length && i < def.SubParams.Length; i++ )
+                for( int i = 0; i < cp.SubParams.Count && i < def.SubParams.Length; i++ )
                 {
                     var subParam = cp.SubParams[ i ];
                     var subDef = def.SubParams.OrderBy( f => f.Options.Order ).ToArray()[ i ];
@@ -186,7 +186,7 @@ namespace UltraMapper.CommandLine
 
                     IEnumerable<IParsedParam> getSubparams( ComplexParam localcp )
                     {
-                        for( int i = 0; i < localcp.SubParams.Length; i++ )
+                        for( int i = 0; i < localcp.SubParams.Count; i++ )
                         {
                             var item = localcp.SubParams[ i ];
 
@@ -358,16 +358,16 @@ namespace UltraMapper.CommandLine
                     requiredParams = tempDef.SubParams
                         .Count( cmdi => cmdi.Options?.IsRequired ?? false );
 
-                    if( cp.SubParams.Length < requiredParams ||
-                        cp.SubParams.Length > tempDef.SubParams.Length )
+                    if( cp.SubParams.Count < requiredParams ||
+                        cp.SubParams.Count > tempDef.SubParams.Length )
                     {
                         throw new ArgumentNumberException( param );
                     }
                 }
                 else
                 {
-                    if( cp.SubParams.Length < requiredParams ||
-                        cp.SubParams.Length > paramsCount )
+                    if( cp.SubParams.Count < requiredParams ||
+                        cp.SubParams.Count > paramsCount )
                     {
                         throw new ArgumentNumberException( param );
                     }
@@ -468,8 +468,8 @@ namespace UltraMapper.CommandLine
         {
             int requiredParams = paramsDef.Count( cmdi => cmdi.Options?.IsRequired ?? false );
 
-            if( param.SubParams.Length < requiredParams ||
-                param.SubParams.Length > paramsDef.Length )
+            if( param.SubParams.Count < requiredParams ||
+                param.SubParams.Count > paramsDef.Length )
             {
                 throw new ArgumentNumberException( param );
             }

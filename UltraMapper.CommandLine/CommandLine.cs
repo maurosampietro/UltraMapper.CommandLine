@@ -54,8 +54,8 @@ namespace UltraMapper.CommandLine
 
                 cfg.Mappers.AddBefore<ReferenceMapper>( new IMappingExpressionBuilder[]
                 {
-                    new ParsedCommandsExpressionBuilder( cfg ),
-                    new ParsedCommandMapper( cfg, helpProvider ),
+                    new ParsedCommandCollectionExpressionBuilder( cfg ),
+                    new ParsedCommandExpressionBuilder( cfg, helpProvider ),
                     new ArrayParamExpressionBuilder( cfg),
                     new ComplexParamExpressionBuilder( cfg ){ CanMapByIndex = true },
                     new SimpleParamExpressionBuilder( cfg )

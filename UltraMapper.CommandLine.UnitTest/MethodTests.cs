@@ -404,14 +404,14 @@ namespace UltraMapper.CommandLine.UnitTest
         [TestMethod]
         public void CallComplexParam()
         {
-            var args = $"--{nameof( Commands4.MoveMethod1 )} (from to) (from to)";
+            var args = $"--{nameof( Commands4.MoveMethod1 )} (from1 to1) (from2 to2)";
             var parsed = CommandLine.Instance.Parse<Commands4>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
-            Assert.IsTrue( parsed.From1 == "from" );
-            Assert.IsTrue( parsed.To1 == "to" );
-            Assert.IsTrue( parsed.From2 == "from" );
-            Assert.IsTrue( parsed.To2 == "to" );
+            Assert.IsTrue( parsed.From1 == "from1" );
+            Assert.IsTrue( parsed.To1 == "to1" );
+            Assert.IsTrue( parsed.From2 == "from2" );
+            Assert.IsTrue( parsed.To2 == "to2" );
         }
     }
 
@@ -486,11 +486,18 @@ namespace UltraMapper.CommandLine.UnitTest
                 this.PrintNumbers = new[] { numbers.A, numbers.B };
             }
 
-            public void PrintCollections( string[] lines, IEnumerable<int> numbers )
+            public void PrintSimpleCollections( string[] lines, IEnumerable<int> numbers )
             {
                 this.IsExecuted = true;
                 this.PrintLines = lines;
                 this.PrintNumbers = numbers.ToArray();
+            }
+
+            public void PrintComplexCollections( List<ComplexLine> lines, IEnumerable<ComplexNumber> numbers )
+            {
+                this.IsExecuted = true;
+                this.PrintLines = lines.Select( cp => cp.A + cp.B ).ToArray();
+                this.PrintNumbers = numbers.Select( cn => cn.A + cn.B ).ToArray();
             }
         }
 
@@ -574,12 +581,23 @@ namespace UltraMapper.CommandLine.UnitTest
         [TestMethod]
         public void Method2ParamsCollections()
         {
-            var args = $"--{nameof( Commands5.PrintCollections )} [b c] [0 1]";
+            var args = $"--{nameof( Commands5.PrintSimpleCollections )} [b c] [0 1]";
             var parsed = CommandLine.Instance.Parse<Commands5>( args );
 
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.PrintLines.SequenceEqual( new[] { "b", "c" } ) );
             Assert.IsTrue( parsed.PrintNumbers.SequenceEqual( new[] { 0, 1 } ) );
+        }
+
+        [TestMethod]
+        public void Method2ParamsComplexCollections()
+        {
+            var args = $"--{nameof( Commands5.PrintSimpleCollections )} [ (a b) ( c d) ] [ (0 1) (2 3) ]";
+            var parsed = CommandLine.Instance.Parse<Commands5>( args );
+
+            Assert.IsTrue( parsed.IsExecuted );
+            Assert.IsTrue( parsed.PrintLines.SequenceEqual( new[] { "ab", "cd" } ) );
+            Assert.IsTrue( parsed.PrintNumbers.SequenceEqual( new[] { 1, 5 } ) );
         }
     }
 }

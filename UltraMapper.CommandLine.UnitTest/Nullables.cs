@@ -76,5 +76,24 @@ namespace UltraMapper.CommandLine.UnitTest
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.MethodParam.SequenceEqual( new int?[] { 11, 13 } ) );
         }
+
+        //SHOULD SUPPORT NULLS
+        //[TestMethod]
+        //public void SetNullableCollectionProperty()
+        //{
+        //    string args = $"--{nameof( NullableCollectionProperty.Option )} [null 11 13]";
+        //    var parsed = CommandLine.Instance.Parse<NullableCollectionProperty>( args );
+        //    Assert.IsTrue( parsed.Option.SequenceEqual( new int?[] { null, 11, 13 } ) );
+        //}
+
+        //[TestMethod]
+        //public void SetNullableCollectionMethodParameter()
+        //{
+        //    string args = $"--{nameof( NullableCollectionMethod.Method )} [null 11 13]";
+        //    var parsed = CommandLine.Instance.Parse<NullableCollectionMethod>( args );
+
+        //    Assert.IsTrue( parsed.IsExecuted );
+        //    Assert.IsTrue( parsed.MethodParam.SequenceEqual( new int?[] { null, 11, 13 } ) );
+        //}
     }
 }

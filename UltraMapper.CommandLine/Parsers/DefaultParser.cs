@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using UltraMapper.CommandLine.Mappers.Internals;
+using UltraMapper.CommandLine.Internals;
 using UltraMapper.Parsing;
 
 namespace UltraMapper.CommandLine.Parsers
@@ -130,7 +130,7 @@ namespace UltraMapper.CommandLine.Parsers
             if( String.IsNullOrWhiteSpace( commandLine ) )
                 throw new ArgumentNullException( nameof( commandLine ), "Null or empty command" );
 
-            var commands = commandLine.SplitKeepDelimiter( COMMAND_IDENTIFIER ).ToArray();
+            var commands = commandLine.SplitKeepDelimiter( COMMAND_IDENTIFIER, "([", ")]" ).ToArray();
             if( commands.Length == 0 )
             {
                 //try implicit notation

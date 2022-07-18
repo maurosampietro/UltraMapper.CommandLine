@@ -55,7 +55,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void WrongArg()
         {
             string args = "--open wrongarg";
-            Assert.ThrowsException<FormatException>( () =>
+            Assert.ThrowsException<ArgumentException>( () =>
                 CommandLine.Instance.Parse<Commands>( args ) );
         }
     }

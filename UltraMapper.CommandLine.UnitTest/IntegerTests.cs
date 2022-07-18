@@ -39,7 +39,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void SetToIntegerFromDecimalNumber()
         {
             string args = $"--{nameof( Commands.Option )} 1.0";
-            Assert.ThrowsException<FormatException>( () =>
+            Assert.ThrowsException<ArgumentException>( () =>
             {
                 var parsed = CommandLine.Instance.Parse<Commands>( args );
             } );
@@ -49,7 +49,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void SetToNegativeIntegerFromDecimalNumber()
         {
             string args = $"--{nameof( Commands.Option )} -1.0";
-            Assert.ThrowsException<FormatException>( () =>
+            Assert.ThrowsException<ArgumentException>( () =>
             {
                 var parsed = CommandLine.Instance.Parse<Commands>( args );
             } );
@@ -59,7 +59,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void WrongArg()
         {
             string args = $"--{nameof( Commands.Option )} suka";
-            Assert.ThrowsException<FormatException>( () =>
+            Assert.ThrowsException<ArgumentException>( () =>
             {
                 var parsed = CommandLine.Instance.Parse<Commands>( args );
             } );

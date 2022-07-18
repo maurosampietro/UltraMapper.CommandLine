@@ -9,7 +9,7 @@ namespace UltraMapper.CommandLine.UnitTest
     [TestClass]
     public class DefaultParserTests
     {
-        private DefaultParser _textParser = new DefaultParser();
+        private readonly DefaultParser _textParser = new DefaultParser();
 
         [TestMethod]
         public void WrongCommandSyntax()
@@ -229,6 +229,31 @@ namespace UltraMapper.CommandLine.UnitTest
             Assert.IsTrue( (complexParam2[ 1 ] as SimpleParam).Value == "y" );
 
             Assert.IsTrue( param3.Value == "z" );
+        }
+
+        [TestMethod]
+        public void CommandIdentifierInsideParameter()
+        {
+            //need quotes on last '--z' param (otherwise interpreted as command)
+
+            var args = @"--command (--a (--b [ (--1 --2) (--3 --4) (--5 --6) ] --d)) ( --x --y ) ""--z""";
+            var command = _textParser.Parse( args ).ToList();
+
+            Assert.IsTrue( command.Single().Name == "command" );
+            Assert.IsTrue( ((command.Single().Param as ComplexParam)[ 2 ] as SimpleParam).Value == "--z" );
+
+            //args = @"--command (--a (--b [ (--1 --2) (--3 --4) (--5 --6) ] --d)) ( --x --y ) ""\""--z\""""";
+            //command = _textParser.Parse( args ).ToList();
+
+            //Assert.IsTrue( command.Single().Name == "command" );
+            //Assert.IsTrue( ((command.Single().Param as ComplexParam)[ 2 ] as SimpleParam).Value == @"""\""--z\""""" );
+
+            args = @"--command (--a (--b [ (--1 --2) (--3 --4) (--5 --6) ] --d)) ( --x --y ) --z";
+            command = _textParser.Parse( args ).ToList();
+
+            Assert.IsTrue( command.Count == 2 );
+            Assert.IsTrue( command.First().Name == "command" );
+            Assert.IsTrue( command.Last().Name == "z" );
         }
 
         private void ShouldThrow<T>( string args ) where T : Exception

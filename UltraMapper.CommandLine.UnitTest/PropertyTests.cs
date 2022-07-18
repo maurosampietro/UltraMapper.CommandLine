@@ -77,7 +77,7 @@ namespace UltraMapper.CommandLine.UnitTest
         public void WrongTypeOfArg()
         {
             var args = "--open thisisnotcovertibletoboolean";
-            Assert.ThrowsException<FormatException>(
+            Assert.ThrowsException<ArgumentException>(
                 () => CommandLine.Instance.Parse<Commands>( args ) );
         }
 
