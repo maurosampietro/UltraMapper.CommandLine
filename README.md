@@ -40,7 +40,7 @@ class Program
 {
     static void Main( string[] args )
     {
-        //if called from cmd.exe quotes must be escaped with '\'
+        //if called from cmd.exe double quotes must be escaped with '\'
         //--add (\"John Smith\" 26 account=(number=AC2903X balance=3500 creditcards=[(CRD01 1000) (CRD02 2000)]))
         CommandLine.Instance.Parse<CommandLineSupportedCommands>( args );
     }
