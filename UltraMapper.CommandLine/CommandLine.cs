@@ -52,13 +52,14 @@ namespace UltraMapper.CommandLine
                     rule.TargetMemberProvider.IgnoreNonPublicMembers = true;
                 } );
 
-                cfg.Mappers.AddBefore<ReferenceMapper>( new IMappingExpressionBuilder[]
+                cfg.Mappers.AddBefore<NullableMapper>( new IMappingExpressionBuilder[]
                 {
-                    new ParsedCommandCollectionExpressionBuilder( cfg ),
-                    new ParsedCommandExpressionBuilder( cfg, helpProvider ),
-                    new ArrayParamExpressionBuilder( cfg),
-                    new ComplexParamExpressionBuilder( cfg ){ CanMapByIndex = true },
-                    new SimpleParamExpressionBuilder( cfg )
+                    new ParsedCommandCollectionExpressionBuilder(),
+                    new ParsedCommandExpressionBuilder( helpProvider ),
+
+                    new SimpleParamExpressionBuilder(),
+                    new ArrayParamExpressionBuilder(),
+                    new ComplexParamExpressionBuilder(){ CanMapByIndex = true },
                 } );
 
                 cfg.MapTypes<string, double>( str => ConvertStringToDouble( str ) );

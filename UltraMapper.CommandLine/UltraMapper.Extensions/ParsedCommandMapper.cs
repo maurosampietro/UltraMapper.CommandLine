@@ -24,8 +24,7 @@ namespace UltraMapper.CommandLine.Extensions
             FlattenHierarchy = false
         };
 
-        public ParsedCommandExpressionBuilder( Configuration configuration, IHelpProvider helpProvider )
-            : base( configuration )
+        public ParsedCommandExpressionBuilder( IHelpProvider helpProvider )
         {
             _helpProvider = helpProvider;
             _helperCall = ( type, param ) => _helpProvider.GetHelp( type, param );
@@ -51,7 +50,7 @@ namespace UltraMapper.CommandLine.Extensions
             var subParam = Expression.Parameter( typeof( IParsedParam ), "param" );
 
             var memberAssign = this.GetMemberAssignments( context,
-                targetMembers, subParam, MapperConfiguration ).ToList();
+                targetMembers, subParam, mapping.GlobalConfig ).ToList();
 
             var help = Expression.IfThen
             (
@@ -67,14 +66,17 @@ namespace UltraMapper.CommandLine.Extensions
             (
                 new[] { context.Mapper, subParam },
 
-                Expression.Assign( context.Mapper, Expression.Constant( _mapper ) ),
+                Expression.Assign( context.Mapper, Expression.Constant( context.MapperInstance ) ),
 
                 Expression.Assign( subParam, Expression.Property( context.SourceInstance, nameof( ParsedCommand.Param ) ) ),
                 Expression.Block( memberAssign ),
-                help
+                help,
+
+                Expression.Constant( null, context.TargetInstance.Type )
             );
 
-            var delegateType = typeof( Action<,,> ).MakeGenericType( context.ReferenceTracker.Type,
+
+            var delegateType = typeof( UltraMapperDelegate<,> ).MakeGenericType(
                context.SourceInstance.Type, context.TargetInstance.Type );
 
             return Expression.Lambda( delegateType, expression,
@@ -146,7 +148,7 @@ namespace UltraMapper.CommandLine.Extensions
                 var mappingSource = this.GetMappingSource( context, propertyInfo );
                 var mappingTarget = new MappingTarget( memberInfo );
                 var memberMapping = typeMapping.AddMemberToMemberMapping( mappingSource, mappingTarget );
-                
+
                 var memberAssignment = memberMapping.MemberMappingExpression.Body
                     .ReplaceParameter( context.Mapper, "mapper" )
                     .ReplaceParameter( subParam, mappingSource.ValueGetter.Parameters[ 0 ].Name )
@@ -207,22 +209,26 @@ namespace UltraMapper.CommandLine.Extensions
                     }
                     else
                     {
-                        if( param.ParameterType.IsArray )
+                        if(param.ParameterType.IsEnumerable())
                         {
-                            var temp = MapperConfiguration[ paramType, param.ParameterType ].MappingExpression;
+                            var paramTargetType = param.ParameterType;
+                            //if( paramTargetType.GetGenericTypeDefinition() == typeof( IEnumerable<> ) )
+                            //    paramTargetType = typeof( List<> ).MakeGenericType( param.ParameterType.GetCollectionGenericType() );
 
-                            var tempTarget = Expression.Parameter( param.ParameterType, "temptarget" );
+                            var temp = MapperConfiguration[ paramType, paramTargetType ].MappingExpression;
+
+                            var tempTarget = Expression.Parameter( paramTargetType, "temptarget" );
                             var selectedParam = Expression.Parameter( paramType, "selectedParam" );
 
                             var getCount = typeof( System.Linq.Enumerable ).GetMethods(
                                 BindingFlags.Static | BindingFlags.Public )
                             .First( m =>
                             {
-                                if( m.Name != nameof( System.Linq.Enumerable.Count ) )
+                                if(m.Name != nameof( System.Linq.Enumerable.Count ))
                                     return false;
 
                                 var parameters = m.GetParameters();
-                                if( parameters.Length != 1 ) return false;
+                                if(parameters.Length != 1) return false;
 
                                 return parameters[ 0 ].ParameterType.GetGenericTypeDefinition() == typeof( IEnumerable<> );
                             } )
@@ -230,15 +236,21 @@ namespace UltraMapper.CommandLine.Extensions
 
                             Expression GetNewInstanceWithReservedCapacity()
                             {
-                                var constructorWithCapacity = param.ParameterType.GetConstructor( new Type[] { typeof( int ) } );
-                                if( constructorWithCapacity == null ) return null;
+                                var constructorWithCapacity = paramTargetType.GetConstructor( new Type[] { typeof( int ) } );
+                                if(constructorWithCapacity != null)
+                                {
+                                    var itemsProperty = Expression.Property( Expression.Convert( selectedParam,
+                                        typeof( ArrayParam ) ), nameof( ArrayParam.Items ) );
 
-                                var itemsProperty = Expression.Property( Expression.Convert( selectedParam,
-                                    typeof( ArrayParam ) ), nameof( ArrayParam.Items ) );
-
-                                var getCountMethod = Expression.Call( null, getCount, itemsProperty );
-                                return Expression.New( constructorWithCapacity, getCountMethod );
+                                    var getCountMethod = Expression.Call( null, getCount, itemsProperty );
+                                    return Expression.New( constructorWithCapacity, getCountMethod );
+                                }
+                                else {
+                                    return Expression.New( typeof( List<> ).MakeGenericType(paramTargetType.GenericTypeArguments) );
+                                }
                             }
+                            
+                            var getNewInstanceExp = GetNewInstanceWithReservedCapacity();
 
                             var paramExp = Expression.Block
                             (
@@ -250,11 +262,11 @@ namespace UltraMapper.CommandLine.Extensions
                                     paramType
                                 ) ),
 
-                                Expression.Assign( tempTarget, GetNewInstanceWithReservedCapacity() ),
+                                Expression.Assign( tempTarget, getNewInstanceExp ),
 
                                 Expression.Invoke( itemMapping, context.ReferenceTracker, selectedParam, tempTarget ),
 
-                                tempTarget
+                               tempTarget
                             );
 
                             parametersExps.Add( paramExp );
@@ -287,7 +299,7 @@ namespace UltraMapper.CommandLine.Extensions
                                 Expression.Invoke( itemMapping, context.ReferenceTracker, selectedParam, tempTarget ),
 
                                 tempTarget
-                            ); ;
+                            );
 
                             parametersExps.Add( paramExp );
                         }
@@ -310,9 +322,9 @@ namespace UltraMapper.CommandLine.Extensions
                 return new MappingSource<ParsedCommand, string>( pc => ((SimpleParam)pc.Param).Value );
 
             if( propertyInfo.PropertyType.IsEnumerable() )
-                return new MappingSource<ParsedCommand, IReadOnlyList<IParsedParam>>( pc => ((ArrayParam)pc.Param).Items );
+                return new MappingSource<ParsedCommand, ArrayParam>( pc => (ArrayParam)pc.Param );
 
-            return new MappingSource<ParsedCommand, IList<IParsedParam>>( pc => ((ComplexParam)pc.Param).SubParams );
+            return new MappingSource<ParsedCommand, ComplexParam>( pc => (ComplexParam)pc.Param );
         }
 
         private static readonly Expression<Func<IList<IParsedParam>, ParameterInfo, object>> _selectParamExp =

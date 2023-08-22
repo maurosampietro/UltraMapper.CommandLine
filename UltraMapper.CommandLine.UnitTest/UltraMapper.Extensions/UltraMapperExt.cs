@@ -92,8 +92,8 @@ namespace UltraMapper.CommandLine.UnitTest.UltraMapper.Extensions
 
             mapper.Config.Mappers.AddBefore<ReferenceMapper>( new IMappingExpressionBuilder[]
             {
-                new SimpleParamExpressionBuilder( mapper.Config ),
-                new ComplexParamExpressionBuilder( mapper.Config )
+                new SimpleParamExpressionBuilder(),
+                new ComplexParamExpressionBuilder()
             } );
 
             var complexParam = new ComplexParam()

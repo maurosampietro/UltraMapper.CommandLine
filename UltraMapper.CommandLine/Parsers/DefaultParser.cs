@@ -251,6 +251,8 @@ namespace UltraMapper.CommandLine.Parsers
                 else if( paramValue.StartsWith( @"""" ) && paramValue.EndsWith( @"""" ) )
                 {
                     paramValue = paramValue.Substring( 1, paramValue.Length - 2 );
+                    if( paramValue == "null") paramValue = null;
+
                     yield return new SimpleParam()
                     {
                         Name = paramName,
@@ -260,6 +262,8 @@ namespace UltraMapper.CommandLine.Parsers
                 }
                 else
                 {
+                    if(paramValue == "null") paramValue = null;
+
                     yield return new SimpleParam()
                     {
                         Name = paramName,

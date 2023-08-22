@@ -139,7 +139,7 @@ namespace UltraMapper.CommandLine.UnitTest
         [TestMethod]
         public void EnumerableComplexProperty()
         {
-            var args = $"--{nameof( CommandsEnumerable.EnumerableComplexTypeProperty )} [(1 2) (3 4) (5 6)]";
+            var args = $"--{nameof( CommandsEnumerable.EnumerableComplexTypeProperty )} [(1 2) (3 4) (5 6)]";            
             var parsed = CommandLine.Instance.Parse<CommandsEnumerable>( args );
 
             Assert.IsTrue( parsed.EnumerableComplexTypeProperty
@@ -296,7 +296,7 @@ namespace UltraMapper.CommandLine.UnitTest
         }
 
         [TestMethod]
-        public void EnumerableComplexProperty()
+        public void EnumerableComplexMethod()
         {
             var args = $"--{nameof( CommandsEnumerable.EnumerableComplexMethod )} [(1 2) (3 4) (5 6)]";
             var parsed = CommandLine.Instance.Parse<CommandsEnumerable>( args );

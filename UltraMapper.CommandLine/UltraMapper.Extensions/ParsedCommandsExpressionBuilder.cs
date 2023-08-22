@@ -9,9 +9,6 @@ namespace UltraMapper.CommandLine.Extensions
 {
     public class ParsedCommandCollectionExpressionBuilder : CollectionMapper
     {
-        public ParsedCommandCollectionExpressionBuilder( Configuration configuration )
-            : base( configuration ) { }
-
         public override bool CanHandle( Mapping mapping )
         {
             var source = mapping.Source.EntryType;
@@ -28,15 +25,18 @@ namespace UltraMapper.CommandLine.Extensions
             var target = mapping.Target.EntryType;
 
             var context = (CollectionMapperContext)this.GetMapperContext( mapping );
-            var mappingExpression = MapperConfiguration[ typeof( ParsedCommand ), target ].MappingExpression;
+            var mappingExpression = mapping.GlobalConfig[ typeof( ParsedCommand ), target ].MappingExpression;
 
-            var body = ExpressionLoops.ForEach( context.SourceInstance, context.SourceCollectionLoopingVar,
-                Expression.Invoke( mappingExpression, context.ReferenceTracker,
-                    context.SourceCollectionLoopingVar, context.TargetInstance ) );
+            var body = Expression.Block(
+                ExpressionLoops.ForEach( context.SourceInstance, context.SourceCollectionLoopingVar,
+                    Expression.Invoke( mappingExpression, context.ReferenceTracker,
+                    context.SourceCollectionLoopingVar, context.TargetInstance ) ),
 
-            var delegateType = typeof( Action<,,> ).MakeGenericType(
-                 context.ReferenceTracker.Type, context.SourceInstance.Type,
-                 context.TargetInstance.Type );
+                Expression.Constant( null, context.TargetInstance.Type )
+            );
+
+            var delegateType = typeof( UltraMapperDelegate<,> ).MakeGenericType(
+                 context.SourceInstance.Type, context.TargetInstance.Type );
 
             return Expression.Lambda( delegateType, body,
                 context.ReferenceTracker, context.SourceInstance, context.TargetInstance );

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UltraMapper.CommandLine.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UltraMapper.Parsing", "..\UltraMapper.Parsing\UltraMapper.Parsing\UltraMapper.Parsing.csproj", "{3AA98F92-D541-4BAE-BD73-D042AB0D83F1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UltraMapper", "..\UltraMapper\UltraMapper\UltraMapper.csproj", "{53EECDEA-63E1-4529-B49B-31389A95B711}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{3AA98F92-D541-4BAE-BD73-D042AB0D83F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AA98F92-D541-4BAE-BD73-D042AB0D83F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AA98F92-D541-4BAE-BD73-D042AB0D83F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53EECDEA-63E1-4529-B49B-31389A95B711}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53EECDEA-63E1-4529-B49B-31389A95B711}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53EECDEA-63E1-4529-B49B-31389A95B711}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53EECDEA-63E1-4529-B49B-31389A95B711}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -50,6 +50,14 @@ namespace UltraMapper.CommandLine.UnitTest
         }
 
         [TestMethod]
+        public void SetNullablePropertyPassNull()
+        {
+            string args = $"--{nameof( NullableProperty.Option )} null";
+            var parsed = CommandLine.Instance.Parse<NullableProperty>( args );
+            Assert.IsTrue( parsed.Option == null );
+        }
+
+        [TestMethod]
         public void SetNullableMethodParameter()
         {
             string args = $"--{nameof( NullableMethod.Method )} 11";
@@ -68,6 +76,14 @@ namespace UltraMapper.CommandLine.UnitTest
         }
 
         [TestMethod]
+        public void SetNullableCollectionPropertyPassNulls()
+        {
+            string args = $"--{nameof( NullableCollectionProperty.Option )} [11 null 13]";
+            var parsed = CommandLine.Instance.Parse<NullableCollectionProperty>( args );
+            Assert.IsTrue( parsed.Option.SequenceEqual( new int?[] { 11, null, 13 } ) );
+        }
+
+        [TestMethod]
         public void SetNullableCollectionMethodParameter()
         {
             string args = $"--{nameof( NullableCollectionMethod.Method )} [11 13]";
@@ -76,6 +92,17 @@ namespace UltraMapper.CommandLine.UnitTest
             Assert.IsTrue( parsed.IsExecuted );
             Assert.IsTrue( parsed.MethodParam.SequenceEqual( new int?[] { 11, 13 } ) );
         }
+
+        [TestMethod]
+        public void SetNullableCollectionMethodParameterPassNulls()
+        {
+            string args = $"--{nameof( NullableCollectionMethod.Method )} [11 null 13]";
+            var parsed = CommandLine.Instance.Parse<NullableCollectionMethod>( args );
+
+            Assert.IsTrue( parsed.IsExecuted );
+            Assert.IsTrue( parsed.MethodParam.SequenceEqual( new int?[] { 11, null, 13 } ) );
+        }
+
 
         //SHOULD SUPPORT NULLS
         //[TestMethod]

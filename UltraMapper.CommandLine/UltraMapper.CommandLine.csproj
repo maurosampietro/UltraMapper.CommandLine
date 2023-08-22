@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFrameworks>netstandard20;net452;net462;net472;net48;net50;net60</TargetFrameworks>
+    <TargetFrameworks>net60</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Authors>Mauro Sampietro</Authors>
     <Copyright>2020</Copyright>
@@ -19,21 +19,15 @@
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Parsers\Core\ArrayParam.cs" />
-    <Compile Remove="Parsers\Core\ComplexParam.cs" />
-    <Compile Remove="Parsers\Core\IParsedParam.cs" />
-    <Compile Remove="Parsers\Core\SimpleParam.cs" />
-    <Compile Remove="UltraMapper.Extensions\ArrayParamExpressionBuilder.cs" />
-    <Compile Remove="UltraMapper.Extensions\CollectionToNonCollectionExpressionBuilder.cs" />
-    <Compile Remove="UltraMapper.Extensions\ComplexParamExpressionBuilder.cs" />
-    <Compile Remove="UltraMapper.Extensions\ComplexParamMemberExpressionBuilder.cs" />
-    <Compile Remove="UltraMapper.Extensions\SimpleParamExpressionBuilder.cs" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net60|AnyCPU'">
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="UltraMapper.Extensions\ParsedCommandExpressionBuilder.cs~RF1a930dc9.TMP" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net60|AnyCPU'">
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\UltraMapper.Parsing\UltraMapper.Parsing\UltraMapper.Parsing.csproj" />

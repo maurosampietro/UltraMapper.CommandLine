@@ -122,7 +122,7 @@ namespace UltraMapper.CommandLine.UnitTest
             args = $"--{nameof( Commands.AllOptions )} b=[bbb] c=11 a=[aaa]";
             parsed = CommandLine.Instance.Parse<Commands>( args );
 
-            args = $"--{nameof( Commands.AllOptions )} c=11 b=[bbb] a=[aaa]";
+            args = $"--{nameof( Commands.AllOptions )} c=11 a=[aaa] b=[bbb]";
             parsed = CommandLine.Instance.Parse<Commands>( args );
 
             args = $"--{nameof( Commands.AllOptions )} c=11 b=[bbb] a=[aaa]";

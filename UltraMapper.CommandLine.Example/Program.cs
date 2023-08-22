@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading;
 
 namespace UltraMapper.CommandLine.Example
@@ -11,7 +12,7 @@ namespace UltraMapper.CommandLine.Example
         static void Main( string[] args )
         {
             //--add ("John Smith" 26 account=( number=AC2903X balance=3500.00 creditcards=[(CRD01 1000.00) (CRD02 2000.00)]))
-            ConsoleLoop.Start<CustomerCommands>( args );
+            ConsoleLoop.Start<CustomerCommands>( args );            
         }
 
         public class CustomerCommands
