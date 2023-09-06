@@ -18,6 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\UltraMapper.Parsing\UltraMapper.Parsing\UltraMapper.Parsing.csproj" />
 		<ProjectReference Include="..\UltraMapper.CommandLine\UltraMapper.CommandLine.csproj" />
 	</ItemGroup>
 
