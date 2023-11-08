@@ -127,16 +127,16 @@ namespace UltraMapper.CommandLine.Parsers
 
         public IEnumerable<ParsedCommand> Parse( string commandLine )
         {
-            if( String.IsNullOrWhiteSpace( commandLine ) )
+            if(String.IsNullOrWhiteSpace( commandLine ))
                 throw new ArgumentNullException( nameof( commandLine ), "Null or empty command" );
 
             var commands = commandLine.SplitKeepDelimiter( COMMAND_IDENTIFIER, "([", ")]" ).ToArray();
-            if( commands.Length == 0 )
+            if(commands.Length == 0)
             {
                 //try implicit notation
                 {
                     var match = BalancedParenthesesRegex.Match( commandLine );
-                    if( !match.Success )
+                    if(!match.Success)
                         throw new SyntaxErrorException();
 
                     var parsedParams = match.Groups[ "params" ]
@@ -148,10 +148,10 @@ namespace UltraMapper.CommandLine.Parsers
             }
 
             int paramIndex = 0;
-            foreach( var command in commands )
+            foreach(var command in commands)
             {
                 var match = CommandRegex.Match( command );
-                if( !match.Success )
+                if(!match.Success)
                     throw new SyntaxErrorException();
 
                 var cmdName = match.Groups[ "command" ].Value;
@@ -163,20 +163,33 @@ namespace UltraMapper.CommandLine.Parsers
                 var parameters = GetCommandParams( parsedParams ).ToList();
 
                 IParsedParam theparam = null;
-                if( parameters.Count > 1 )
+                if(parameters.Count > 1)
                 {
-                    theparam = new ComplexParam()
+                    var newcp = new ComplexParam()
                     {
                         //Name = cmdName,
                         Index = paramIndex,
-                        SubParams = parameters.ToArray()
+                        //SubParams = parameters.ToArray()
                     };
+
+                    theparam = newcp;
+
+                    foreach(var item in parameters)
+                    {
+                        if(item is ComplexParam cp)
+                            newcp.Complex.Add( cp );
+                        else if(item is SimpleParam sp)
+                            newcp.Simples.Add( sp );
+                        else if(item is ArrayParam ap)
+                            newcp.Arrays.Add( ap );
+                    }
+
                 }
                 else
                 {
                     var p = parameters.FirstOrDefault();
 
-                    if( p == null )
+                    if(p == null)
                         theparam = null;
                     else
                     {
@@ -198,14 +211,14 @@ namespace UltraMapper.CommandLine.Parsers
         private IEnumerable<IParsedParam> GetCommandParams( IEnumerable<string> parameters )
         {
             int paramIndex = 0;
-            foreach( var item in parameters )
+            foreach(var item in parameters)
             {
                 var match = NameValueSpitter.Match( item );
                 var paramName = match.Groups[ "paramName" ].Value;
                 var paramValue = match.Groups[ "paramValue" ].Value;
 
-                if( paramValue.StartsWith( ARRAY_START_IDENTIFIER ) &&
-                    paramValue.EndsWith( ARRAY_END_IDENTIFIER ) )
+                if(paramValue.StartsWith( ARRAY_START_IDENTIFIER ) &&
+                    paramValue.EndsWith( ARRAY_END_IDENTIFIER ))
                 {
                     paramValue = paramValue.Substring( 1, paramValue.Length - 2 );
 
@@ -221,14 +234,21 @@ namespace UltraMapper.CommandLine.Parsers
                             Index = paramIndex
                         };
 
-                        foreach( var subParam in GetCommandParams( subParams ) )
-                            arrayParam.Add( subParam );
+                        foreach(var subParam in GetCommandParams( subParams ))
+                        {
+                            if(subParam is SimpleParam sp)
+                                arrayParam.Simples.Add( sp );
+                            else if( subParam is ComplexParam cp)
+                                arrayParam.Complex.Add(cp );
+                            else if (subParam is ArrayParam ap )
+                                arrayParam.Arrays.Add( ap );
+                        }
 
                         yield return arrayParam;
                     }
                 }
-                else if( paramValue.StartsWith( OBJECT_START_IDENTIFIER ) &&
-                    paramValue.EndsWith( OBJECT_END_IDENTIFIER ) )
+                else if(paramValue.StartsWith( OBJECT_START_IDENTIFIER ) &&
+                    paramValue.EndsWith( OBJECT_END_IDENTIFIER ))
                 {
                     paramValue = paramValue.Substring( 1, paramValue.Length - 2 );
 
@@ -238,20 +258,32 @@ namespace UltraMapper.CommandLine.Parsers
 
                     var subparamList = new List<IParsedParam>();
 
-                    foreach( var subParam in GetCommandParams( subParams ) )
+                    foreach(var subParam in GetCommandParams( subParams ))
                         subparamList.Add( subParam );
 
-                    yield return new ComplexParam()
+                    var newcp = new ComplexParam()
                     {
                         Name = paramName,
                         Index = paramIndex,
-                        SubParams = subparamList.ToArray()
+                        //SubParams = subparamList.ToArray()
                     };
+
+                    foreach(var item2 in subparamList)
+                    {
+                        if(item2 is ComplexParam cp)
+                            newcp.Complex.Add( cp );
+                        else if(item2 is SimpleParam sp)
+                            newcp.Simples.Add( sp );
+                        else if(item2 is ArrayParam ap)
+                            newcp.Arrays.Add( ap );
+                    }
+
+                    yield return newcp;
                 }
-                else if( paramValue.StartsWith( @"""" ) && paramValue.EndsWith( @"""" ) )
+                else if(paramValue.StartsWith( @"""" ) && paramValue.EndsWith( @"""" ))
                 {
                     paramValue = paramValue.Substring( 1, paramValue.Length - 2 );
-                    if( paramValue == "null") paramValue = null;
+                    if(paramValue == "null") paramValue = null;
 
                     yield return new SimpleParam()
                     {

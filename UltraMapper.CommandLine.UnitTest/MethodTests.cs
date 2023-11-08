@@ -592,7 +592,7 @@ namespace UltraMapper.CommandLine.UnitTest
         [TestMethod]
         public void Method2ParamsComplexCollections()
         {
-            var args = $"--{nameof( Commands5.PrintSimpleCollections )} [ (a b) ( c d) ] [ (0 1) (2 3) ]";
+            var args = $"--{nameof( Commands5.PrintComplexCollections )} [ (a b) ( c d) ] [ (0 1) (2 3) ]";
             var parsed = CommandLine.Instance.Parse<Commands5>( args );
 
             Assert.IsTrue( parsed.IsExecuted );

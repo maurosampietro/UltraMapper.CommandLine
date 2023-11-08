@@ -25,7 +25,7 @@ namespace UltraMapper.CommandLine
         {
             var definition = DefinitionHelper.GetCommandDefinitions( typeof( T ) ).ToArray();
 
-            foreach( var command in commands )
+            foreach(var command in commands)
             {
                 //check the command first, then the params
                 _commandChecks.Checks( command, typeof( T ), definition );
@@ -35,10 +35,10 @@ namespace UltraMapper.CommandLine
                 command.Param = Internal( command.Param, def );
                 command.Param = InternalOptionalMethodParams( command.Param, def );
 
-                if( command.Param != null )
+                if(command.Param != null)
                 {
                     //named command with only 1 nameless param: the name of the param is the name of the command
-                    if( def.SubParams.Length <= 1 && String.IsNullOrEmpty( command.Param.Name ) )
+                    if(def.SubParams.Length <= 1 && String.IsNullOrEmpty( command.Param.Name ))
                         command.Param.Name = command.Name;
                 }
 
@@ -48,82 +48,91 @@ namespace UltraMapper.CommandLine
 
         private IParsedParam InternalOptionalMethodParams( IParsedParam param, ParameterDefinition def )
         {
-            if( def.MemberType != MemberTypes.METHOD ) return param;
+            if(def.MemberType != MemberTypes.METHOD) return param;
 
             ResolveNameOfUnnamedParams( param, def );
 
             var optionalParams = def.SubParams.Where( p => !p.Options.IsRequired ).ToList();
 
-            if( optionalParams.Count == 0 )
+            if(optionalParams.Count == 0)
                 return param;
 
             var requiredParams = def.SubParams.Except( optionalParams );
 
-            if( !(param is ComplexParam) )
+            if(!(param is ComplexParam))
             {
-                var subs = new List<IParsedParam>();
+                var newCp = new ComplexParam();
 
+                if(param != null)
+                {
+                    if(param is SimpleParam paramSp)
+                        newCp.Simples.Add( paramSp );
+                    else if(param is ArrayParam arrayp)
+                        newCp.Arrays.Add( arrayp );
+                }
 
-                if( param != null )
-                    subs.Add( param );
-
-                for( int paramIndex = 0; paramIndex < def.SubParams.Length; paramIndex++ )
+                for(int paramIndex = 0; paramIndex < def.SubParams.Length; paramIndex++)
                 {
                     var sub = def.SubParams[ paramIndex ];
 
-                    if( param?.Name == sub.Name )
+                    if(param?.Name == sub.Name)
                         continue;
 
                     //if( param?.Index == sub.Options.Order )
                     //    continue;
 
-                    if( !sub.Options.IsRequired )
+                    if(!sub.Options.IsRequired)
                     {
-                        if( sub.Type.IsBuiltIn( false ) )
-                            subs.Add( new SimpleParam() { Name = sub.Name, Index = sub.Options.Order, Value = sub.DefaultValue?.ToString() } );
-                        else if( sub.Type.IsEnumerable() )
-                            subs.Add( new ArrayParam() { Name = sub.Name, Index = sub.Options.Order } );
+                        if(sub.Type.IsBuiltIn( false ))
+                            newCp.Simples.Add( new SimpleParam() { Name = sub.Name, Index = sub.Options.Order, Value = sub.DefaultValue?.ToString() } );
+                        else if(sub.Type.IsEnumerable())
+                            newCp.Arrays.Add( new ArrayParam() { Name = sub.Name, Index = sub.Options.Order } );
                         else
-                            subs.Add( new ComplexParam() { Name = sub.Name, Index = sub.Options.Order } );
+                            newCp.Complex.Add( new ComplexParam() { Name = sub.Name, Index = sub.Options.Order } );
                     }
                 }
 
-                return new ComplexParam()
-                {
-                    SubParams = subs.ToArray()
-                };
+                return newCp;
             }
-            else if( ((ComplexParam)param).SubParams.Count < def.SubParams.Length )
+            else if(((ComplexParam)param).SubParams.Count < def.SubParams.Length)
             {
                 var paramsSubs = new List<IParsedParam>();
                 paramsSubs.AddRange( ((ComplexParam)param).SubParams );
 
-                for( int paramIndex = 0; paramIndex < def.SubParams.Length; paramIndex++ )
+                for(int paramIndex = 0; paramIndex < def.SubParams.Length; paramIndex++)
                 {
                     var defSub = def.SubParams[ paramIndex ];
 
-                    if( paramsSubs.Any( s => s.Name == defSub.Name ) )
+                    if(paramsSubs.Any( s => s.Name == defSub.Name ))
                         continue;
 
                     //if( paramIndex < paramsSubs.Count &&
                     //    paramsSubs[ paramIndex ].Index == defSub.Options.Order )
                     //    continue;
 
-                    if( !defSub.Options.IsRequired )
+                    if(!defSub.Options.IsRequired)
                     {
-                        if( defSub.Type.IsBuiltIn( false ) )
+                        if(defSub.Type.IsBuiltIn( false ))
                             paramsSubs.Add( new SimpleParam() { Name = defSub.Name, Index = defSub.Options.Order, Value = defSub.DefaultValue?.ToString() } );
-                        else if( defSub.Type.IsEnumerable() )
+                        else if(defSub.Type.IsEnumerable())
                             paramsSubs.Add( new ArrayParam() { Name = defSub.Name, Index = defSub.Options.Order } );
                         else
                             paramsSubs.Add( new ComplexParam() { Name = defSub.Name, Index = defSub.Options.Order } );
                     }
                 }
 
-                return new ComplexParam()
+                var newcp = new ComplexParam();
+                foreach(var item in paramsSubs)
                 {
-                    SubParams = paramsSubs.ToArray()
-                };
+                    if(item is ComplexParam cp)
+                        newcp.Complex.Add( cp );
+                    else if(item is SimpleParam sp)
+                        newcp.Simples.Add( sp );
+                    else if(item is ArrayParam ap)
+                        newcp.Arrays.Add( ap );
+                }
+
+                return newcp;
             }
 
             return param;
@@ -132,53 +141,57 @@ namespace UltraMapper.CommandLine
         private static void ResolveNameOfUnnamedParams( IParsedParam param, ParameterDefinition def )
         {
             //add name to unnamed params
-            if( param is ComplexParam cp )
+            if(param is ComplexParam cp)
             {
-                for( int i = 0; i < cp.SubParams.Count && i < def.SubParams.Length; i++ )
+                for(int i = 0; i < cp.SubParams.Count && i < def.SubParams.Length; i++)
                 {
                     var subParam = cp.SubParams[ i ];
                     var subDef = def.SubParams.OrderBy( f => f.Options.Order ).ToArray()[ i ];
-                    if( subDef.Type.IsBuiltIn( true ) || subDef.Type.IsEnumerable() )
+                    if(subDef.Type.IsBuiltIn( true ) || subDef.Type.IsEnumerable())
                     {
-                        if( String.IsNullOrWhiteSpace( subParam.Name ) )
+                        if(String.IsNullOrWhiteSpace( subParam.Name ))
                             subParam.Name = subDef.Name;
                     }
                     else
                         ResolveNameOfUnnamedParams( subParam, subDef );
                 }
             }
-            else if( param is ArrayParam ap )
+            else if(param is ArrayParam ap)
             {
                 var subDef = def.SubParams.OrderBy( f => f.Options.Order ).ToArray()[ 0 ];
-                if( String.IsNullOrWhiteSpace( param.Name ) )
+                if(String.IsNullOrWhiteSpace( param.Name ))
                     param.Name = subDef.Name;
             }
         }
 
         private IParsedParam Internal( IParsedParam param, ParameterDefinition def )
         {
-            if( param == null ) return null;
+            if(param == null) return null;
 
-            switch( param )
+            switch(param)
             {
                 case ArrayParam _: return param;
 
                 case SimpleParam sp:
 
-                    if( def.Type?.IsBuiltIn( true ) == true )
+                    if(def.Type?.IsBuiltIn( true ) == true)
                         return sp;
 
-                    return new ComplexParam()
+                    var newcp = new ComplexParam()
                     {
                         Name = def.Name,
                         Index = 0,
-                        SubParams = new[] { sp }
+
                     };
+
+                    newcp.Simples.Add( sp );
+
+                    return newcp;
 
                 case ComplexParam cp:
                 {
                     var subParamsDef = def.SubParams;
-                    if( subParamsDef.All( s => s.Type.IsBuiltIn( true ) ) )
+                    if(subParamsDef.All( s => s.Type.IsBuiltIn( true ) ))
                     {
                         _complexParamChecks.Checks( cp, def.Type, def.SubParams );
                         return cp;
@@ -186,12 +199,12 @@ namespace UltraMapper.CommandLine
 
                     IEnumerable<IParsedParam> getSubparams( ComplexParam localcp )
                     {
-                        for( int i = 0; i < localcp.SubParams.Count; i++ )
+                        for(int i = 0; i < localcp.SubParams.Count; i++)
                         {
                             var item = localcp.SubParams[ i ];
 
                             var defSub = def.SubParams.FirstOrDefault( k => k.Name.ToLower() == item.Name.ToLower() );
-                            if( defSub == null )
+                            if(defSub == null)
                                 defSub = def.SubParams.FirstOrDefault( k => k.Options.Order == item.Index );
 
                             var newitem = Internal( item, defSub );
@@ -199,14 +212,15 @@ namespace UltraMapper.CommandLine
                         }
                     };
 
-                    if( def.SubParams.Length == 1 )
+                    if(def.SubParams.Length == 1)
                     {
                         //nesting just to check properly
                         var temp = new ComplexParam()
                         {
                             Name = "",
-                            SubParams = new[] { cp }
                         };
+
+                        temp.Complex.Add( cp );
 
                         _complexParamChecks.Checks( temp, def.Type, def.SubParams );
 
@@ -219,12 +233,23 @@ namespace UltraMapper.CommandLine
 
                         var subparams = getSubparams( cp ).ToArray();
 
-                        return new ComplexParam()
+                        var newcp2 = new ComplexParam()
                         {
                             Name = def.Name,
                             Index = 0,
-                            SubParams = subparams
                         };
+
+                        foreach(var item in subparams)
+                        {
+                            if(item is ComplexParam cp2)
+                                newcp2.Complex.Add( cp2 );
+                            else if(item is SimpleParam sp)
+                                newcp2.Simples.Add( sp );
+                            else if(item is ArrayParam ap)
+                                newcp2.Arrays.Add( ap );
+                        }
+
+                        return newcp2;
                     }
                 }
             }
@@ -250,7 +275,7 @@ namespace UltraMapper.CommandLine
 
         public void CheckThrowCommandExists( ParsedCommand command, Type target, ParameterDefinition[] commandDefs )
         {
-            if( !commandDefs.Any( p => p.Name.ToLower() == command.Name.ToLower() ) )
+            if(!commandDefs.Any( p => p.Name.ToLower() == command.Name.ToLower() ))
                 throw new UndefinedCommandException( target, command.Name );
         }
 
@@ -263,7 +288,7 @@ namespace UltraMapper.CommandLine
             var nameCollisions = paramsDef.GroupBy( p => p.Name.ToLower() )
                 .Where( group => group.Count() > 1 );
 
-            foreach( var collision in nameCollisions )
+            foreach(var collision in nameCollisions)
             {
                 //overload checking is possible but i don't think it's worth the complexity
                 throw new DuplicateCommandException( target, param );
@@ -285,10 +310,10 @@ namespace UltraMapper.CommandLine
             var availableParamNames = longNames
                 .Where( i => !String.IsNullOrWhiteSpace( i ) );
 
-            if( !String.IsNullOrEmpty( command.Param?.Name ) )
+            if(!String.IsNullOrEmpty( command.Param?.Name ))
             {
                 var isCorrectParam = availableParamNames.Contains( command.Param.Name );
-                if( !isCorrectParam )
+                if(!isCorrectParam)
                     throw new UndefinedParameterException( target, command.Param.Name );
             }
 
@@ -318,7 +343,7 @@ namespace UltraMapper.CommandLine
 
         protected void CheckThrowNamedParamsOrder( ParsedCommand command )
         {
-            if( command.Param is ComplexParam cp )
+            if(command.Param is ComplexParam cp)
                 _complexTypeChecks.CheckThrowNamedParamsOrder( cp );
         }
 
@@ -330,44 +355,44 @@ namespace UltraMapper.CommandLine
             int paramsCount = paramDef.SubParams.Length;
 
             //implicit set for booleans
-            if( param.Param == null && requiredParams > 0 && paramDef.Type != typeof( bool ) )
+            if(param.Param == null && requiredParams > 0 && paramDef.Type != typeof( bool ))
             {
                 throw new ArgumentNumberException( param );
             }
-            else if( param.Param is SimpleParam sp )
+            else if(param.Param is SimpleParam sp)
             {
-                if( paramDef.MemberType == MemberTypes.METHOD )
+                if(paramDef.MemberType == MemberTypes.METHOD)
                 {
-                    if( requiredParams > 1 )
+                    if(requiredParams > 1)
                         throw new ArgumentNumberException( param );
 
-                    if( paramsCount == 0 )
+                    if(paramsCount == 0)
                         throw new ArgumentNumberException( param );
                 }
                 else
                 {
-                    if( requiredParams > 1 )
+                    if(requiredParams > 1)
                         throw new ArgumentNumberException( param );
                 }
             }
-            else if( param.Param is ComplexParam cp )
+            else if(param.Param is ComplexParam cp)
             {
                 var tempDef = paramDef.SubParams?.FirstOrDefault();
-                if( paramDef.SubParams.Length == 1 && tempDef != null && !tempDef.Type.IsBuiltIn( false ) )
+                if(paramDef.SubParams.Length == 1 && tempDef != null && !tempDef.Type.IsBuiltIn( false ))
                 {
                     requiredParams = tempDef.SubParams
                         .Count( cmdi => cmdi.Options?.IsRequired ?? false );
 
-                    if( cp.SubParams.Count < requiredParams ||
-                        cp.SubParams.Count > tempDef.SubParams.Length )
+                    if(cp.SubParams.Count < requiredParams ||
+                        cp.SubParams.Count > tempDef.SubParams.Length)
                     {
                         throw new ArgumentNumberException( param );
                     }
                 }
                 else
                 {
-                    if( cp.SubParams.Count < requiredParams ||
-                        cp.SubParams.Count > paramsCount )
+                    if(cp.SubParams.Count < requiredParams ||
+                        cp.SubParams.Count > paramsCount)
                     {
                         throw new ArgumentNumberException( param );
                     }
@@ -395,9 +420,9 @@ namespace UltraMapper.CommandLine
             var groups = param.SubParams.Where( p => !String.IsNullOrEmpty( p.Name ) )
                 .GroupBy( p => p.Name.ToLower() );
 
-            foreach( var item in groups )
+            foreach(var item in groups)
             {
-                if( item.Count() > 1 )
+                if(item.Count() > 1)
                     throw new DuplicateArgumentException( item.Key );
             }
         }
@@ -411,7 +436,7 @@ namespace UltraMapper.CommandLine
             var nameCollisions = paramsDef.GroupBy( param => param.Name.ToLower() )
                 .Where( group => group.Count() > 1 );
 
-            foreach( var collision in nameCollisions )
+            foreach(var collision in nameCollisions)
             {
                 //overload checking is possible but i don't think it's worth the complexity
                 throw new DuplicateParameterException( collision.Key );
@@ -433,10 +458,10 @@ namespace UltraMapper.CommandLine
             var providedParams = param.SubParams.Where( l => !String.IsNullOrWhiteSpace( l.Name ) )
                 .Select( p => p.Name.ToLower() );
 
-            foreach( var providedParam in providedParams )
+            foreach(var providedParam in providedParams)
             {
                 var isCorrectParam = availableParamNames.Contains( providedParam );
-                if( !isCorrectParam )
+                if(!isCorrectParam)
                     throw new UndefinedParameterException( target, providedParam );
             }
         }
@@ -447,9 +472,9 @@ namespace UltraMapper.CommandLine
             int lastNonNamedParamIndex = -1;
 
             int i = 0;
-            foreach( var subparam in param.SubParams )
+            foreach(var subparam in param.SubParams)
             {
-                if( String.IsNullOrWhiteSpace( subparam.Name ) )
+                if(String.IsNullOrWhiteSpace( subparam.Name ))
                     lastNonNamedParamIndex = i;
                 else
                     lastNamedParamIndex = i;
@@ -457,8 +482,8 @@ namespace UltraMapper.CommandLine
                 i++;
             }
 
-            if( (lastNamedParamIndex > -1 && lastNonNamedParamIndex > -1) &&
-                    lastNonNamedParamIndex > lastNamedParamIndex )
+            if((lastNamedParamIndex > -1 && lastNonNamedParamIndex > -1) &&
+                    lastNonNamedParamIndex > lastNamedParamIndex)
             {
                 throw new MisplacedNamedParamException( param );
             }
@@ -468,8 +493,8 @@ namespace UltraMapper.CommandLine
         {
             int requiredParams = paramsDef.Count( cmdi => cmdi.Options?.IsRequired ?? false );
 
-            if( param.SubParams.Count < requiredParams ||
-                param.SubParams.Count > paramsDef.Length )
+            if(param.SubParams.Count < requiredParams ||
+                param.SubParams.Count > paramsDef.Length)
             {
                 throw new ArgumentNumberException( param );
             }
