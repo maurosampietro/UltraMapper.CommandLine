@@ -84,8 +84,8 @@ namespace UltraMapper.CommandLine.UnitTest
             string args = @"--command [ a=1 b=2 ]";
             var res = _textParser.Parse( args );
 
-            Assert.IsTrue( (res.First().Param as ArrayParam).Simples.First().Name == @"a" ); //array item name never used
-            Assert.IsTrue( (res.First().Param as ArrayParam).Simples.First().Value == @"1" ); //array item name never used
+            Assert.IsTrue( (res.First().Param as ArrayParam).Simple.First().Name == @"a" ); //array item name never used
+            Assert.IsTrue( (res.First().Param as ArrayParam).Simple.First().Value == @"1" ); //array item name never used
         }
 
         [TestMethod]
@@ -125,8 +125,8 @@ namespace UltraMapper.CommandLine.UnitTest
             var res = _textParser.Parse( args );
 
             Assert.IsTrue( res.First().Param.Name == "prop" );
-            Assert.IsTrue( (res.First().Param as ArrayParam).Simples.ElementAt( 0 ).Value == "a");
-            Assert.IsTrue( (res.First().Param as ArrayParam).Simples.ElementAt( 1 ).Value == "b");
+            Assert.IsTrue( (res.First().Param as ArrayParam).Simple.ElementAt( 0 ).Value == "a");
+            Assert.IsTrue( (res.First().Param as ArrayParam).Simple.ElementAt( 1 ).Value == "b");
         }
 
         [TestMethod]
@@ -158,7 +158,7 @@ namespace UltraMapper.CommandLine.UnitTest
             var res = _textParser.Parse( args );
 
             var array = res.First().Param as ArrayParam;
-            var arrayValues = array.Simples.Select( v => ((SimpleParam)v).Value );
+            var arrayValues = array.Simple.Select( v => ((SimpleParam)v).Value );
 
             Assert.IsTrue( arrayValues.SequenceEqual( new[] { "1", "2", "3", "4", "5" } ) );
         }
@@ -170,7 +170,7 @@ namespace UltraMapper.CommandLine.UnitTest
             var res = _textParser.Parse( args );
 
             var array = res.First().Param as ArrayParam;
-            var arrayValues = array.Simples.Select( v => ((SimpleParam)v).Value );
+            var arrayValues = array.Simple.Select( v => ((SimpleParam)v).Value );
 
             Assert.IsTrue( arrayValues.SequenceEqual( new[] { "1", "2", "3", "4", "5" } ) );
         }
@@ -198,10 +198,10 @@ namespace UltraMapper.CommandLine.UnitTest
             var array2 = complexParam.SubParams[ 2 ] as ArrayParam;
 
             Assert.IsTrue( simple0.Value == "a" );
-            Assert.IsTrue( array1.Simples[ 0 ].Value == "b" );
-            Assert.IsTrue( array1.Simples[ 1 ].Value == "c" );
-            Assert.IsTrue( array2.Simples[ 0 ].Value == "d" );
-            Assert.IsTrue( array2.Simples[ 1 ].Value == "e" );
+            Assert.IsTrue( array1.Simple[ 0 ].Value == "b" );
+            Assert.IsTrue( array1.Simple[ 1 ].Value == "c" );
+            Assert.IsTrue( array2.Simple[ 0 ].Value == "d" );
+            Assert.IsTrue( array2.Simple[ 1 ].Value == "e" );
         }
 
         [TestMethod]
@@ -215,14 +215,14 @@ namespace UltraMapper.CommandLine.UnitTest
             var complexParam2 = complexParam.Complex.ElementAt( 1 );
             var param3 = complexParam.SubParams[ 2 ] as SimpleParam;
 
-            Assert.IsTrue( complexParam1.Simples.ElementAt( 0 ).Value == "a" );
-            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Simples.ElementAt( 0 ).Value == "b" );
-            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Arrays.ElementAt( 0 ).Complex.ElementAt( 0 ).Simples.ElementAt( 0 ).Value == "1" );
-            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Arrays.ElementAt( 0 ).Complex.ElementAt( 0 ).Simples.ElementAt( 1 ).Value == "2" );
-            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Arrays.ElementAt( 0 ).Complex.ElementAt( 1 ).Simples.ElementAt( 0 ).Value == "3" );
-            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Arrays.ElementAt( 0 ).Complex.ElementAt( 1 ).Simples.ElementAt( 1 ).Value == "4" );
-            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Arrays.ElementAt( 0 ).Complex.ElementAt( 2 ).Simples.ElementAt( 0 ).Value == "5" );
-            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Arrays.ElementAt( 0 ).Complex.ElementAt( 2 ).Simples.ElementAt( 1 ).Value == "6" );
+            Assert.IsTrue( complexParam1.Simple.ElementAt( 0 ).Value == "a" );
+            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Simple.ElementAt( 0 ).Value == "b" );
+            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Array.ElementAt( 0 ).Complex.ElementAt( 0 ).Simple.ElementAt( 0 ).Value == "1" );
+            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Array.ElementAt( 0 ).Complex.ElementAt( 0 ).Simple.ElementAt( 1 ).Value == "2" );
+            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Array.ElementAt( 0 ).Complex.ElementAt( 1 ).Simple.ElementAt( 0 ).Value == "3" );
+            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Array.ElementAt( 0 ).Complex.ElementAt( 1 ).Simple.ElementAt( 1 ).Value == "4" );
+            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Array.ElementAt( 0 ).Complex.ElementAt( 2 ).Simple.ElementAt( 0 ).Value == "5" );
+            Assert.IsTrue( complexParam1.Complex.ElementAt( 0 ).Array.ElementAt( 0 ).Complex.ElementAt( 2 ).Simple.ElementAt( 1 ).Value == "6" );
             Assert.IsTrue( ((complexParam1[ 1 ] as ComplexParam)[ 2 ] as SimpleParam).Value == "d" );
 
             Assert.IsTrue( (complexParam2[ 0 ] as SimpleParam).Value == "x" );

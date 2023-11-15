@@ -51,7 +51,7 @@ namespace UltraMapper.CommandLine
         {
             this.Initialize( type );
 
-            string helpParam = ((SimpleParam)parsedParam)?.Value;
+            string helpParam = ((SimpleParam)parsedParam).Value;
 
             var cmdDefs = DefinitionHelper.GetCommandDefinitions( type );
             cmdDefs.OrderBy( cDef => cDef.Name ).ToList();

@@ -179,9 +179,9 @@ namespace UltraMapper.CommandLine.Parsers
                         if(item is ComplexParam cp)
                             newcp.Complex.Add( cp );
                         else if(item is SimpleParam sp)
-                            newcp.Simples.Add( sp );
+                            newcp.Simple.Add( sp );
                         else if(item is ArrayParam ap)
-                            newcp.Arrays.Add( ap );
+                            newcp.Array.Add( ap );
                     }
 
                 }
@@ -237,11 +237,11 @@ namespace UltraMapper.CommandLine.Parsers
                         foreach(var subParam in GetCommandParams( subParams ))
                         {
                             if(subParam is SimpleParam sp)
-                                arrayParam.Simples.Add( sp );
+                                arrayParam.Simple.Add( sp );
                             else if( subParam is ComplexParam cp)
                                 arrayParam.Complex.Add(cp );
                             else if (subParam is ArrayParam ap )
-                                arrayParam.Arrays.Add( ap );
+                                arrayParam.Array.Add( ap );
                         }
 
                         yield return arrayParam;
@@ -273,9 +273,9 @@ namespace UltraMapper.CommandLine.Parsers
                         if(item2 is ComplexParam cp)
                             newcp.Complex.Add( cp );
                         else if(item2 is SimpleParam sp)
-                            newcp.Simples.Add( sp );
+                            newcp.Simple.Add( sp );
                         else if(item2 is ArrayParam ap)
-                            newcp.Arrays.Add( ap );
+                            newcp.Array.Add( ap );
                     }
 
                     yield return newcp;

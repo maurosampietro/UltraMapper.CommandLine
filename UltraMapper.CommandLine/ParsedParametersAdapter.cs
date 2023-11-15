@@ -66,9 +66,9 @@ namespace UltraMapper.CommandLine
                 if(param != null)
                 {
                     if(param is SimpleParam paramSp)
-                        newCp.Simples.Add( paramSp );
+                        newCp.Simple.Add( paramSp );
                     else if(param is ArrayParam arrayp)
-                        newCp.Arrays.Add( arrayp );
+                        newCp.Array.Add( arrayp );
                 }
 
                 for(int paramIndex = 0; paramIndex < def.SubParams.Length; paramIndex++)
@@ -84,9 +84,9 @@ namespace UltraMapper.CommandLine
                     if(!sub.Options.IsRequired)
                     {
                         if(sub.Type.IsBuiltIn( false ))
-                            newCp.Simples.Add( new SimpleParam() { Name = sub.Name, Index = sub.Options.Order, Value = sub.DefaultValue?.ToString() } );
+                            newCp.Simple.Add( new SimpleParam() { Name = sub.Name, Index = sub.Options.Order, Value = sub.DefaultValue?.ToString() } );
                         else if(sub.Type.IsEnumerable())
-                            newCp.Arrays.Add( new ArrayParam() { Name = sub.Name, Index = sub.Options.Order } );
+                            newCp.Array.Add( new ArrayParam() { Name = sub.Name, Index = sub.Options.Order } );
                         else
                             newCp.Complex.Add( new ComplexParam() { Name = sub.Name, Index = sub.Options.Order } );
                     }
@@ -127,9 +127,9 @@ namespace UltraMapper.CommandLine
                     if(item is ComplexParam cp)
                         newcp.Complex.Add( cp );
                     else if(item is SimpleParam sp)
-                        newcp.Simples.Add( sp );
+                        newcp.Simple.Add( sp );
                     else if(item is ArrayParam ap)
-                        newcp.Arrays.Add( ap );
+                        newcp.Array.Add( ap );
                 }
 
                 return newcp;
@@ -184,7 +184,7 @@ namespace UltraMapper.CommandLine
 
                     };
 
-                    newcp.Simples.Add( sp );
+                    newcp.Simple.Add( sp );
 
                     return newcp;
 
@@ -244,9 +244,9 @@ namespace UltraMapper.CommandLine
                             if(item is ComplexParam cp2)
                                 newcp2.Complex.Add( cp2 );
                             else if(item is SimpleParam sp)
-                                newcp2.Simples.Add( sp );
+                                newcp2.Simple.Add( sp );
                             else if(item is ArrayParam ap)
-                                newcp2.Arrays.Add( ap );
+                                newcp2.Array.Add( ap );
                         }
 
                         return newcp2;
