@@ -176,7 +176,7 @@ namespace UltraMapper.CommandLine.UnitTest.UltraMapper.Extensions
         [Ignore]
         public void DirectNestedPropertyAssignment() //Is it actually useful?
         {
-            var args = $"--{nameof( Commands.SomeCommand )} SomeCommand.SubLevel2.SubLevel3.G:g";
+            var args = $"--{nameof( Commands.SomeCommand )} SomeCommand.SubLevel2.SubLevel3.G=g";
             var parsed = CommandLine.Instance.Parse<Commands>( args );
 
             Assert.IsTrue( parsed.SomeCommand.SubLevel2.SubLevel3.G == "g" );

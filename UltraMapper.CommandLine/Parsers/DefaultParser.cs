@@ -117,7 +117,7 @@ namespace UltraMapper.CommandLine.Parsers
         )+? (?(open) (?!) )               # fail if open > 0",
             RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled, TimeSpan.FromSeconds( 3 ) );
 
-        public static readonly Regex NameValueSpitter = new Regex( @"^((?<paramName>[\w\.]+)\s*=\s*){0,1}(?<paramValue>.*)",
+        public static readonly Regex NameValueSplitter = new Regex( @"^((?<paramName>[\w\.]+)\s*=\s*){0,1}(?<paramValue>.*)",
             RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled, TimeSpan.FromSeconds( 3 ) );
 
         public IEnumerable<ParsedCommand> Parse( string[] args )
@@ -213,7 +213,7 @@ namespace UltraMapper.CommandLine.Parsers
             int paramIndex = 0;
             foreach(var item in parameters)
             {
-                var match = NameValueSpitter.Match( item );
+                var match = NameValueSplitter.Match( item );
                 var paramName = match.Groups[ "paramName" ].Value;
                 var paramValue = match.Groups[ "paramValue" ].Value;
 

@@ -236,7 +236,7 @@ namespace UltraMapper.CommandLine
                         var newcp2 = new ComplexParam()
                         {
                             Name = def.Name,
-                            Index = 0,
+                            Index =cp.Index,
                         };
 
                         foreach(var item in subparams)

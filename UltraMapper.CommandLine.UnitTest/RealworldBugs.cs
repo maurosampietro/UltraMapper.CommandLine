@@ -10,13 +10,13 @@ namespace UltraMapper.CommandLine.UnitTest
         {
             public class InnerType
             {
-                [Option( IsRequired = true, Order = 0 )]
+                [Option( IsRequired = true, Order = 1 )]
                 public string A { get; set; }
 
-                [Option( IsRequired = true, Order = 1 )]
+                [Option( IsRequired = true, Order = 2 )]
                 public string B { get; set; }
 
-                [Option( IsRequired = false )]
+                [Option( IsRequired = false, Order = 0 )]
                 public InnerType Inner2 { get; set; }
             }
 
@@ -48,7 +48,7 @@ namespace UltraMapper.CommandLine.UnitTest
         }
 
         [TestMethod]
-        [Ignore] //this should throw and it's ok, but it's not easy to understand where the problem is
+        //[Ignore] //this should throw and it's ok, but it's not easy to understand where the problem is
         public void ComplexAnonymousParamOnSimpleParamOrderOvverride()
         {
             //order is set overridden manually so the order should be:
@@ -110,6 +110,6 @@ namespace UltraMapper.CommandLine.UnitTest
                 Assert.IsTrue( customer.Account.CreditCards[ 1 ].CardNumber == "CRD02" );
                 Assert.IsTrue( customer.Account.CreditCards[ 1 ].MonthlyLimit == 2000 );
             }
-        }        
+        }
     }
 }

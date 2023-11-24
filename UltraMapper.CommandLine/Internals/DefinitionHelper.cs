@@ -40,12 +40,28 @@ namespace UltraMapper.CommandLine.Mappers
             var subs = new ParameterDefinition[ root.Children.Count ];
             _cache.Add( nodeType, subs );
 
+            var sortedChildren = root.Children.Select( c => new { Child = c, Options = c.Item.GetCustomAttribute<OptionAttribute>() ?? new OptionAttribute() } )
+                .Where( m => !m.Options.IsIgnored )
+                .OrderByDescending( info => info.Options.IsRequired )
+                .ThenBy( info => info.Options.Order )
+                .Select( c => c.Child )
+                .ToList();
+
             for( int i = 0; i < root.Children.Count; i++ )
             {
-                var command = root.Children[ i ];
+                var command = sortedChildren[ i ];
 
-                var optionAttribute = command.Item.GetCustomAttribute<OptionAttribute>() ?? new OptionAttribute();
-                if( optionAttribute?.IsIgnored == true )
+                var optionAttribute = command.Item.GetCustomAttribute<OptionAttribute>();
+                if ( optionAttribute == null ) 
+                {
+                    optionAttribute = new OptionAttribute();
+                    optionAttribute.Order = i;
+                }
+
+                if(optionAttribute.Order == -1)
+                    optionAttribute.Order = i;
+
+                if ( optionAttribute?.IsIgnored == true )
                     continue;
 
                 string name = String.IsNullOrWhiteSpace( optionAttribute?.Name ) ?
@@ -53,8 +69,7 @@ namespace UltraMapper.CommandLine.Mappers
 
                 if( !Regex.IsMatch( name, @"^\w+$" ) )
                     throw new InvalidNameException( name );
-
-                optionAttribute.Order = i;
+               
 #if NET47
                 var subparameters = Array.Empty<ParameterDefinition>();
 #else
