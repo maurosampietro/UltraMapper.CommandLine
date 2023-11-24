@@ -1,4 +1,7 @@
-﻿namespace UltraMapper.CommandLine.UnitTest
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+
+namespace UltraMapper.CommandLine.UnitTest
 {
     //[TestClass]
     //public class Commanding
@@ -24,4 +27,6 @@
     //        Assert.IsTrue( target.A == nameof( Commands.A ) );
     //    }
     //}
+
+  
 }

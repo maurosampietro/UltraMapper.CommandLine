@@ -318,7 +318,7 @@ namespace UltraMapper.CommandLine.Extensions
 
         private IMappingSource GetMappingSource( ReferenceMapperContext context, PropertyInfo propertyInfo )
         {
-            if( propertyInfo.PropertyType.IsBuiltIn( true ) )
+            if( propertyInfo.PropertyType.IsBuiltIn( true ) || propertyInfo.PropertyType == typeof(DateTime) )
                 return new MappingSource<ParsedCommand, string>( pc => ((SimpleParam)pc.Param).Value );
 
             if( propertyInfo.PropertyType.IsEnumerable() )

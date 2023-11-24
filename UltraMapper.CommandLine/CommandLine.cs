@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UltraMapper.CommandLine.Extensions;
 using UltraMapper.CommandLine.Parsers;
 using UltraMapper.Conventions;
 using UltraMapper.MappingExpressionBuilders;
+using UltraMapper.Parsing;
 using UltraMapper.Parsing.Extensions;
 
 namespace UltraMapper.CommandLine
@@ -66,6 +68,10 @@ namespace UltraMapper.CommandLine
                 cfg.MapTypes<string, bool>( str => ConvertStringToBoolean( str ) );
             } );
 
+            Mapper.Config.MapTypes<string, DateTime>( s => DateTime.Parse( s, CultureInfo ) );
+            Mapper.Config.MapTypes<SimpleParam, DateTime>( s => DateTime.Parse( s.Value, CultureInfo ) );
+            Mapper.Config.MapTypes<IParsedParam, DateTime>( s => DateTime.Parse( ((SimpleParam)s).Value, CultureInfo ) );
+
             //TODO: converters and multiple converters
             //try
             //{
@@ -85,7 +91,7 @@ namespace UltraMapper.CommandLine
 
         public T Parse<T>( string str, T instance ) where T : class
         {
-            if( String.IsNullOrWhiteSpace( str ) )
+            if(String.IsNullOrWhiteSpace( str ))
                 return instance;
 
             this.HelpProvider.Initialize( typeof( T ) );
@@ -118,7 +124,7 @@ namespace UltraMapper.CommandLine
         /// <returns></returns>
         public T Parse<T>( string[] args, T instance ) where T : class
         {
-            if( args == null || args.Length == 0 )
+            if(args == null || args.Length == 0)
                 return instance;
 
             this.HelpProvider.Initialize( typeof( T ) );
@@ -132,7 +138,7 @@ namespace UltraMapper.CommandLine
 
         private double ConvertStringToDouble( string str )
         {
-            if( String.IsNullOrWhiteSpace( str ) )
+            if(String.IsNullOrWhiteSpace( str ))
                 return 0.0;
 
             return Double.Parse( str, NumberStyles.Any, CultureInfo );
@@ -140,8 +146,8 @@ namespace UltraMapper.CommandLine
 
         private bool ConvertStringToBoolean( string str )
         {
-            if( str == "1" ) return true;
-            if( str == "0" ) return false;
+            if(str == "1") return true;
+            if(str == "0") return false;
 
             return Boolean.Parse( str );
         }

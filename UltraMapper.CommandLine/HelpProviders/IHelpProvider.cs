@@ -9,5 +9,8 @@ namespace UltraMapper.CommandLine
         bool ShowHelpOnError { get; set; }
         void Initialize( Type type );
         void GetHelp( Type type, IParsedParam helpParam );
+
+        void GetHelp<T>() where T : class, new() =>
+            GetHelp( typeof( T ), null );
     }
 }

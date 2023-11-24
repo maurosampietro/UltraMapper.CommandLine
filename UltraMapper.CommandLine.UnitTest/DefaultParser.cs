@@ -70,6 +70,26 @@ namespace UltraMapper.CommandLine.UnitTest
         }
 
         [TestMethod]
+        public void OpenPath12()
+        {
+            //il : del percorso è in conflitto con la sintassi dei nomi dei parametri
+
+            string args = @"--open ""C:\""";
+            var res = _textParser.Parse( args );
+
+            Assert.IsTrue( (res.First().Param as SimpleParam).Value == @"C:\" );
+        }
+
+        [TestMethod]
+        public void OpenPath4()
+        {
+            string args = "--open \"\\\"ciao\\suka\\\"\"";
+            var res = _textParser.Parse( args );
+
+            Assert.IsTrue( (res.First().Param as SimpleParam).Value == "\"\\\"ciao\\suka\\\"\"" );
+        }
+
+        [TestMethod]
         public void AnythingQuoted()
         {
             string args = @"--command ""[([\""])]""";
