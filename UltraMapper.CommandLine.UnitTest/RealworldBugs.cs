@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace UltraMapper.CommandLine.UnitTest
 {
@@ -85,14 +86,28 @@ namespace UltraMapper.CommandLine.UnitTest
         [TestMethod]
         public void GitHubExample()
         {
+            CommandLine.Instance.CultureInfo = CultureInfo.GetCultureInfo( "en-US" );
             var args = "--add (\"John Smith\" 26 account=(number=AC2903X balance=3500.00 creditcards=[(CRD01 1000.00) (CRD02 2000.00)]))";
             var parsed = CommandLine.Instance.Parse<CustomerCommands>( args );
         }
 
+        //Numbers are parsed differently based on culture (decimal separator . or , )
         [TestMethod]
         public void GitHubExample2()
         {
+            CommandLine.Instance.CultureInfo = CultureInfo.GetCultureInfo( "en-US" ); 
+            
             var args = "--add (\"John Smith\" 26 (number=AC2903X balance=3500.00 creditcards=[(CRD01 1000.00) (CRD02 2000.00)]))";
+            var parsed = CommandLine.Instance.Parse<CustomerCommands>( args );           
+        }
+
+        //Numbers are parsed differently based on culture (decimal separator . or , )
+        [TestMethod]
+        public void GitHubExample21()
+        {
+            CommandLine.Instance.CultureInfo = CultureInfo.GetCultureInfo( "it-It" );
+
+            var args = "--add (\"John Smith\" 26 (number=AC2903X balance=3500,00 creditcards=[(CRD01 1000,00) (CRD02 2000,00)]))";
             var parsed = CommandLine.Instance.Parse<CustomerCommands>( args );
         }
 

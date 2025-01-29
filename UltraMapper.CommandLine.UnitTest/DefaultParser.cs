@@ -83,10 +83,10 @@ namespace UltraMapper.CommandLine.UnitTest
         [TestMethod]
         public void OpenPath4()
         {
-            string args = "--open \"\\\"ciao\\suka\\\"\"";
+            string args = "--open \"\\c i a o\\s u k a\\\"";
             var res = _textParser.Parse( args );
 
-            Assert.IsTrue( (res.First().Param as SimpleParam).Value == "\"\\\"ciao\\suka\\\"\"" );
+            Assert.IsTrue( (res.First().Param as SimpleParam).Value == "\\c i a o\\s u k a\\" );
         }
 
         [TestMethod]
